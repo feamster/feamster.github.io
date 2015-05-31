@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Incentives for IP Prefix Aggregation</title>
+  </head>
+
+  <body BGColor="white">
+  <hr NOSHADE SIZE="5">
+    <h1>Incentives for IP Prefix Aggregation</h1>
+    <HR NOSHADE SIZE="5">
+
+<table>
+<tr>
+<td VALIGN="TOP"><b>Sponsor</b></td>
+<td><p> Prof. Nick Feamster<br>
+feamster@cc.gatech.edu<br>
+ </p>
+</td>
+</tr>
+<tr>
+<td><b>Area</b></td>
+<td>Networking</td>
+</tr>
+</table>
+<hr NOSHADE SIZE="5">
+<p>
+<b>Problem</b><BR>
+<P>
+The size of the Internet's routing table (<i>i.e.</i>, the list of IP
+prefixes for all destinations on the Internet) is increasing rapidly.
+In the span of just a few years, the size of this table has nearly
+doubled.  Much of the cause of this growth is that ASes (<i>i.e.</i>,
+independently operated networks) at the edge of the network are
+increasingly buying service from multiple providers (a practice called
+<em>multihoming</em>) and advertising IP prefixes that refer to more
+specific portions of their networks.
+<p>
+Unfortunately, these more specific prefixes take up additional space in
+the routing table.  To save space, some ASes may "aggregate" a more
+specific prefix if it is contained within another prefix for which it
+already has a route.  This process of aggregation saves space in the
+routing tables, but it can interfere with the edge ISPs ability to
+control the path that traffic takes en route to its network.
+<p>
+Your project could involve measurement, theoretical analysis, or both.
+For example, you could perform a measurement study to answer one or more
+of the following questions:
+<ol>
+<li> How often do edge ASes advertise more specific prefixes in an
+attempt to control inbound traffic?
+<li> How often are an edge AS's prefixes aggregated by
+other ASes? How often does this practice affect traffic flow?
+</ol>
+<p>
+It turns out that traffic could follow the intended paths if only some
+subset of the ISPs carried the more specific routing information.  Can
+you determine, from the Internet's AS-level graph, who needs to carry
+the more specific prefixes, and the conditions under which they might be
+willing to do so?
+<p>
+<b>Background</b><BR>
+<P>
+There hasn't been much study of aggregation in previous work, but you
+may be interested in reading the following Internet draft, which
+explains the problem above in more detail.  The second paper below gives
+a little more background on instances where some IP prefixes may be
+rather unspecific.
+<ul>
+<li> R. White and N. Feamster<br>
+<b><a href=http://nms.lcs.mit.edu/~feamster/papers/draft-white-path-considerations-00.txt>Considerations in Validating the Path in Routing
+Protocols</a></b><br> 
+Internet Draft, April 2004.
+<p>
+<li> M. Freedman, M. Vutukuru, N. Feamster, H. Balakrishnan<br>
+<b>Geographic locality of IP prefixes</b><br>
+<em>ACM Internet Measurement Conference</em>, October 2005.
+</ul>
+Extending the latter paper is also a reasonable direction, if that
+interests you.
+<p>
+<b>Deliverables</b><BR>
+<P>
+A short (less than 10-page) writeup describing your findings.
+<p>
+<b>Evaluation</b><BR>
+<P>
+Based on the quality of the final report.  Performing a reasonable
+measurement study is sufficient.  
+<p>
+
+</body>
+</html>

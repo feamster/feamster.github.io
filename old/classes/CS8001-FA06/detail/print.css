@@ -1,0 +1,12 @@
+div#credit { 
+  display: none; 
+}
+
+
+div#lastupdated { 
+  display: none;
+}
+
+div#seminfo { 
+  display:  inline;
+}

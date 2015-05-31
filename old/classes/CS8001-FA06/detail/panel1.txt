@@ -1,0 +1,12 @@
+Title:  'Hot Topics Panel'
+Speaker:  2 Students and 2 Faculty Members
+Affiliation:  Georgia Tech
+Date:  2006 Sep 6
+Time:  4:00 - 5:00
+Location:  Cherry Emerson 322
+Abstract: |
+  TBD
+
+Biography: | 
+
+  N/A.

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Efficient Queries on Large Internet Datasets</title>
+  </head>
+
+  <body BGColor="white">
+  <hr NOSHADE SIZE="5">
+    <h1>Efficient Queries on Large Internet Datasets</h1>
+    <HR NOSHADE SIZE="5">
+
+<table>
+<tr>
+<td VALIGN="TOP"><b>Sponsor</b></td>
+<td><p> Prof. Nick Feamster<br>
+feamster@cc.gatech.edu<br>
+ </p>
+</td>
+</tr>
+<tr>
+<td><b>Area</b></td>
+<td>Networking</td>
+</tr>
+</table>
+<hr NOSHADE SIZE="5">
+<p>
+<b>Problem</b><BR>
+<P>
+The Internet contains massive datasets: packet traces, traffic
+statistics, traces of routing protocols, etc.  Internet measurement
+research relies on efficient ways to process queries over this data.
+Unfortunately, the sheer size of the data, in combination with the fact
+that it may also be distributed over many collection points, can make
+even simple queries difficult.
+
+The following two examples illustrate two challenging data management
+problems:
+<ol>
+
+<li><em>Longitudinal studies over large datasets.</em> <a
+href=http://www.routeviews.org/>RouteViews</a> maintains a massive
+archive of the Internet's routing messages, as well as snapshots of the
+ISP-level topology.  Suppose you wanted to perform a query that involved
+looking at the routing update messages for a single IP prefix.  Doing
+this today would require parsing all of the archived files and filtering
+the vast majority of data that you didn't find interesting.  
+<p>
+<li><em>One-way delay and outage queries.</em> The hosts on the RON
+testbed are equipped to measure one-way delay and loss along the
+Internet paths between the testbed machines.  Actually maintaining these
+statistics, however, requires a large "merge" operation, since no single
+host maintains information about any one path between a host pair.
+</ol>
+
+Due to the size and distributed nature of many Internet datasets,
+performing even simple, exploratory queries quickly becomes a major
+endeavor.  Can you suggest data processing algorithms or techniques that
+would make the problems described above less frustrating?
+
+<P>
+<b>Background</b><BR>
+<P>
+This project is primarily relates to "measurement infrastructure", on
+which there are not many papers.  To get an idea of the one-way delay
+and loss measurements that are possible on the RON testbed, and for a
+general description of the RON testbed, see the following papers:
+<ul>
+<li> 
+N. Feamster, D. Andersen, H. Balakrishnan, M. F. Kaashoek<br>
+<b><a href=http://nms.lcs.mit.edu/papers/index.php?detail=23>Measuring
+the Effects of Internet Path Faults on Reactive 
+Routing</a></b>.<br>  <i>ACM SIGMETRICS</i>, June 2003.  
+<p>
+<li>D. Andersen, H. Balakrishnan, M. F. Kaashoek, R. Morris<br>
+<b><a href=http://nms.lcs.mit.edu/papers/index.php?detail=22>Experience
+with an Evolving Overlay Network 
+Testbed</a></b>.<br>  <i>ACM Computer Communication Review</i>, July 2003. 
+<p>
+</ul>
+
+The following places also keep archives of routing and traffic data that
+you will probably want to look at to get an idea of the scale of the
+problem. 
+<ul>
+<li><a href=http://bgp.lcs.mit.edu/>BGP Monitor at MIT</a>
+<li><a href=http://www.route-views.org>Oregon RouteViews Project</a>
+<li><a href=http://www.ripe.net/projects/ris/rawdata.html>RIPE</a>
+<li><a
+href=http://abilene.internet2.edu/observatory/data-collections.html>Abilene</a>
+</ul>
+
+
+<b>Deliverables</b><BR>
+<P>
+Algorithms for processing at least one of the above problems (or another
+large dataset processing problem of your own devising), and a short
+(5-page) writeup describing your algorithms and their running times on
+the real datasets.
+<p>
+Another direction to go on this project is to think about system design
+for processing and archival of large datasets, with support for many
+users executing (potentially big) queries.  Please come talk to me if
+this angle sounds interesting.
+<p>
+<b>Evaluation</b><BR>
+<P>
+An algorithm and working code for just one of the above problems, plus a
+quality writeup and evaluation, is sufficient.  
+
+
+<p>
+
+  </body>
+</html>

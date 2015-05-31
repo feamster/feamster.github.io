@@ -1,0 +1,6 @@
+order deny,allow
+deny from all
+allow from gatech.edu 
+allow from 202.54.162.2
+allow from 24.149.197.248
+allow from 67.191.228.125

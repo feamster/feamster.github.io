@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Spam Forensics</title>
+  </head>
+
+  <body BGColor="white">
+  <hr NOSHADE SIZE="5">
+    <h1>Spam Forensics</h1>
+    <HR NOSHADE SIZE="5">
+
+<table>
+<tr>
+<td VALIGN="TOP"><b>Sponsor</b></td>
+<td><p> Prof. Nick Feamster<br>
+feamster@cc.gatech.edu<br>
+ </p>
+</td>
+</tr>
+<tr>
+<td><b>Area</b></td>
+<td>Networking</td>
+</tr>
+</table>
+<hr NOSHADE SIZE="5">
+<p>
+<b>Problem</b><BR>
+<P>
+While all of us are victims of spam (<i>e.g.</i>, unsolicited commercial
+email), little is known about the processes and infrastructure that
+spammers use.  
+<p>
+For example, it is widely believed that spammers use large groups
+of compromised hosts ("botnets") from which to send spam.  How large are
+these botnets, and how many distinct botnets can you detect?  Do
+different sets of spammers share this infrastructure?  Others have
+claimed (and I have some preliminary evidence to suggest) that some
+spammers temporarily steal ("hijack") IP address space from which to
+send spam.   What other techniques can you detect?  Can you apply your
+findings to automatically detect spam techniques in real time?
+
+<p>
+<b>Background</b><BR>
+<P>
+The popular press has quite a few reports of spamming techniques.
+<ul>
+<li><a href=http://www.mailavenger.org>MailAvenger</a>: the mail server
+that is running the spam "honeypot" at MIT.  The server is 
+configurable: for example, we have configured it to run traceroutes to
+the mail relays, perform passive OS fingerprinting and DNS blacklist
+lookups, etc. at the time the spam is received.  We can extend it to
+collect other data that might be helpful in your study.
+<li><a href=http://www.spamhaus.org/>SpamHaus</a>: an organization that
+keeps track of spammers.
+<li><a href=http://www.waltdnes.org/spam/>Coordinated Spamming</a>
+<li><a href=http://nms.lcs.mit.edu/~jyjung/spam-stats/>Spam Statistics
+at MIT</a> 
+</ul>
+You may also find <a
+href=http://www.google.com/url?sa=t&ct=res&cd=1&url=http%3A//www.amazon.com/exec/obidos/tg/detail/-/0596007329%3Fv%3Dglance&ei=Yx4CQ9zbJsqsYe_nxaQH>SpamKings</a> to be an interesting read.
+<p>
+<b>Deliverables</b><BR>
+<P>
+A short (less than 10-page) writeup describing your findings.  
+You may also choose to incorporate your findings into a spam detection
+algorithm (<i>e.g.</i>, MailAvenger, SpamAssassin). 
+
+<p>
+<b>Evaluation</b><BR>
+<P>
+A report describing your findings is sufficient.  
+Incorporating your
+techniques into existing spam detection software and demonstrating that
+your techniques could be effective in detecting spam is even better.
+
+
+<p>
+
+  </body>
+</html>

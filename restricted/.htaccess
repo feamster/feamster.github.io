@@ -1,0 +1,8 @@
+AuthUserFile /u/feamster/public_html/restricted/.htpasswd
+AuthGroupFile /dev/null
+AuthName Private
+AuthType Basic
+
+<Limit GET POST>
+require valid-user
+</Limit>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Studying Routing Configuration Errors in Large ISPs</title>
+  </head>
+
+  <body BGColor="white">
+  <hr NOSHADE SIZE="5">
+    <h1>Studying Routing Configuration Errors in Large ISPs</h1>
+    <HR NOSHADE SIZE="5">
+
+<table>
+<tr>
+<td VALIGN="TOP"><b>Sponsor</b></td>
+<td><p> Prof. Nick Feamster<br>
+feamster@cc.gatech.edu<br>
+ </p>
+</td>
+</tr>
+<tr>
+<td><b>Area</b></td>
+<td>Networking</td>
+</tr>
+</table>
+<hr NOSHADE SIZE="5">
+<p>
+<b>Problem</b><BR>
+<P>
+Internet routing, the process by which hosts construct paths to
+destinations, must be highly configurable to provide scalability and
+allow network operators to express flexible business policies.  In some
+sense, configuring a network of routers to run a routing protocol is
+like writing a large distributed program.  This configurability provides
+flexibility, but also introduces complexity that can lead to errors.
+<p>
+Recent work has shown that analyzing the static configuration files is
+surprisingly useful for detecting errors and predicting the dynamic
+behavior of the Internet's routing protocol, the <em>Border Gateway
+Protocol (BGP)</em>.  This project involves further exploring the types
+of errors that static configuration analysis can detect.  For example,
+you could investigate errors caused by the interactions between a
+network's BGP and internal routing configurations (see the background
+papers for more details on this problem).  You could also analyze some
+other aspect of the network configuration (<i>e.g.</i>, a network's VPN
+configuration).  In any case, you'll be finding errors in the
+configurations of operational networks.
+<p>
+<b>Background</b><BR>
+<P>
+You'll likely find these papers useful.  The first one, on <em>rcc</em>,
+is particularly relevant, as it describes the tool that performs static
+analysis on BGP configurations.
+<ul>
+<li> N. Feamster and H. Balakrishnan<br>
+<b><a href=http://nms.lcs.mit.edu/papers/index.php?detail=123>Detecting
+BGP Configuration Faults with Static 
+Analysis</b></a><br> 
+<em>Usenix NSDI</em>, May 2005.
+<p>
+<li> T. Griffin and G. Wilfong<br>
+<b><a href=http://www.acm.org/sigcomm/sigcomm2002/papers/ibgp.html>On the
+Correctness of iBGP Configuration</a></b><br> 
+<em>ACM SIGCOMM</em>, August 2002.
+<p>
+<li> N. Feamster and J. Rexford<br>
+<b><a href=http://nms.lcs.mit.edu/papers/index.php?detail=12>A Model of
+BGP Routing for Network Engineering</a></b><br> 
+<em>ACM SIGMETRICS</em>, June 2004.
+</ul>
+You'll want to have a look at the <em>rcc</em> code, available <a
+href=http://nms.lcs.mit.edu/rcc/>here</a>. 
+You'll also want to contact me to gain access to the router
+configuration files on which you can test your code (and hopefully find
+some errors!).
+<p>
+<b>Deliverables</b><BR>
+<P>
+Your additions to the <i>rcc</i> codebase, and a short (less than
+5-page) writeup describing your analysis of errors in real-world router
+configurations. 
+<p>
+<b>Evaluation</b><BR>
+<P>
+Based on the quality of your analysis.  Finding errors
+makes for excellent results, but developing sound checks is more important!
+
+<p>
+
+  </body>
+</html>

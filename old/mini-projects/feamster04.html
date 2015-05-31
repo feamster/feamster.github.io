@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Securing the Internet's "Data Plane"</title>
+  </head>
+
+  <body BGColor="white">
+  <hr NOSHADE SIZE="5">
+    <h1>Securing the Internet's "Data Plane"</h1>
+    <HR NOSHADE SIZE="5">
+
+<table>
+<tr>
+<td VALIGN="TOP"><b>Sponsor</b></td>
+<td><p> Prof. Nick Feamster<br>
+feamster@cc.gatech.edu<br>
+ </p>
+</td>
+</tr>
+<tr>
+<td><b>Area</b></td>
+<td>Networking</td>
+</tr>
+</table>
+<hr NOSHADE SIZE="5">
+<p>
+<b>Problem</b><BR>
+<P>
+Internet routing depends on the cooperation of thousands of competing
+networks called autonomous systems (ASes), each 
+of which sets policy about the routes it is willing to
+accept and propagate.  Routing security has two angles: (1) <em>control-plane
+security</em>, which concerns protecting the authenticity of the information
+carried by the routing protocol itself; and (2) <em>data-plane security</em>,
+which involves providing guarantees about where traffic actually goes
+(<i>i.e.</i>, whether the path it takes corresponds to the advertised
+route). 
+<p>
+Control-plane security has been studied rather extensively, although all
+practical solutions to this problem require the deployment of a
+centralized public-key infrastructure or trusted third party.
+Data-plane security, however, is an important (and unstudied) problem.
+This project involves designing new ways to allow hosts on the Internet
+to gain assurances about the paths their packets actually travel en
+route to other hosts.  Can you augment today's infrastructure to provide
+support for a host to prevent its packets from traveling through a
+certain AS?  What changes could allow a host to get a receipt that
+proved its traffic traveled along a certain path?  Can you find
+solutions to these problems that are efficient enough to work at real
+Internet traffic rates? 
+
+<p>
+<b>Background</b><BR>
+<P>
+As mentioned, there is not a lot of work on data-plane security,
+although parts of these two papers talk about the problem:
+<ul>
+<li> 
+L. Subramanian, V. Roth, I. Stoica, S. Shenker, R. Katz<br>
+<b><a href=http://www.cs.berkeley.edu/~lakme/listenwhisper.pdf>Listen and Whisper: Security Mechanisms for BGP</a></b>.<br>
+<i>Usenix NSDI</i>, October 2004.   
+<p>
+<LI> 
+N. Feamster, H. Balakrishnan, J. Rexford<br>
+<font color=black><b><a
+href=http://nms.lcs.mit.edu/papers/index.php?detail=116>Some
+Foundational Problems in Interdomain Routing</a></b></font>. <br>
+<em>Proc. ACM SIGCOMM Workshop on Hot Topics in Networking
+		(HotNets-III)</em>, November 2004.  
+</ul>
+To understand the control-plane security problem, and the state of the
+art, see the following paper:
+<ul>
+<li>S. Kent, C. Lynn, K. Seo<br>
+<b><a href=http://www.ir.bbn.com/projects/s-bgp/IEEE-JSAC-April2000/IEEE-JSAC-S-BGP.html>Secure Border Gateway Protocol</a></b>.<br>
+<em>IEEE Journal on Selected Areas in Communication</em>, April 2000
+</ul>
+You can also check out the <a
+href=http://www.ir.bbn.com/projects/s-bgp/s-bgp-index.html>S-BGP Home Page</a>
+<p>
+<b>Deliverables</b><BR>
+<P>
+Please turn in a short (less than 10 pages) writeup describing your
+proposed algorithm, evaluation, and conclusion.
+
+<p>
+<b>Evaluation</b><BR>
+<P>
+Based on the quality of the final report.  Proposing a new algorithm and
+performing "back of the envelope" running-time analysis is sufficient.
+An implementation and experimental evaluation of your algorithm is better.
+
+<p>
+
+  </body>
+</html>
