@@ -1,7 +1,0 @@
-<%= inc("doctype.html") %>
-<html xml:lang="en" lang="en">
-<head>
-<title><%= @page.title %></title>
-<link rel="stylesheet" type="text/css" href="style.css" />
-<link rel="stylesheet" type="text/css" media="print" href="print.css" />
-</head>
