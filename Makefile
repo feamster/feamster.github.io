@@ -1,2 +1,2 @@
 all:
-	rsync -e ssh -avz ./ portal.cs.princeton.edu:public_html/
+	rsync -e ssh -avz ./ feamster@portal.cs.princeton.edu:public_html/
