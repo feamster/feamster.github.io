@@ -24,3 +24,9 @@ body {
 .table-sm{
   font-size: 11px;
 }
+
+.img-responsive{
+  height: 200px;
+  width: 170px;
+  border-radius: 95%;
+}
