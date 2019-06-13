@@ -1,4 +1,6 @@
 all: uchicago
+
+princeton:
 	rsync -e ssh -avz ./ feamster@portal.cs.princeton.edu:public_html/
 
 uchicago:
