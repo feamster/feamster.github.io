@@ -20,8 +20,8 @@ h3 {
 
 a {
         text-decoration: none ;
-        color: #991133 ;
-	background: #ffffff;	
+        color: #8000ff;
+        background: #ffffff;	
 }
 
 a:hover {
@@ -63,11 +63,9 @@ DIV.traps a {
 }
 
 
-
-
 DIV.announcements a:visited { 
   background: #dddddd;
-  color:  #408860;
+  color:  #8000ff;
 }
 
 DIV.announcements td {
@@ -76,7 +74,7 @@ DIV.announcements td {
 
 a:visited { 
   background: #ffffff;
-  color:  #408860;
+  color:  #8000ff;
 }
 
 
