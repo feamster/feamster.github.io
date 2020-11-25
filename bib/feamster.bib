@@ -3,8 +3,7 @@
   title = "Topology Inference from {BGP} Routing Dynamics",
   booktitle={ACM SIGCOMM Internet Measurement Workshop},
   pages={243--248},
-  year={2002}
-  crossref = "imw2002"
+  year={2002},
 }
 
 @inproceedings{Andersen2006:aip,
@@ -47,8 +46,8 @@
   title = 	 "{SwitchBlade: A Platform for Rapid Deployment of Network Protocols on Programmable Hardware}",
   booktitle={ACM SIGCOMM},
   pages={183--194},
-  year={2010}
-  address = 	 {New Delhi, India},
+  year={2010},
+  address = {New Delhi, India},
 }
 
 @inproceedings{Bavier2006,
@@ -73,7 +72,7 @@
 @inproceedings{Cunha2009:tomo,
   author = {Italo Cunha and Renata Teixeira and Nick Feamster and Christophe Diot},
   title = "{Measurement Methods for Fast and Accurate Blackhole Identification with Binary Tomography}",
-  booktitle = "{ACM SIGCOMM Internet Measurement Conference}",
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
   year = {2009},
   pages = {254--266},
   address = {Chicago, IL},
@@ -83,7 +82,7 @@
   author = {S. Roy and N. Feamster},
   title = "{Characterizing Correlated Latency Anomalies in Broadband Access Networks}",
   booktitle = {ACM SIGCOMM},
-  year = {2013},
+  year = 2013,
   address = {Hong Kong},
   pages = {525--526}
 }
@@ -366,9 +365,10 @@ pages={1--14},
 @inproceedings{Feamster2004b,
   author = 	 {Nick Feamster and Zhuoqing Morley Mao and Jennifer Rexford},
   title = 	 "{Border{G}uard: Detecting Cold Potatoes from Peers}",
-  booktitle = {ACM SIGCOMM Internet Measurement Conference},
+  booktitle = {ACM SIGCOMM Internet Measurement Conference (IMC)},
   address = {Taormina, Sicily, Italy},
-  pages = {213--218}
+  pages = {213--218},
+  year = 2004
 }
 
 
@@ -378,7 +378,7 @@ pages={1--14},
   number = "MIT-LCS-TR-948",
   institution =  "Massachusetts Institute of Technology",
   year =         2004,
-  month =        MAY,
+  month =        may,
   pages = {1--14},
 }
 
@@ -446,7 +446,10 @@ pages={1--14},
 @inproceedings{feamster:fdna2004,
   title = "{The Case for Separating Routing from Routers}",
   author = "Nick Feamster and Hari Balakrishnan and Jennifer Rexford and Aman Shaikh and Kobus van der Merwe",
-  crossref = "fdna2004",
+  booktitle = {ACM SIGCOMM Workshop on Future Directions in Network Architecture},
+  address = {Portland, OR},
+  year = 2004,
+  month = aug,
   pages = {5--12}
 }
 
@@ -470,12 +473,13 @@ pages={1--14},
   note = "{Winner of the MIT George M. Sprowls Honorable Mention for Best MIT Ph.D. Dissertation in Computer Science}",
 }
 
-
-
 @inproceedings{Feamster2005b,
   author =       {Nick Feamster and Ramesh Johari and Hari Balakrishnan},
   title =        "{The Implications of Autonomy for Stable Policy Routing}",
-  crossref = "sigcomm2005",
+  booktitle = {ACM SIGCOMM},
+  year = 2005,
+  month = aug,
+  address = {Philadelphia, PA},
   pages = {25--36}
 }
 
@@ -486,7 +490,6 @@ pages={1--14},
   address = {Monticello, IL},
   month = sep,
   year = 	 2005,
-
 }
 
 @article{Feamster2006,
@@ -494,19 +497,13 @@ pages={1--14},
   title = 	 "{Network-Wide Prediction of BGP Routes}",
   year = 2007,
   month = jun,
-  journal = TON,
-}
-
-@article{Feamster2006:rl,
-  author = 	 {Nick Feamster and Hari Balakrishnan},
-  title = 	 "{Correctness Properties for Internet Routing}",
-  journal = TON,
+  journal = "{IEEE/ACM Transactions on Networking}",
 }
 
 @article{Feamster2006:policy,
   author = 	 {Nick Feamster and Ramesh Johari and Hari Balakrishnan},
   title = 	 "{Stable Policy Routing with Provider Independence}",
-  journal = TON,
+  journal = "{IEEE/ACM Transactions on Networking}",
   year = 	 2007,
   month = dec,
 }
@@ -514,15 +511,9 @@ pages={1--14},
 @inproceedings{Feamster2006:spam,
   author =       {Anirudh Ramachandran and Nick Feamster},
   title =        "{Understanding the Network-Level Behavior of Spammers}",
-  crossref = "sigcomm2006",
-  note = "An earlier version appeared as Georgia Tech TR GT-CSS-2006-001"
-}
-
-@inproceedings{Feamster2006:cabo,
-  author =       {Nick Feamster and Lixin Gao and Jennifer Rexford},
-  title =        "{How to Lease the Internet in Your Spare Time}",
-  crossref = "hotnets2006",
-  note = "Georgia Tech TR GT-CSS-2006-010"
+  booktitle = {ACM SIGCOMM},
+  year = 2006,
+  month = aug
 }
 
 @inproceedings{Feamster2006:diagnosis-wired,
@@ -534,8 +525,6 @@ pages={1--14},
   year = 2006,
 }
 
-
-
 @article{Feamster2011:neted,
   author = {Nick Feamster and Jennifer Rexford},
   title = "{Getting Students' Hands Dirty With Clean-Slate Networking}",
@@ -543,10 +532,6 @@ pages={1--14},
   month = dec,
   year = 2011,
 }
-
-
-
-
 
 @InProceedings{feamster2013:isoc-latency,
   author = 	 {Nick Feamster},
@@ -557,11 +542,9 @@ pages={1--14},
   address = 	 {London, England},
 }
 
-
 @InProceedings{chetty2013:isoc-latency,
   author = 	 {Marshini Chetty and Enrico Calandro and Nick Feamster},
-  title = 	 "{Latency Effects on Broadband Performance in South Africa
-}",
+  title = 	 "{Latency Effects on Broadband Performance in South Africa }",
   booktitle = {ISOC Workshop on Reducing Internet Latency},
   year = 	 {2013},
   month = 	 sep,
@@ -604,48 +587,66 @@ pages={1--14},
 @inproceedings{Kim2011:config,
   author = "{Hyojoon Kim and Theophilus Benson and Aditya Akella and Nick Feamster}",
   title = "{Understanding the Evolution of Network Configuration: A Tale of Two Campuses}",
-  crossref = "imc2011"
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
+  year = 2011,
+  month = nov,
+  address = {Berlin, Germany}
 }
 
 @inproceedings{Hao2011:dns,
   author = {Shuang Hao and Nick Feamster and Ramakant Pandrangi},
   title = "{Monitoring the Initial DNS Behavior of Spammers}",
-  crossref = "imc2011"
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
+  year = 2011,
+  month = nov,
+  address = {Berlin, Germany}
 }
 
 @inproceedings{hao2013:dns,
   title = {Understanding the Domain Registration Behavior of Spammers}, 
   author = {Hao, Shuang and Thomas, Matthew and Paxson, Vern and Feamster, Nick and
         Kreibich, Christian and Grier, Chris and Hollenbeck, Scott}, 
-  crossref = "imc2013"
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
+  year = 2013,
+  month = oct,
+  address = {Barcelona, Spain}
 }
 
 
 @inproceedings{Valancius2011:tiers,
   author = {Vytautas Valancius and Cristian Lumezanu and Nick Feamster and Ramesh Johari and Vijay Vazirani},
   title = "{How Many Tiers? Pricing in the Internet Transit Market}",
-  crossref = "sigcomm2011"
+  booktitle={ACM SIGCOMM},
+  year={2011},
+  month = aug,
+  address = {Toronto, Ontario, Canada}, 
 }
 
 @inproceedings{Sundaresan2011:bismark,
   author = {Srikanth Sundaresan and Walter de Donato and Nick Feamster and Renata Teixeira and Sam Crawford and Antonio Pescape},
   title = "{Broadband Internet Performance: A View From the Gateway}",
-  crossref = "sigcomm2011"
+  booktitle={ACM SIGCOMM},
+  year={2011},
+  month = aug,
+  address = {Toronto, Ontario, Canada}, 
 }
 
 @inproceedings{sundaresan2013:webperf,
-  title = {Measuring and Mitigating Web Performance Bottlenecks in Broadband Access
-        Networks}, 
-  author = {Sundaresan, Srikanth and Feamster, Nick and Teixeira, Renata and Magharei,
-        Nazanin}, 
-  crossref = "imc2013"
+  title = {Measuring and Mitigating Web Performance Bottlenecks in Broadband Access Networks}, 
+  author = {Sundaresan, Srikanth and Feamster, Nick and Teixeira, Renata and Magharei, Nazanin}, 
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
+  year = 2013,
+  month = oct,
+  address = {Barcelona, Spain}
 }
 
 @inproceedings{grover2013:nat,
   title = {Peeking Behind the NAT: An Empirical Study of Home Networks}, 
-  author = {Grover, Sarthak and Park, Mi Seon and Sundaresan, Srikanth and Burnett, Sam and
-        Kim, Hyojoon and Feamster, Nick}, 
-  crossref = "imc2013"
+  author = {Grover, Sarthak and Park, Mi Seon and Sundaresan, Srikanth and Burnett, Sam and Kim, Hyojoon and Feamster, Nick}, 
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference (IMC)}",
+  year = 2013,
+  month = oct,
+  address = {Barcelona, Spain}
 }
 
 
@@ -666,7 +667,6 @@ pages={1--14},
   month = aug,
   year = 2011
 }
-  
 
 @inproceedings{Feamster2011:neted-workshop,
   author = {Nick Feamster and Jennifer Rexford},
@@ -695,8 +695,6 @@ pages={1--14},
   year = 2012
 }
 
-
-
 @article{Chetty2012:sdn,
   author = {Marshini Chetty and Nick Feamster},
   title = "{Refactoring Network Infrastructure to Improve Manageability: A Case Study of Home Networking}",
@@ -710,7 +708,7 @@ pages={1--14},
 @inproceedings{chetty2013:dev,
 title = "{Measuring Broadband Performance in South Africa}",
 author = {Marshini Chetty and Srikanth Sundaresan and Sachit Muckaden and Nick Feamster and Enrico Calandro},
-booktitle = "{4th ACM DEV (Symposium on Computing for Development)}",
+booktitle = "{ACM Symposium on Computing for Development (DEV)}",
 address = {Cape Town, South Africa},
 month = dec,
 year = 2013
@@ -724,19 +722,6 @@ address = {New Orleans, LA},
 month = dec,
 year = 2013
 }
-
-
-@misc{Feamster2011:cacm,
-  author = "{Nick Feamster and Wenke Lee and Sam Burnett}",
-  title = "{Making Sense of Internet Censorship}",
-  month = mar,
-  year = 2013,
-  note = "{\em In Submission.}"
-}
-
-
-
-
 
 @Article{Sundaresan2012:broadband,
   author = 	 {Srikanth Sundaresan and Walter de Donato and Nick Feamster and Renata Teixeira and Sam Crawford and Antonio Pescape},
@@ -760,42 +745,38 @@ year = 2013
 @inproceedings{Lumezanu2012:spam,
   author = {Cristian Lumezanu and Nick Feamster},
   title = "{Measuring common spam on email and Twitter}",
-  crossref = "imc2012",
+  booktitle = "{ACM SIGCOMM Internet Measurement Conference}",
+  year = 2012,
+  month = nov,
+  address = {Boston, MA}
 }
 
 
 @inproceedings{Konte2012:pam,
   author = {Maria Konte and Nick Feamster},
   title = "{Re-wiring Activity of Malicious Networks}",
-  crossref = "pam2012"
+  booktitle = {Passive and Active Measurement (PAM)},
+  address = {Vienna, Austria},
+  year = 2012,
 }
 
 @inproceedings{Katz2012:lifeguard,
   author = {Ethan Katz-Bassett and Colin Scott and David Choffnes and Italo Cunha and Vytautas Valancius and Nick Feamster and Harsha Madhyastha and T. Anderson and A. Krishnamurthy},
   title = "{LIFEGUARD: Practical Repair of Persistent Route Failures}",
-  crossref = "sigcomm2012"
+  booktitle={ACM SIGCOMM},
+  year=2012,
+  month = aug,
+  address = {Helsinki, Finland}, 
 }
 
-
-
-
-@InProceedings{feamster2013:sdx, 
-  author = 	 {N. Feamster and D. Levin and J. Rexford and S. Shenker and R. Clark and J. Bailey}, 
-  title = 	 "{SDX: A Software Defined Internet Exchange}",
-  crossref =  "ons2013",
-}
-
-
-@InProceedings{anwer2013:slick,
-  author = 	 {B. Anwer and T. Benson and N. Feamster and D. Levin and J. Rexford}, 
-  title = 	 "{A Slick Control Plane for Network Middleboxes}",
-  crossref =  "ons2013",
-}
 
 @InProceedings{valancius2013:pecan,
   author = 	 {Valancius, Vytautas and Ravi, Bharath and Feamster, Nick and Snoeren, Alex C},
   title = 	 {Quantifying the Benefits of Joint Content and Network Routing},
-  crossref =  "sigmetrics2013",
+  booktitle = {ACM SIGMETRICS},
+  year = 2013,
+  month = jun,
+  address = {Pittsburgh, PA}
 }
 
 @InProceedings{voellmy2012:procera,
@@ -806,10 +787,6 @@ year = 2013
   month = 	 aug,
   address = 	 {Helsinki, Finland},
 }
-
-
- 
-
 
 @TechReport{sundaresan2013:wtf,
   author = 	 {S. Sundaresan and Y. Grunenberger and N. Feamster and D. Papagiannaki and D. Levin and R. Teixeira},
@@ -845,58 +822,31 @@ year = 2013
 @inproceedings{kim2012:coronet,
   title={CORONET: Fault Tolerance for Software Defined Networks},
   author={Kim, Hyojoon and Schlansker, Mike and Santos, Jose Renato and Tourrilhes, Jean and Turner, Yoshio and Feamster, Nick},
-  booktitle={Network Protocols (ICNP), 2012 20th IEEE International Conference on},
+  booktitle={IEEE International Conference on Network Protocols (ICNP)},
   pages={1--2},
   year={2012},
   organization={IEEE}
 }
 
 
-
-
-@inproceedings{Motiwala2007:presto,
-  author = 	 {Murtaza Motiwala and Nick Feamster and Santosh Vempala},
-  title = 	 "{Improving Interdomain Routing Security with BGP Path Splicing}", 
-  crossref = "presto2007",
-}
-
-
 @inproceedings{Motiwala2007:splicing,
   author = 	 {Murtaza Motiwala and Nick Feamster and Santosh Vempala},
   title = 	 "{Path Splicing: Reliable Connectivity with Rapid Recovery}", 
-  crossref = "hotnets2007",
+  booktitle = {ACM SIGCOMM Workshop on Hot Topics in Networking (HotNets)},
+  month = oct,
+  year = 2007,
+  address = {Atlanta, GA}
+
 }
-
-
-
-@inproceedings{Feamster2007:agora,
-  author = 	 {Nick Feamster and Ramesh Johari and Vijay Vazirani},
-  title = 	 "{AGORA: A Market for Internet Connectivity}", 
-  crossref = "hotnets2007",
-}
-
-
-@inproceedings{Feamster2007:presto,
-  author = 	 {Nick Feamster and Ramesh Johari and Vijay Vazirani},
-  title = 	 "{AGORA: A Market for Internet Connectivity}", 
-  crossref = "presto2007",
-}
-
-
-@InProceedings{Shenker2010:fi,
-  author = 	 {Nick Feamster and Brighten Godfrey and Nick McKeown and Guru Parulkar and Jennifer Rexford and Scott Shenker},
-  title = 	 "{Architecting for Innovation}",
-  note = "{\em In Preparation.}",
-}
-
 
 @inproceedings{Burnett2010:collage,
   author = {Sam Burnett and Nick Feamster and Santosh Vempala},
   title = "{Chipping Away at Censorship Firewalls with Collage}",
-  crossref = "usenixsec2010"
+  booktitle = {USENIX Security Symposium},
+  address = {Washington, DC},
+  month = aug,
+  year = 2010
 }
-
-
 
 @Article{burnett2013:censorship,
   author = 	 {Sam Burnett and Nick Feamster},
@@ -911,37 +861,22 @@ year = 2013
 @inproceedings{Antonakakis2010:notos,
   author = "{Manos Antonakakis and Roberto Perdisci and David Dagon and Wenke Lee and Nick Feamster}",
   title = "{Building a Dynamic Reputation System for DNS}",
-  crossref = "usenixsec2010"
-}
-
-
-
-@misc{Valancius2009:mint,
-  author = {Vytautas Valancius and Nick Feamster and Ramesh Johari and Vijay Vazirani},
-  title = "{A Market for Internet Connectivity}",
-  note = "{\em In Preparation.}",
-  month = mar,
+  booktitle = {USENIX Security Symposium},
+  address = {Washington, DC},
+  month = aug,
   year = 2010
 }
 
 @inproceedings{Valancius2010:bgpmux,
   author = {Vytautas Valancius and Nick Feamster and Jennifer Rexford and Akihiro Nakao},
   title = "{Wide-Area Routing for Distributed Services}",
-  crossref = "usenix2010"
+  booktitle={USENIX Annual Technical Conference},
+  year= 2010,
+  month = jun,
+  address = {Boston, MA}
 }
 
 
-@inproceedings{Valancius2007:presto,
-  author = 	 {Vytautas Valancius and Nick Feamster},
-  title = 	 "{Layering the Interdomain Routing Layer}", 
-  crossref = "presto2007",
-}
-
-@inproceedings{Valancius2007:mini,
-  author = 	 {Vytautas Valancius and Jiayue He and Nick Feamster},
-  title = 	 "{DiMINIshing the Obstacles to Routing Innovation}", 
-  crossref = "hotnets2007",
-}
 
 @inproceedings{Valancius2008:mint,
   author = 	 {Vytautas Valancius and Nick Feamster and Ramesh Johari and Vijay Vazirani},
@@ -950,11 +885,6 @@ year = 2013
   month = dec,
   year = 2009
 }
-
-
-
-
-
 
 @inproceedings{Motiwala2006:orchid-wired,
   author = 	 {Murtaza Motiwala and Nick Feamster},
@@ -965,8 +895,6 @@ year = 2013
   year = 2006,
 }
 
-
-
 @article{Feamster2007:cabo-ccr,
   author =       {Nick Feamster and Lixin Gao and Jennifer Rexford},
   title =        "{How to Lease the Internet in Your Spare Time}",
@@ -975,11 +903,7 @@ year = 2013
   number = 1,
   month = jan,
   year = 2007,
-  note = {Editorial section.}
 }
-
-
-
 
 @inproceedings{Ramachandran2007:bitstore,
   author =       {Anirudh Ramachandran and Atish das Sarma and Nick Feamster},
@@ -990,9 +914,6 @@ year = 2013
   year = 2007,
 }
 
-
-
-
 @inproceedings{Ramachandran2006:dnsbl,
   author =       {Anirudh Ramachandran and David Dagon and Nick Feamster},
   title =        "{Can DNSBLs Keep Up with Bots?}",
@@ -1001,7 +922,6 @@ year = 2013
   month = jul,
   year = 2006,
 }
-
 
 @inproceedings{Ramachandran2006:recon,
   author =       {Anirudh Ramachandran and Nick Feamster and David Dagon},
@@ -1013,19 +933,6 @@ year = 2013
 }
 
 
-@inproceedings{Ramachandran2006:botnet,
-  author =       {Anirudh Ramachandran and Srinivasan Seetharaman and Nick Feamster and Anukool Lakhina},
-  title =        "{Monitoring Stealthy Network Conversations with Sampled Traffic}", 
-  crossref = "imc2006"
-}
-
-
-@inproceedings{Ramachandran2007:flexsample,
-  author =       {Anirudh Ramachandran and Srinivasan Seetharaman and Nick Feamster and Vijay Vazirani},
-  title =        "{Building a Better Mousetrap}", 
-  note = "{\em In submission.}"
-}
-
 @inproceedings {ramachandran2007:spamtracker,
     title = "{Filtering Spam with Behavioral Blacklisting}",
     author = "Anirudh Ramachandran and Nick Feamster and Santosh Vempala",
@@ -1035,16 +942,13 @@ year = 2013
     year = 2007
 }
 
-
-
-
 @TechReport{Ramachandran2008:fish4phish,
   author =       {Anirudh Ramachandran and Nick Feamster and Kobus van der Merwe and Balachander Krishnamurthy and Oliver Spatschek},
   title =        "{Fishing for Phishing in the Network Stream}", 
   institution = "{Georgia Tech School of Computer Science}",
   month = mar,
   year = 2010,
-  number = 	 {http://smartech.gatech.edu/handle/1853/25463},
+  url = 	 {https://smartech.gatech.edu/handle/1853/25463},
 }
 
 
@@ -1066,15 +970,15 @@ year = 2013
   month = 	 dec,
 }
 
-
-
 @inproceedings{Valancius2007:bgpmux-conext,
   author =       {Vytautas Valancius and Nick Feamster},
   title =        "{Multiplexing BGP Sessions with BGP-Mux}", 
-  crossref = "conext2007"
+  booktitle = "{ACM SIGCOMM Conference on Emerging Networking Experiments and Technologies (CoNEXT)}",
+  pages = {1--2},
+  address = {New York, NY},
+  year = 2007,
+  url = {https://dl.acm.org/doi/abs/10.1145/1364654.1364707?cid=81548029281} 
 }
-
-
 
 @TechReport{Valancius2008:bgpmux-tr,
   author =       {Vytautas Valancius and Nick Feamster},
@@ -1083,12 +987,6 @@ year = 2013
   year = 	 {2008},
   number = 	 {GT-CS-08-05},
   month = 	 jul,
-}
-
-@inproceedings{Feamster2006:vini,
-  author =       {Andy Bavier and Nick Feamster and Mark Huang and Larry Peterson and Jennifer Rexford},
-  title =        "{In VINI Veritas: Realistic and Controlled Network Experimentation}",
-  crossref = "sigcomm2006",
 }
 
 @inproceedings{Feamster2008:sigcse,
@@ -1101,20 +999,14 @@ year = 2013
   year = 2008
 }
 
-
-
 @InProceedings{Syed2007:spamsvm-nips,
   author = 	 {Nadeem Syed and Nick Feamster and Alex Gray},
   title = 	 {Predicting Bad Behavior},
-  booktitle = {NIPS Workshop on Machine Learning in Adversarial
-Environments for Computer Security},
-  year = 	 2007,
+  booktitle = {NIPS Workshop on Machine Learning in Adversarial Environments for Computer Security},
   address = 	 {Whistler, Canada},
   month = 	 dec,
+  year = 	 2007,
 }
-
-
-
 
 @unpublished{Hao2008:botnets,
   author = 	 {Shuang Hao and Nick Feamster},
@@ -1123,25 +1015,15 @@ Environments for Computer Security},
   month = 	 apr,
 }
 
-@misc{Hao2008:snare,
-  author = 	 {Shuang Hao and Nick Feamster},
-  title = 	 "{Detecting Spammers with SNARE: Spatio-temporal Network-level Automatic Reputation Engine}",
-  note = {{\em In submission.}},
-  month = feb,
-  year = 2009
-}
-
 
 @inproceedings{Hao2009:snare,
   author = 	 {Shuang Hao and Nadeem Syed and Nick Feamster and Alexander Gray and Sven Krasser},
   title = 	 "{Detecting Spammers with SNARE: Spatio-temporal Network-level Automatic Reputation Engine}",
-  crossref = "usenixsec2009",
+  booktitle = {USENIX Security Symposium},
+  year =   {2009},
+  month =    aug,
+  address =    {Montreal, Quebec, Canada},
 }
-
-
-
-
-
 
 @TechReport{Ramachandran2008:pedigree,
   author = 	 {Anirudh Ramachandran and Kaushik Bhandakar and Mohammed Mukarram bin Tariq and Nick Feamster},
@@ -1152,33 +1034,36 @@ Environments for Computer Security},
   month = 	 feb,
 }
 
-@InProceedings{Ramachandran:sigcomm2008:pedigree,
-  author = 	 {Anirudh Ramachandran and Kaushik Bhandakar and Mohammed Mukarram bin Tariq and Nick Feamster},
-  title = 	 "{Packets with Provenance}",
-  crossref =  "sigcomm2008",
-}
-
 
 
 @InProceedings{Ramachandran2008:wosn,
   author = 	 {Anirudh Ramachandran and Nick Feamster},
   title = 	 "{Authenticated Out-of-Band Communication over Social Links}",
-  crossref =  "wosn2008",
+  booktitle = {ACM SIGCOMM Workshop on Online Social Networks (WOSN)},
+  address = {Seattle, WA},
+  year = 2008,
+  month = aug,
+  pages = {61--66},
+  url = {https://dl.acm.org/doi/10.1145/1397735.1397749?cid=81548029281}
 }
 
 @InProceedings{Ramachandran2008:flexsample,
   author = 	 {Anirudh Ramachandran and Srinivasan Seetharaman and Nick Feamster and Vijay Vazirani},
   title = 	 "{Fast Monitoring of Traffic Subpopulations}",
-  crossref =  "imc2008",
+  booktitle={ACM SIGCOMM Internet Measurement Conference},
+  year={2008},
+  month = oct,
+  address = {Vouliagmeni, Greece}, 
 }
-
-
 
 
 @InProceedings{Motiwala2008:splicing,
   author = 	 {Murtaza Motiwala and Megan Elmore and Nick Feamster and Santosh Vempala},
   title = 	 "{Path Splicing}",
-  crossref =  "sigcomm2008",
+  booktitle={ACM SIGCOMM},
+  year={2008},
+  month = aug,
+  address = {Seattle, WA}, 
 }
 
 @article{Tariq2010:wise,
@@ -1193,37 +1078,42 @@ Environments for Computer Security},
 @inproceedings{Tariq2009:nano,
   author = 	 {Mohammed Mukarram bin Tariq and Murtaza Motiwala and Nick Feamster and Mostafa Ammar},
   title = 	 "{Detecting General Network Neutrality Violations with Causal Inference}",
-  crossref = "conext2009",
+  booktitle = "{ACM SIGCOMM Conference on Emerging Networking Experiments and Technologies (CoNEXT)}",
+  pages = {289--300},
+  address = {Rome, Italy},
+  year = 2009,
+  url = {https://dl.acm.org/doi/10.1145/1658939.1658972?cid=81548029281}
 }
 
 @inproceedings{Tariq2009:vlan,
   author = 	 {Mohammed Mukarram bin Tariq and Ahmed Mansy and Nick Feamster and Mostafa Ammar},
   title = 	 "{Measuring VLAN-Induced Sharing on a Campus Network}",
-  crossref = "imc2009"
+  booktitle={ACM SIGCOMM Internet Measurement Conference (IMC)},
+  year={2009},
+  month = nov,
+  address = {Chicago, IL}, 
 }
-
 
 
 
 @InProceedings{Tariq2008:wise,
   author = 	 {Mohammed Mukarram bin Tariq and Amgad Zeitoun and Nick Feamster and Mostafa Ammar},
   title = 	 "{Answering What-If Deployment and Configuration Questions with WISE}",
-  crossref =  "sigcomm2008",
+  booktitle={ACM SIGCOMM},
+  year={2008},
+  month = aug,
+  address = {Seattle, WA}, 
 }
 
 
 @InProceedings{Tariq2008:nano,
   author = 	 {Mohammed Mukarram bin Tariq and Murtaza Motiwala and Nick Feamster},
   title = 	 "{NANO: Network Access Neutrality Observatory}",
-  crossref =  "hotnets2008",
+  booktitle = {ACM SIGCOMM Workshop on Hot Topics in Networking (HotNets)},
+  month = oct,
+  year = 2008,
+  address = {Calgary, Alberta, Canada}
 }
-
-@InProceedings{Tariq2010:hip,
-  author = 	 {Mukarram bin Tariq and Jake Brutlag and Natalia Sutin and Nick Feamster and Mostafa Ammar},
-  title = 	 "{Answering How-to Questions for Mitigating High-latency Web Transactions with HIP}",
-  note = "{\em In Submission.}",
-}
-
 
 
 
@@ -1242,7 +1132,10 @@ Environments for Computer Security},
 @InProceedings{Andersen2008:aip,
   author = 	 {David Andersen and Hari Balakrishnan and Nick Feamster and Scott Shenker},
   title = 	 "{Accountable Internet Protocol (AIP)}",
-  crossref =  "sigcomm2008",
+  booktitle={ACM SIGCOMM},
+  year={2008},
+  month = aug,
+  address = {Seattle, WA}, 
 }
 
 
@@ -1291,22 +1184,29 @@ Environments for Computer Security},
   journal = {Telecommunications Policy},
   year =   {2017},
   month =    oct,
+  url = {https://www.sciencedirect.com/science/article/pii/S0308596117302616},
+  volume = 41,
+  number = 7,
+  pages = {587--599}
 }
 
 @InProceedings{pearce2018:iris:login,
   author =   {Paul Pearce and Ben Jones and Frank Li and Roya Ensafi and Nick Feamster and Vern Paxson},
   title =    "{Global Measurement of DNS Manipulation}",
   booktitle = {USENIX ;login:},
-  year =   {2018},
+  year =   {2017},
   month =    jan,
+  url = {https://www.usenix.org/publications/login/winter2017/pearce}
 }
 
 @InProceedings{pearce2018:augur:sp,
   author =   {Paul Pearce and Roya Ensafi and Frank Li and Nick Feamster and Vern Paxson},
-  title =    "{Towards Continual Measurement of Global Network-Level Censorship}",
+  title =    "{Toward Continual Measurement of Global Network-Level Censorship}",
   booktitle = {IEEE Security and Privacy},
   year =   {2018},
   month =    jan,
+  pages = {24--33},
+  url = {https://ieeexplore.ieee.org/document/8283433}
 }
 
 
@@ -1361,7 +1261,7 @@ Environments for Computer Security},
 
 @InProceedings{greschbach2017:fingerprintor:ndss,
   author = 	 {Benjamin Greschbach and Tobias Pulls and Laura Roberts and Philipp Winter and Nick Feamster},
-  title = 	 "{FingerprinTor: DNS Fingerprinting Attacks on Tor}",
+  title = 	 "{The Effect of DNS on Tor's Anonymity}",
   booktitle = {Network and Distributed Systems Security Symposium},
   year = 	 {2017},
   month = 	 feb,
@@ -1394,6 +1294,7 @@ Environments for Computer Security},
   year = 	 {2016},
   month = 	 sep,
   address = 	 {Zanzibar, Tanzania},
+  url = {https://www.sciencedirect.com/science/article/pii/S0308596117302616},
 }
 
 
@@ -1456,33 +1357,46 @@ Environments for Computer Security},
 @inproceedings{Freedman2005,
   author = 	 {Michael Freedman and Mythili Vutukuru and Nick Feamster and Hari Balakrishnan},
   title = 	 "{Geographic Locality of IP Prefixes}",
-  crossref = "imc2005"
+  booktitle={ACM SIGCOMM Internet Measurement Conference (IMC)},
+  year={2005},
+  month = oct,
+  address = {Berkeley, CA}, 
 }
 
 @inproceedings{Fu2001,
   author = 	 {Kevin Fu and Emil Sit and Kendra Smith and Nick Feamster},
   title = 	 {Dos and Don'ts of Client Authentication on the {W}eb},
-  crossref =     "usenixsec2001"
+  booktitle = {USENIX Security Symposium},
+  month = aug,
+  year = 2001,
+  address = {Washington, DC}
 }
 
 
 @inproceedings{gupta2014:pam,
   author = {Arpit Gupta and Matt Calder and Nick Feamster and Marshini Chetty and Enrico Calandro and Ethan Katz-Bassett},
   title = "{Peering at the Internet’s Frontier: A First Look at ISP Interconnectivity in Africa}",
-  crossref = "pam2014"
+  booktitle = {Passive and Active Measurement (PAM)},
+  year = 2014,
+  address = {Los Angeles, CA},
 }
 
 @inproceedings{Huang2006:bgp,
   author =       {Yiyi Huang and Nick Feamster and Anukool Lakhina and Jim Xu},
   title =        "{Exposing Routing Problems with Network-Wide analysis}", 
-  crossref = "sigmetrics2007"
+  booktitle = {ACM SIGMETRICS},
+  month = jun,
+  year = 2007,
+  address = {San Diego, CA}
 }
 
 
 @InProceedings{Konte2008:pam,
   author = 	 {Maria Konte and Nick Feamster and Jaeyeon Jung},
   title = 	 "{Dynamics of Online Scam Infrastructure}",
-  crossref =  "pam2009",
+  booktitle = {Passive and Active Measurement (PAM)},
+  year = 2009,
+  address = {Seoul, Korea},
 }
 
 
@@ -1506,42 +1420,12 @@ Environments for Computer Security},
   note = "{\em Chapter:} Revealing Botnet Membership with DNSBL Counterintelligence",
 }
 
-@misc{Ramachandran2009:spamspotter,
-  author = 	 {Anirudh Ramachandran and Hitesh Khandelwal and Shuang Hao and Nick Feamster and Santosh Vempala},
-  title = 	 "{A Dynamic Reputation Service for Spotting Spammers}",
-  month = mar,
-  year = 2010,
-  note = "{\em In Preparation.}"
-}
-
-@misc{Lychev2009:contract,
-  author = {Robert Lychev and Nick Feamster},
-  title = "{Derailing Depeering: Incentives for Interdomain Contracts}",
-  note = "{\em In Preparation.}",
-  month = mar,
-  year = 2010
-}
-
-@InProceedings{Mansy2008:pam,
-  author = 	 {Ahmed Mansy and Mukarram bin Tariq and Nick Feamster and Mostafa Ammar},
-  title = 	 "{Measuring VLAN-Induced Dependencies on a Campus Network}",
-  note = {{\em In Submission.}}
-}
-
 @techreport{Monteleoni2004,
   title = "Managing the 802.11 Energy/Performance Tradeoff with Machine Learning",
   author = "Claire Monteleoni and Hari Balakrishnan and Nick Feamster and Tommi Jaakkola",
   institution = MIT,
   number = "MIT-LCS-TR-971",
   year = 2004
-}
-
-@misc{Nayak2009:openflow,
-  author = {Ankur Nayak and Alex Reimers and Russ Clark and Nick Feamster},
-  title = "{Resonance: Dynamic Access Control for Enterprise Networks}",
-  note = "{\em In submission.}",
-  month = mar,
-  year = 2009
 }
 
 @inproceedings{Nayak2009:resonance,
@@ -1553,18 +1437,12 @@ Environments for Computer Security},
   year = 2009
 }
 
-@inproceedings{Kim2010:resonance,
-  author = {Hyojoon Kim and Ankur Nayak and Nick Feamster and Russ Clark and Matt Sanders and Tim Upthegrove},
-  title = "{Realizing Network Policies with Event-Based Programs}",
-  note = "{{\em In Submission.}}",
-  month = oct,
-  year = 2010
-}
-
 @inproceedings{Perdisci2010:http,
   author = 	 {Roberto Perdisci and Wenke Lee and Nick Feamster},
-  title = 	 {{Behavioral Clustering of HTTP-Based Malware}},
-  crossref = "nsdi2010"
+  title = 	 {Behavioral Clustering of HTTP-Based Malware},
+  booktitle = "{USENIX Symposium on Networked Systems Design and Implementation (NSDI)}",
+  address = {San Jose, CA},
+  year = 2011
 }
 
 @TechReport{Sundaresan2009:grenouille,
@@ -1587,31 +1465,12 @@ Environments for Computer Security},
   number = 	 {GT-CS-10-16},
 }
 
-@InProceedings{Hassan2010:homerun,
-  author = 	 {Umayr Hassan and Ye Deng and Ken Calvert and Keith Edwards and Nick Feamster},
-  title = 	 "{HomeRun: Toward Resilient Home Networking}",
-  note = "{\em In Submission.}",
-}
-
-@unpublished{Vutukuru2005b,
-	author = "Mythili Vutukuru and Nick Feamster and Michael Walfish and Hari Balakrishnan and Scott Shenker",
-	title = "{Revisiting Internet Addressing: Back to the Future!}",
-	institution = "{MIT Computer Science and Artificial Intelligence Laboratory}",
-        note = "Unpublished manuscript."
-}
-
-@misc{Wang2004,
-  author = 	 {Feng Wang and Nick Feamster and Lixin Gao},
-  title = 	 {Quantifying the Causes of End-to-End {I}nternet Path Failures},
-  month = feb,
-  year = 2007,
-  note = "Submitted for publication",
-}
-
 @inproceedings{Wang2006:bgp,
   author = 	 {Feng Wang and Nick Feamster and Lixin Gao},
   title = 	 {Measuring the Contributions of Routing Dynamics to Prolonged End-to-End Internet Path Failures},
-  crossref = "globecom2007",
+  booktitle = {IEEE Conference on Global Communications (GlobeCom)},
+  month = nov,
+  year = 2007
 }
 
 @inproceedings{Wee99,
@@ -1625,26 +1484,41 @@ Environments for Computer Security},
 @inproceedings{xing2013:poison,
   author = {Xinyu Xing and Wei Ming and Dan Doozan and Alex Snoeren and Nick Feamster and Wenke Lee},
   title = {Take This Personally: Pollution Attacks on Personalized Services},
-  crossref = "usenixsec2013",
+  booktitle = {USENIX Security Symposium},
+  address = {Washington, DC},
+  month = aug,
+  year = 2013
 }
 
 
 @inproceedings{xing2014:pam,
   author = {Xinyu Xing and Wei Meng and Dan Doozan and Nick Feamster and Wenke Lee and Alex Snoeren},
-  title = "{Exposing Inconsistent Web Search Results with Bobble}",
-  crossref = "pam2014"
+  title = "{  year = 2007,
+  address = {San Diego, CA}Exposing Inconsistent Web Search Results with Bobble}",
+  booktitle = {Passive and Active Measurement (PAM)},
+  year = 2014,
+  address = {Los Angeles, CA},
 }
 
 @inproceedings{Yardi2008:wosn,
     author = {S. Yardi and N. Feamster and A. Bruckman},
     title="{Photo-Based Authentication Using Social Networks}",
-    crossref="wosn2008"
+    booktitle = {ACM SIGCOMM Workshop on Online Social Networks (WOSN)},
+    address = {Seattle, WA},
+    year = 2008,
+    month = aug,
+    pages = {55--60},
+    url = {https://dl.acm.org/doi/10.1145/1397735.1397748?cid=81548029281},
 }
 
 @InProceedings{Khadilkar2007:dhcp,
   author = 	 {Manas Khadilkar and Nick Feamster and Russ Clark and Matt Sanders},
   title = 	 "{Usage-Based DHCP Lease Time Optimization}",
-  crossref =  "imc2007",
+  booktitle={ACM SIGCOMM Internet Measurement Conference (IMC)},
+  pages={299--304},
+  year={2007},
+  month = oct,
+  address = {San Diego, CA}, 
 }
 
 @mastersthesis{feamster:meng,
@@ -1693,7 +1567,7 @@ Environments for Computer Security},
 }
 
 
-@article{jones2014:foci,
+@inproceedings{jones2014:foci,
   title="{Facade: High-Throughput, Deniable Censorship Circumvention Using Web Search}",
   author={Jones, Ben and Burnett, Sam and Feamster, Nick and Sathya Gunasekaran and Sean Donovan and Sarthak Grover and Sathya and Habak, Karim},
   journal={USENIX Workshop on Free and Open Communications on the Internet (FOCI)},
@@ -1717,14 +1591,6 @@ Environments for Computer Security},
   year={2014},
   month = oct,
   address = {Vancouver, British Columbia, Canada}, 
-}
-
-@article{burnett2014:encore,
-  title={Encore: Lightweight Measurement of Web Censorship with Cross-Origin Requests},
-  author={Burnett, Sam and Feamster, Nick},
-  journal={arXiv preprint arXiv:1410.1211},
-  month = sep,
-  year={2014},
 }
 
 @inproceedings{donovan2014:hotnets,
@@ -1795,16 +1661,6 @@ year = 2015,
   note={In progress.}
 }
 
-@inproceedings{hu2018,
-title = "{Preserving Privacy at IXPs}",
-author = {X. Hu and Arpit Gupta and Nick Feamster and Arojit Panda and Scott Shenker},
-booktitle = {Asia-Pacific Workshop on Networking (APNet)},
-address = {Beijing, China},
-month = aug,
-year = 2017,
-}
-
-
 @inproceedings{acar2018:iot,
 title = "{Web-based Attacks to Discover and Control Local IoT Devices}",
 author = {Gunes Acar and Danny Huang and Frank Li and Arvind Narayanan and Nick Feamster},
@@ -1812,6 +1668,8 @@ booktitle = {ACM SIGCOMM Workshop on Internet of Things Security and Privacy},
 address = {Budapest, Hungary},
 month = aug,
 year = 2018,
+pages = {29--35},
+url = {https://dl.acm.org/doi/10.1145/3229565.3229568?cid=81548029281}
 }
 
 @inproceedings{hu2018:ixp,
@@ -1821,6 +1679,8 @@ booktitle = {Asia-Pacific Workshop on Networking (APNet)},
 address = {Beijing, China},
 month = aug,
 year = 2018,
+url = {https://dl.acm.org/doi/abs/10.1145/3232565.3232575},
+pages = {43--49},
 }
 
 
@@ -1832,6 +1692,8 @@ booktitle = {ACM SIGCOMM Workshop on Internet of Things Security and Privacy},
 address = {Budapest, Hungary},
 month = aug,
 year = 2018,
+pages = {43--48},
+url = {https://dl.acm.org/doi/10.1145/3229565.3229567?cid=81548029281}
 }
 
 @inproceedings{gupta2018:sonata:sigcomm,
@@ -1841,6 +1703,8 @@ booktitle = {ACM SIGCOMM},
 address = {Budapest, Hungary},
 month = aug,
 year = 2018,
+pages = {357--371},
+url = {https://dl.acm.org/doi/10.1145/3230543.3230555?cid=81548029281}
 }
 
 @inproceedings{winter2018:onion:usenix,
@@ -1850,6 +1714,8 @@ booktitle = {USENIX Security Symposium},
 address = {Baltimore, Maryland},
 month = aug,
 year = 2018,
+pages = {411--428},
+url = {https://www.usenix.org/conference/usenixsecurity18/presentation/winter}
 }
 
 @inproceedings{hounsel2018:cs:foci,
@@ -1859,6 +1725,8 @@ booktitle = {USENIX Workshop on Free and Open Communications on the Internet (FO
 address = {Baltimore, Maryland},
 month = aug,
 year = 2018,
+pages = {1--6},
+url = {https://www.usenix.org/conference/foci18/presentation/hounsel}
 }
 
 
