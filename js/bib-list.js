@@ -2700,15 +2700,15 @@ var bibtexify = (function($) {
             'article': 'Journal',
             'book': 'Book',
             'conference': 'Conference',
-            'inbook': 'Book chapter',
+            'inbook': 'Book Chapter',
             'incollection': 'In Collection',
             'inproceedings': 'Conference',
             'manual': 'Manual',
             'mastersthesis': 'Thesis',
-            'misc': 'Misc',
-            'phdthesis': 'PhD Thesis',
-            'proceedings': 'Conference proceeding',
-            'techreport': 'Technical report',
+            'misc': 'Misc.',
+            'phdthesis': 'Ph.D. Thesis',
+            'proceedings': 'Conference Proceedings',
+            'techreport': 'Tech Report',
             'unpublished': 'Unpublished'}
     };
     // format a phd thesis similarly to masters thesis
