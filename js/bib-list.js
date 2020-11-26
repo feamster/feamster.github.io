@@ -2830,7 +2830,7 @@ var bibtexify = (function($) {
             maxItems = Math.max(maxItems, value.count);
             maxTypes = Math.max(maxTypes, types.length);
         });
-        var isTypeMode = maxItems > 15;
+        var isTypeMode = maxItems > 1;
         yearstats.sort(function(a, b) {
             var diff = a.year - b.year;
             if (!isNaN(diff)) {
