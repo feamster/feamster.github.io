@@ -2558,19 +2558,19 @@ var bibtexify = (function($) {
         links: function(entryData) {
             var itemStr = '';
             if (entryData.url && entryData.url.match(/.*\.pdf/)) {
-                itemStr += ' (<a title="PDF-version of this article"  target="_blank" href="' +
-                            entryData.url + '">pdf<\/a>)';
+                itemStr += ' <a title="PDF-version of this article"  target="_blank" href="' +
+                            entryData.url + '"><i class="fa fa-file-pdf-o"></i><\/a>';
             } else if (entryData.url) {
-                itemStr += ' (<a title="This article online" target="_blank" href="' + entryData.url +
-                            '">link<\/a>)';
+                itemStr += ' <a title="This article online" target="_blank" href="' + entryData.url +
+                            '"><i class="fa fa-globe""></i><\/a>';
             }
             return itemStr;
         },
         // adds the bibtex link and the opening div with bibtex content
         bibtex: function(entryData) {
             var itemStr = '';
-            itemStr += ' (<a title="This article as BibTeX" href="#" class="biblink">' +
-                        'bib</a>)<div class="bibinfo hidden">';
+            itemStr += ' <a title="This article as BibTeX" href="#" class="biblink">' +
+                        '<i class="fa fa-book"></i></a><div class="bibinfo hidden">';
             itemStr += '<a href="#" class="bibclose" title="Close">x</a><pre>';
             itemStr += '@' + entryData.entryType + "{" + entryData.cite + ",\n";
             $.each(entryData, function(key, value) {
@@ -2591,7 +2591,7 @@ var bibtexify = (function($) {
         // generates the twitter link for the entry
         tweet: function(entryData, bib) {
           // url, via, text
-          var itemStr = ' (<a title="Tweet this article" href="http://twitter.com/share?url=';
+          var itemStr = ' <a title="Tweet this article" href="http://twitter.com/share?url=';
           itemStr += entryData.url;
           itemStr += '&via=' + bib.options.tweet;
           itemStr += '&text=';
@@ -2610,7 +2610,7 @@ var bibtexify = (function($) {
             itemStr += uriencode(splitName(auth[0].last) + " et al");
           }
           itemStr += ": " + uriencode(entryData.title);
-          itemStr += '" target="_blank">tweet</a>)';
+          itemStr += '" target="_blank"><i class="fa fa-twitter""></i></a>';
           return itemStr;
         },
         // helper functions for formatting different types of bibtex entries
