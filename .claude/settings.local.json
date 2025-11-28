@@ -21,7 +21,12 @@
       "Bash(done)",
       "Bash(qlmanage:*)",
       "Bash(chmod:*)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(ls:*)",
+      "Bash(sips:*)",
+      "Bash(brew list:*)",
+      "Bash(exiftool:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []
