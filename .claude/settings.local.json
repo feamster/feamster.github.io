@@ -26,7 +26,8 @@
       "Bash(sips:*)",
       "Bash(brew list:*)",
       "Bash(exiftool:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(unzip:*)"
     ],
     "deny": [],
     "ask": []
