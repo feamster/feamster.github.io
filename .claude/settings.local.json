@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:siddhant-ray.github.io)",
+      "WebFetch(domain:eddshi.xyz)",
+      "WebFetch(domain:computerscience.uchicago.edu)",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(make:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git pull:*)",
+      "Bash(cat:*)",
+      "Bash(git submodule:*)",
+      "Bash(git clone:*)",
+      "Bash(for f in netml-logo.svg internet-innovation-logo.svg online-speech-logo.svg)",
+      "Bash(do qlmanage -t -s 400 -o . $f)",
+      "Bash(done)",
+      "Bash(qlmanage:*)",
+      "Bash(chmod:*)",
+      "Bash(ssh:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
