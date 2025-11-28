@@ -8,13 +8,32 @@
 	<meta name="description" content="">
 	<meta name="author" content="Nick Feamster">
 
-	<title>Nick Feamster</title>
+	<title>Nick Feamster - Software</title>
 
 	<!-- Bootstrap core CSS -->
 	<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 	<!-- Custom styles for this template -->
 	<link href="css/modern-business.css" rel="stylesheet">
+
+	<style>
+		.card {
+			height: 100%;
+		}
+		.card-img-top {
+			width: 100%;
+			height: 180px;
+			object-fit: contain;
+			background-color: #f8f9fa;
+			padding: 15px;
+		}
+		.section-header {
+			border-bottom: 2px solid #dee2e6;
+			padding-bottom: 0.5rem;
+			margin-bottom: 1.5rem;
+			margin-top: 2rem;
+		}
+	</style>
 
 </head>
 
@@ -28,120 +47,184 @@
 			$("#nav-placeholder").load("./navbar.html");
 		});
 	</script>
+
 	<div class="container mt-4">
+
+		<!-- Intro Section -->
+		<div class="row mb-4">
+			<div class="col-12">
+				<h2>Software</h2>
+				<p>
+					In addition to the research projects below, I regularly publish open-source software to
+					<a href="https://github.com/feamster"><i class="fa fa-github"></i> GitHub</a>.
+					My research group also maintains repositories at <a href="https://github.com/noise-lab/">noise-lab</a>
+					and <a href="https://github.com/internet-innovation">internet-innovation</a>.
+				</p>
+			</div>
+		</div>
+
+		<!-- Machine Learning & AI -->
+		<h4 class="section-header">Machine Learning &amp; AI</h4>
 		<div class="row">
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/bismark.gif" height="125" alt="BISmark">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/netdiffusion.png" alt="NetDiffusion">
 					<div class="card-body">
-						<h5 class="card-title"><a href="http://projectbismark.net/">BISmark</a></h5>
-						<p class="card-text">Home Broadband Performance</p>
-						<a href="https://github.com/projectbismark/" class="btn btn-secondary">Source Code</a>
+						<h5 class="card-title"><a href="https://github.com/noise-lab/NetDiffusion_Generator">NetDiffusion</a></h5>
+						<p class="card-text">Synthetic Network Traffic Generation</p>
+						<a href="https://github.com/noise-lab/NetDiffusion_Generator" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/mst.png" height="125" alt="MySpeedTest">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/nprint.png" alt="nPrint">
 					<div class="card-body">
-						<h5 class="card-title"><a href="http://goo.gl/28tx3">MySpeedTest</a></h5>
-						<p class="card-text">Mobile Broadband Performance</p>
-						<a href="https://github.com/noise-lab/MySpeedTest" class="btn btn-secondary">Source Code</a>
+						<h5 class="card-title"><a href="https://nprint.github.io/">nPrint</a></h5>
+						<p class="card-text">Packet Representation for Machine Learning</p>
+						<a href="https://github.com/nprint/nprint" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
 
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/netml.png" alt="NetML">
+					<div class="card-body">
+						<h5 class="card-title"><a href="https://github.com/noise-lab/netml">NetML</a></h5>
+						<p class="card-text">ML for Network Traffic Analysis</p>
+						<a href="https://github.com/noise-lab/netml" class="btn btn-secondary btn-sm">GitHub</a>
+						<a href="https://pypi.org/project/netml/" class="btn btn-secondary btn-sm">PyPI</a>
+					</div>
+				</div>
+			</div>
 
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/imp.png" height="125" alt="imp">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/iot.png" alt="IoT Inspector">
+					<div class="card-body">
+						<h5 class="card-title"><a href="https://iot-inspector.princeton.edu">IoT Inspector</a></h5>
+						<p class="card-text">Smart Home Device Behavior</p>
+						<a href="https://github.com/noise-lab/iot-inspector" class="btn btn-secondary btn-sm">GitHub</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Network Measurement -->
+		<h4 class="section-header">Network Measurement</h4>
+		<div class="row">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/netrics.png" alt="Netrics">
+					<div class="card-body">
+						<h5 class="card-title"><a href="https://github.com/internet-innovation/netrics">Netrics</a></h5>
+						<p class="card-text">Internet Performance Measurement</p>
+						<a href="https://github.com/internet-innovation/netrics" class="btn btn-secondary btn-sm">GitHub</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/imp.png" alt="Interconnection">
 					<div class="card-body">
 						<h5 class="card-title"><a href="http://interconnection.citp.princeton.edu/">Interconnection</a></h5>
 						<p class="card-text">Measuring ISP Interconnection</p>
-						<a href="http://interconnection.citp.princeton.edu/about-the-data/" class="btn btn-secondary">Data</a>
+						<a href="http://interconnection.citp.princeton.edu/about-the-data/" class="btn btn-secondary btn-sm">Data</a>
 					</div>
 				</div>
 			</div>
-	
+
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/mst.png" alt="MySpeedTest">
+					<div class="card-body">
+						<h5 class="card-title"><a href="http://goo.gl/28tx3">MySpeedTest</a></h5>
+						<p class="card-text">Mobile Broadband Performance</p>
+						<a href="https://github.com/noise-lab/MySpeedTest" class="btn btn-secondary btn-sm">GitHub</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/bismark.gif" alt="BISmark">
+					<div class="card-body">
+						<h5 class="card-title"><a href="http://projectbismark.net/">BISmark</a></h5>
+						<p class="card-text">Home Broadband Performance</p>
+						<a href="https://github.com/projectbismark/" class="btn btn-secondary btn-sm">GitHub</a>
+					</div>
+				</div>
+			</div>
 		</div>
 
+		<!-- Software-Defined Networking -->
+		<h4 class="section-header">Software-Defined Networking</h4>
 		<div class="row">
-
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/sonata.png" height="150" alt="Sonata">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/sonata.png" alt="Sonata">
 					<div class="card-body">
 						<h5 class="card-title"><a href="https://sonata.cs.princeton.edu/">Sonata</a></h5>
 						<p class="card-text">Streaming Network Telemetry</p>
-						<a href="https://github.com/Sonata-Princeton" class="btn btn-secondary">Source Code</a>
+						<a href="https://github.com/Sonata-Princeton" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/sdx.png" height="125" alt="imp">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/sdx.png" alt="SDX">
 					<div class="card-body">
 						<h5 class="card-title"><a href="https://sdx.cs.princeton.edu/">SDX</a></h5>
-						<p class="card-text">Software-Defined Internet Exchange Point</p>
-						<a href="https://github.com/sdn-ixp" class="btn btn-secondary">Source Code</a>
+						<p class="card-text">Software-Defined Internet Exchange</p>
+						<a href="https://github.com/sdn-ixp" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/rcc.png" height="125" alt="imp">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/rcc.png" alt="rcc">
 					<div class="card-body">
-						<h5 class="card-title"><a href="http://nms.lcs.mit.edu/rcc">rcc: Router Config Checker</a></h5>
-						<p class="card-text">Formal Verification of Router Configuration</p>
-						<a href="https://github.com/noise-lab/rcc/" class="btn btn-secondary">Source Code</a>
+						<h5 class="card-title"><a href="http://nms.lcs.mit.edu/rcc">rcc</a></h5>
+						<p class="card-text">Router Configuration Checker</p>
+						<a href="https://github.com/noise-lab/rcc/" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
-
 		</div>
 
+		<!-- Censorship & Privacy -->
+		<h4 class="section-header">Censorship &amp; Privacy</h4>
 		<div class="row">
-
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/iot.png" height="125" alt="imp">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/encore.png" alt="Encore">
 					<div class="card-body">
-						<h5 class="card-title"><a href="https://iot-inspector.princeton.edu">IoT Inspector</a></h5>
-						<p class="card-text">Studying the Behavior of Smart Home Devices</p>
-						<a href="#" class="btn btn-secondary">Source Code</a>
+						<h5 class="card-title"><a href="https://encore.noise.gatech.edu">Encore</a></h5>
+						<p class="card-text">Measuring Web Censorship</p>
+						<a href="https://github.com/sburnett/encore" class="btn btn-secondary btn-sm">GitHub</a>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/infranet.png" height="125" alt="imp">
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card h-100">
+					<img class="card-img-top" src="./images/infranet.png" alt="Infranet">
 					<div class="card-body">
 						<h5 class="card-title"><a href="http://nms.lcs.mit.edu/infranet/">Infranet</a></h5>
 						<p class="card-text">Circumventing Internet Censorship</p>
-						<a href="http://sourceforge.net/projects/infranet/" class="btn btn-secondary">Source Code</a>
+						<a href="http://sourceforge.net/projects/infranet/" class="btn btn-secondary btn-sm">Source</a>
 					</div>
 				</div>
 			</div>
-
-			<div class="col-md-4 mb-4">
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="./images/encore.png" height="150" alt="imp">
-					<div class="card-body">
-						<h5 class="card-title"><a href="https://encore.noise.gatech.edu">Encore</a></h5>
-						<p class="card-text">Measure Web Censorship</p>
-						<a href="https://github.com/sburnett/encore" class="btn btn-secondary">Source Code</a>
-					</div>
-				</div>
-			</div>
-
-
-
 		</div>
+
 	</div>
+
 	<!-- Footer -->
 	<div id="footer-ph"></div>
 	<script>

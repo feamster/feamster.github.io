@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="dialGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#48BB78;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#276749;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="wifiGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#4A90D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2C5282;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="200" fill="#f8f9fa"/>
+
+  <!-- Speedometer dial -->
+  <g transform="translate(100, 130)">
+    <!-- Outer arc background -->
+    <path d="M -60 0 A 60 60 0 0 1 60 0" fill="none" stroke="#E2E8F0" stroke-width="12" stroke-linecap="round"/>
+    <!-- Speed arc (showing ~75% speed) -->
+    <path d="M -60 0 A 60 60 0 0 1 42 -42" fill="none" stroke="url(#dialGrad)" stroke-width="12" stroke-linecap="round"/>
+    <!-- Needle -->
+    <line x1="0" y1="0" x2="35" y2="-35" stroke="#2D3748" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="8" fill="#2D3748"/>
+    <!-- Speed labels -->
+    <text x="-55" y="20" font-family="Arial, sans-serif" font-size="10" fill="#718096">0</text>
+    <text x="45" y="20" font-family="Arial, sans-serif" font-size="10" fill="#718096">100</text>
+  </g>
+
+  <!-- WiFi symbol above -->
+  <g transform="translate(100, 55)">
+    <path d="M -35 10 Q 0 -20 35 10" fill="none" stroke="url(#wifiGrad)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M -24 18 Q 0 -2 24 18" fill="none" stroke="url(#wifiGrad)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M -12 26 Q 0 16 12 26" fill="none" stroke="url(#wifiGrad)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="0" cy="35" r="5" fill="url(#wifiGrad)"/>
+  </g>
+
+  <!-- Mbps label -->
+  <text x="100" y="175" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#4A5568" text-anchor="middle">Mbps</text>
+</svg>
