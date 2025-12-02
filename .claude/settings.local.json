@@ -27,7 +27,14 @@
       "Bash(brew list:*)",
       "Bash(exiftool:*)",
       "Bash(python3:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "WebFetch(domain:inspector.engineering.nyu.edu)",
+      "WebFetch(domain:www.cc.gatech.edu)",
+      "Bash(find:*)",
+      "Bash(git rm:*)",
+      "Bash(open:*)",
+      "Bash(pdflatex:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
