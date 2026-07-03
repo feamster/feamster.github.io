@@ -2560,6 +2560,9 @@ var bibtexify = (function($) {
             if (entryData.url && entryData.url.match(/.*\.pdf/)) {
                 itemStr += ' <a title="PDF-version of this article"  target="_blank" href="' +
                             entryData.url + '"><i class="fa fa-file-pdf-o"></i><\/a>';
+            } else if (entryData.url && entryData.url.match(/doi\.org\//i)) {
+                itemStr += ' <a title="DOI (canonical link)" target="_blank" href="' + entryData.url +
+                            '">[DOI]<\/a>';
             } else if (entryData.url) {
                 itemStr += ' <a title="This article online" target="_blank" href="' + entryData.url +
                             '"><i class="fa fa-globe""></i><\/a>';
