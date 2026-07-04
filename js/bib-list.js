@@ -2623,11 +2623,14 @@ var bibtexify = (function($) {
           itemStr += '" target="_blank"><i class="fa fa-twitter""></i></a>';
           return itemStr;
         },
-        // helper functions for formatting different types of bibtex entries
+        // helper functions for formatting different types of bibtex entries.
+        // Every optional field is guarded so absent values render nothing
+        // rather than the literal string "missing" (from the undefined->missing
+        // regex on line ~2541).
         inproceedings: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
                 entryData.title + ". In <em>" + entryData.booktitle +
-                ", pp. " + entryData.pages +
+                ((entryData.pages)?", pp. " + entryData.pages:"") +
                 ((entryData.address)?", " + entryData.address:"") + ".<\/em>";
         },
         incollection: function(entryData) {
@@ -2635,15 +2638,16 @@ var bibtexify = (function($) {
                 entryData.title + ". In " +
                 ((entryData.editor)?"" + this.authors2html(entryData.editor) + ", editor, ":"") +
                 "<em>" + entryData.booktitle +
-                ", pp. " + entryData.pages +
+                ((entryData.pages)?", pp. " + entryData.pages:"") +
                 ((entryData.address)?", " + entryData.address:"") + ".<\/em>";
         },
         article: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
-                entryData.title + ". <em>" + entryData.journal + ", " + entryData.volume +
-                ((entryData.number)?"(" + entryData.number + ")":"")+ ", " +
-                "pp. " + entryData.pages + ". " +
-                ((entryData.address)?entryData.address + ".":"") + "<\/em>";
+                entryData.title + ". <em>" + entryData.journal +
+                ((entryData.volume)?", " + entryData.volume:"") +
+                ((entryData.number)?"(" + entryData.number + ")":"") +
+                ((entryData.pages)?", pp. " + entryData.pages:"") +
+                ((entryData.address)?". " + entryData.address:"") + ".<\/em>";
         },
         misc: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
