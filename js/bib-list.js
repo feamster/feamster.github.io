@@ -2566,6 +2566,13 @@ var bibtexify = (function($) {
             } else if (entryData.url) {
                 itemStr += ' <a title="This article online" target="_blank" href="' + entryData.url +
                             '"><i class="fa fa-globe""></i><\/a>';
+            } else if (entryData.doi) {
+                // Fallback: no explicit url but we have a DOI — canonical link.
+                var doiHref = entryData.doi.match(/^https?:\/\//i)
+                    ? entryData.doi
+                    : 'https://doi.org/' + entryData.doi.replace(/^doi:/i, '');
+                itemStr += ' <a title="DOI (canonical link)" target="_blank" href="' + doiHref +
+                            '"><i class="fa fa-external-link"></i><\/a>';
             }
             return itemStr;
         },
