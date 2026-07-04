@@ -2657,13 +2657,24 @@ var bibtexify = (function($) {
         },
         mastersthesis: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
-            entryData.title + ". " + entryData.type + ". " +
-            entryData.organization + ", " + entryData.school + ".";
+                entryData.title + ". " +
+                ((entryData.type)?entryData.type + ". ":"Master's Thesis, ") +
+                ((entryData.organization)?entryData.organization + ", ":"") +
+                entryData.school + ".";
+        },
+        phdthesis: function(entryData) {
+            return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
+                entryData.title + ". " +
+                ((entryData.type)?entryData.type + ". ":"Ph.D. Thesis, ") +
+                ((entryData.organization)?entryData.organization + ", ":"") +
+                entryData.school + ".";
         },
         techreport: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
-                entryData.title + ". " + entryData.institution + ". " +
-                entryData.number + ". " + entryData.type + ".";
+                entryData.title + ". " +
+                ((entryData.institution)?entryData.institution + ". ":"") +
+                ((entryData.number)?entryData.number + ". ":"") +
+                ((entryData.type)?entryData.type + ".":"Technical Report.");
         },
         book: function(entryData) {
             return this.authors2html(entryData.author || entryData.editor) + " (" + entryData.year + "). " +
