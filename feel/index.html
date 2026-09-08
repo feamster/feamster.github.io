@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feel & Do</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7EBE9;
+    --bg-2: #DCE2DF;
+    --ink: #1B262F;
+    --ink-soft: #55656D;
+    --paper: #F6F4EF;
+    --line: rgba(27,38,47,0.14);
+    --accent: #6B4457;
+    --accent-ink: #FBF8F9;
+
+    --c-happy: #C7911E;
+    --c-sad: #4E708C;
+    --c-disgusted: #5C8064;
+    --c-angry: #A8452E;
+    --c-fearful: #6C5D8C;
+    --c-surprised: #2E8C83;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 50% -10%, var(--bg-2), var(--bg) 60%);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    padding: env(safe-area-inset-top,0) 20px calc(env(safe-area-inset-bottom,0) + 28px);
+    display:flex;
+    flex-direction:column;
+  }
+
+  .screen{ display:none; flex-direction:column; flex:1; padding-top:26px; animation: rise .4s ease both; }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .kicker{ font-size:13px; color:var(--ink-soft); margin:0 0 6px; min-height:16px; }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:28px;
+    line-height:1.15;
+    margin:0 0 18px;
+  }
+  h1 em{ font-style:italic; font-weight:400; }
+
+  /* ---------- Breadcrumb / back ---------- */
+  .crumb-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-height:34px;
+    margin-bottom:4px;
+  }
+  .back-btn{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:7px 12px;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    visibility:hidden;
+  }
+  .back-btn.show{visibility:visible;}
+  .crumb-text{
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .crumb-text b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Wheel ---------- */
+  .wheel-wrap{
+    position:relative;
+    width:100%;
+    max-width:360px;
+    margin: 2px auto 14px;
+    aspect-ratio:1/1;
+  }
+  svg#wheel{width:100%;height:100%;display:block;}
+  .seg{cursor:pointer;}
+  .seg-hit{ transition: opacity .12s ease; }
+  .seg-hit:active{ opacity:0.8; }
+  .seg text{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    fill:var(--accent-ink);
+    pointer-events:none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  }
+
+  .wheel-center{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:30%;
+    height:30%;
+    border-radius:50%;
+    background:var(--paper);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 18px rgba(27,38,47,0.14);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:8%;
+    cursor:pointer;
+  }
+  .wheel-center span{
+    font-family:'Fraunces', serif;
+    font-size:14px;
+    line-height:1.25;
+    color:var(--ink-soft);
+  }
+
+  .use-level-link{
+    text-align:center;
+    margin: 0 0 4px;
+  }
+
+  .picked-panel{ text-align:center; min-height:70px; }
+  .picked-panel .feeling{ font-family:'Fraunces', serif; font-size:24px; margin:0 0 3px; }
+  .picked-panel .family{ font-size:13.5px; color:var(--ink-soft); margin:0; }
+
+  .spacer{flex:1;}
+
+  button, .link{ font-family:'Inter', sans-serif; border:none; cursor:pointer; }
+
+  .cta{
+    width:100%;
+    padding:16px 20px;
+    border-radius:14px;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-size:16px;
+    font-weight:600;
+    margin-top:16px;
+    transition: transform .15s ease, opacity .2s ease;
+  }
+  .cta:disabled{opacity:0.4; pointer-events:none;}
+  .cta:active{transform:scale(0.98);}
+
+  .link{
+    background:none;
+    color:var(--ink-soft);
+    font-size:14px;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    padding:10px 0;
+  }
+  .row-links{ display:flex; justify-content:center; gap:20px; margin-top:4px; flex-wrap:wrap; }
+
+  /* ---------- Timer screen ---------- */
+  .timer-feeling{ text-align:center; font-size:14px; color:var(--ink-soft); margin-bottom:6px; }
+  .timer-feeling b{color:var(--ink); font-weight:600;}
+
+  .ring-wrap{ position:relative; width:100%; max-width:280px; margin: 18px auto 8px; aspect-ratio:1/1; }
+  svg#ring{width:100%;height:100%;transform:rotate(-90deg);}
+  .ring-bg{fill:none; stroke: var(--line); stroke-width:10;}
+  .ring-fg{fill:none; stroke: var(--accent); stroke-width:10; stroke-linecap:round; transition: stroke-dashoffset 1s linear;}
+  .ring-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+  .ring-label .time{ font-family:'Fraunces', serif; font-size:44px; font-variant-numeric: tabular-nums; }
+  .ring-label .sub{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+
+  .timer-controls{ display:flex; gap:10px; margin-top:22px; }
+  .btn-soft{
+    flex:1; padding:13px; border-radius:12px;
+    background:var(--paper); border:1px solid var(--line);
+    color:var(--ink); font-size:14px; font-weight:500;
+  }
+  .btn-soft:active{transform:scale(0.98);}
+
+  /* ---------- Reveal screen ---------- */
+  .reveal-card{
+    background:var(--paper);
+    border-radius:20px;
+    padding:34px 26px;
+    text-align:center;
+    box-shadow: 0 10px 30px rgba(27,38,47,0.12);
+    margin-top:8px;
+  }
+  .reveal-card .eyebrow{ font-size:13px; color:var(--ink-soft); margin:0 0 10px; }
+  .reveal-card .activity{ font-family:'Fraunces', serif; font-size:25px; line-height:1.3; margin:0; }
+
+  /* ---------- Activities editor ---------- */
+  .activity-list{ list-style:none; margin:0 0 14px; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .activity-list li{
+    display:flex; align-items:center; gap:10px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:12px; padding:12px 14px;
+  }
+  .activity-list li span{flex:1; font-size:15px;}
+  .remove-btn{ background:none; color:var(--ink-soft); font-size:18px; line-height:1; padding:2px 6px; }
+  .add-row{ display:flex; gap:8px; margin-top:4px; }
+  .add-row input{
+    flex:1; padding:13px 14px; border-radius:12px;
+    border:1px solid var(--line); font-size:15px;
+    font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink);
+  }
+  .add-row input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .add-btn{ width:48px; border-radius:12px; background:var(--accent); color:var(--accent-ink); font-size:22px; }
+  .empty-note{ font-size:14px; color:var(--ink-soft); padding:16px 0; }
+
+  .top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .icon-btn{ background:none; color:var(--ink-soft); font-size:14px; padding:6px 0; }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen{animation:none;}
+    .ring-fg{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- WHEEL SCREEN -->
+  <section class="screen active" id="screen-wheel">
+    <p class="kicker">Right now</p>
+    <h1>What are you <em>feeling</em>?</h1>
+
+    <div class="crumb-row">
+      <button class="back-btn" id="backLevelBtn">&lsaquo; Back</button>
+      <span class="crumb-text" id="crumbText"></span>
+    </div>
+
+    <div class="wheel-wrap">
+      <svg id="wheel" viewBox="0 0 320 320"></svg>
+      <div class="wheel-center" id="wheelCenter"><span id="centerHint">Tap a slice</span></div>
+    </div>
+
+    <p class="use-level-link" id="useLevelWrap" style="display:none;">
+      <button class="link" id="useLevelBtn">Use this word instead</button>
+    </p>
+
+    <div class="picked-panel" id="pickedPanel"></div>
+    <div class="spacer"></div>
+    <button class="cta" id="startTimerBtn" disabled>Start a 10-minute timer</button>
+    <div class="row-links">
+      <button class="link" id="quickPickFromWheel">Just pick something for me</button>
+      <button class="link" id="gotoActivitiesFromWheel">Edit my activities</button>
+    </div>
+  </section>
+
+  <!-- TIMER SCREEN -->
+  <section class="screen" id="screen-timer">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Sitting with it</p>
+      <button class="icon-btn" id="cancelTimerBtn">Cancel</button>
+    </div>
+    <h1>Give it a <em>little time</em></h1>
+    <p class="timer-feeling">Feeling <b id="timerFeelingLabel">—</b></p>
+
+    <div class="ring-wrap">
+      <svg id="ring" viewBox="0 0 200 200">
+        <circle class="ring-bg" cx="100" cy="100" r="90"></circle>
+        <circle class="ring-fg" id="ringFg" cx="100" cy="100" r="90"></circle>
+      </svg>
+      <div class="ring-label">
+        <div class="time" id="timeDisplay">10:00</div>
+        <div class="sub" id="timerSub">counting down</div>
+      </div>
+    </div>
+
+    <div class="timer-controls">
+      <button class="btn-soft" id="pauseBtn">Pause</button>
+      <button class="btn-soft" id="resetBtn">Reset</button>
+    </div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- REVEAL SCREEN -->
+  <section class="screen" id="screen-reveal">
+    <p class="kicker">Time's up</p>
+    <h1>Here's something <em>to do</em></h1>
+
+    <div class="reveal-card">
+      <p class="eyebrow" id="revealEyebrow">Since you were feeling <span id="revealFeeling">—</span></p>
+      <p class="activity" id="revealActivity">—</p>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="cta" id="pickAgainBtn">Pick another activity</button>
+    <div class="row-links">
+      <button class="link" id="gotoActivitiesFromReveal">Edit my activities</button>
+      <button class="link" id="startOverBtn">Start over</button>
+    </div>
+  </section>
+
+  <!-- ACTIVITIES SCREEN -->
+  <section class="screen" id="screen-activities">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Your list</p>
+      <button class="icon-btn" id="doneActivitiesBtn">Done</button>
+    </div>
+    <h1>Favorite <em>activities</em></h1>
+
+    <button class="cta" id="quickPickFromActivities" style="margin-top:0; margin-bottom:18px;">Pick one for me now</button>
+
+    <ul class="activity-list" id="activityList"></ul>
+    <p class="empty-note" id="emptyNote" style="display:none;">Add a few things you actually enjoy doing. This is what gets picked for you.</p>
+
+    <div class="add-row">
+      <input type="text" id="newActivityInput" placeholder="Add an activity" maxlength="80">
+      <button class="add-btn" id="addActivityBtn">+</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Feelings data (3 layers) ----------
+  var WHEEL = [
+    { label:"Happy", color:"var(--c-happy)", children:[
+      { label:"Playful", children:["Aroused","Cheeky","Silly"] },
+      { label:"Content", children:["Free","Joyful","Satisfied"] },
+      { label:"Interested", children:["Curious","Inquisitive","Engaged"] },
+      { label:"Proud", children:["Successful","Confident","Triumphant"] },
+      { label:"Accepted", children:["Respected","Valued","Included"] },
+      { label:"Powerful", children:["Courageous","Creative","Determined"] }
+    ]},
+    { label:"Surprised", color:"var(--c-surprised)", children:[
+      { label:"Startled", children:["Shocked","Dismayed","Stunned"] },
+      { label:"Confused", children:["Disillusioned","Perplexed","Bewildered"] },
+      { label:"Amazed", children:["Astonished","Awe-struck","Astounded"] },
+      { label:"Excited", children:["Eager","Energetic","Enthusiastic"] },
+      { label:"Overcome", children:["Speechless","Overwhelmed","Dumbfounded"] },
+      { label:"Moved", children:["Touched","Impressed","Inspired"] }
+    ]},
+    { label:"Fearful", color:"var(--c-fearful)", children:[
+      { label:"Scared", children:["Helpless","Frightened","Terrified"] },
+      { label:"Anxious", children:["Worried","Nervous","Uneasy"] },
+      { label:"Insecure", children:["Inadequate","Unworthy","Inferior"] },
+      { label:"Weak", children:["Worthless","Insignificant","Small"] },
+      { label:"Rejected", children:["Excluded","Persecuted","Alienated"] },
+      { label:"Threatened", children:["Defensive","On edge","Panicked"] }
+    ]},
+    { label:"Angry", color:"var(--c-angry)", children:[
+      { label:"Let down", children:["Betrayed","Resentful","Deceived"] },
+      { label:"Humiliated", children:["Disrespected","Ridiculed","Belittled"] },
+      { label:"Bitter", children:["Indignant","Violated","Cynical"] },
+      { label:"Mad", children:["Furious","Jealous","Enraged"] },
+      { label:"Aggressive", children:["Provoked","Hostile","Vindictive"] },
+      { label:"Frustrated", children:["Infuriated","Annoyed","Agitated"] }
+    ]},
+    { label:"Disgusted", color:"var(--c-disgusted)", children:[
+      { label:"Disapproving", children:["Loathing","Condemning","Disdainful"] },
+      { label:"Disappointed", children:["Appalled","Revolted","Displeased"] },
+      { label:"Awful", children:["Nauseated","Detestable","Repugnant"] },
+      { label:"Repelled", children:["Horrified","Hesitant","Averse"] },
+      { label:"Suspicious", children:["Skeptical","Withdrawn","Wary"] },
+      { label:"Judgmental", children:["Critical","Contemptuous","Scornful"] }
+    ]},
+    { label:"Sad", color:"var(--c-sad)", children:[
+      { label:"Lonely", children:["Isolated","Abandoned","Forgotten"] },
+      { label:"Vulnerable", children:["Fragile","Victimized","Exposed"] },
+      { label:"Guilty", children:["Ashamed","Remorseful","Regretful"] },
+      { label:"Despair", children:["Grief","Powerless","Hopeless"] },
+      { label:"Depressed", children:["Empty","Numb","Heavy"] },
+      { label:"Hurt", children:["Wounded","Embarrassed","Aching"] }
+    ]}
+  ];
+
+  var DEFAULT_ACTIVITIES = [
+    "Go for a run",
+    "Go to the climbing gym",
+    "Go for a walk",
+    "Play guitar",
+    "Work with the Digitakt",
+    "Work on a mix of an existing song",
+    "Call or text a friend",
+    "Try a different physical activity \u2014 ice skating, paddleboarding, cycling, swimming"
+  ];
+
+  var TIMER_SECONDS = 10 * 60;
+
+  var state = {
+    path: [],            // array of {label, color} chosen so far, e.g. [{label:"Happy"}, {label:"Proud"}]
+    feeling: null,        // {label, family}
+    activities: loadActivities(),
+    timeLeft: TIMER_SECONDS,
+    timerId: null,
+    running: false
+  };
+
+  function loadActivities(){
+    try{
+      var raw = localStorage.getItem("feelAndDo.activities");
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    }catch(e){}
+    return DEFAULT_ACTIVITIES.slice();
+  }
+  function saveActivities(){
+    try{ localStorage.setItem("feelAndDo.activities", JSON.stringify(state.activities)); }catch(e){}
+  }
+
+  // ---------- Screens ----------
+  var screens = {
+    wheel: document.getElementById("screen-wheel"),
+    timer: document.getElementById("screen-timer"),
+    reveal: document.getElementById("screen-reveal"),
+    activities: document.getElementById("screen-activities")
+  };
+  var fromScreen = "wheel";
+  function showScreen(name){
+    Object.keys(screens).forEach(function(k){ screens[k].classList.toggle("active", k === name); });
+  }
+
+  // ---------- Wheel rendering (generic, per level) ----------
+  var svg = document.getElementById("wheel");
+  var CX = 160, CY = 160, R_OUTER = 154, R_INNER = 58;
+
+  function polar(cx, cy, r, angleDeg){
+    var a = (angleDeg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+  function arcPath(cx, cy, rInner, rOuter, startAngle, endAngle){
+    var p1 = polar(cx, cy, rOuter, startAngle);
+    var p2 = polar(cx, cy, rOuter, endAngle);
+    var p3 = polar(cx, cy, rInner, endAngle);
+    var p4 = polar(cx, cy, rInner, startAngle);
+    var largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+    return ["M", p1.x, p1.y, "A", rOuter, rOuter, 0, largeArc, 1, p2.x, p2.y,
+            "L", p3.x, p3.y, "A", rInner, rInner, 0, largeArc, 0, p4.x, p4.y, "Z"].join(" ");
+  }
+
+  function fontSizeFor(count, label){
+    var base = count <= 3 ? 21 : (count <= 6 ? 16 : 13);
+    if(label.length > 10) base -= 2;
+    if(label.length > 14) base -= 2;
+    return base;
+  }
+
+  function addWedgeLabel(cx, cy, r, angle, label, size){
+    var pos = polar(cx, cy, r, angle);
+    var words = label.split(" ");
+    var t = document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x", pos.x);
+    t.setAttribute("y", pos.y);
+    t.setAttribute("text-anchor","middle");
+    t.setAttribute("font-size", size);
+    if(words.length > 1){
+      var lineH = size * 1.05;
+      var startY = pos.y - (lineH * (words.length-1))/2;
+      words.forEach(function(w, i){
+        var ts = document.createElementNS("http://www.w3.org/2000/svg","tspan");
+        ts.setAttribute("x", pos.x);
+        ts.setAttribute("y", startY + i*lineH);
+        ts.textContent = w;
+        t.appendChild(ts);
+      });
+    } else {
+      t.setAttribute("dominant-baseline","middle");
+      t.textContent = label;
+    }
+    return t;
+  }
+
+  function currentColor(){
+    if(state.path.length === 0) return null;
+    return state.path[0].color;
+  }
+
+  function currentItems(){
+    if(state.path.length === 0){
+      return WHEEL.map(function(c){ return { label:c.label, color:c.color, children:c.children }; });
+    }
+    var core = WHEEL.filter(function(c){ return c.label === state.path[0].label; })[0];
+    if(state.path.length === 1){
+      return core.children.map(function(s){ return { label:s.label, color:core.color, children:s.children }; });
+    }
+    var sec = core.children.filter(function(s){ return s.label === state.path[1].label; })[0];
+    return sec.children.map(function(t){ return { label:t, color:core.color, children:null }; });
+  }
+
+  function renderWheel(){
+    svg.innerHTML = "";
+    var items = currentItems();
+    var n = items.length;
+    var sweep = 360 / n;
+
+    items.forEach(function(item, i){
+      var start = i * sweep;
+      var end = start + sweep;
+      var mid = (start + end) / 2;
+
+      var path = document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d", arcPath(CX, CY, R_INNER, R_OUTER, start, end));
+      path.setAttribute("fill", item.color);
+      path.setAttribute("stroke", "var(--bg)");
+      path.setAttribute("stroke-width", "2");
+      path.classList.add("seg","seg-hit");
+      path.dataset.label = item.label;
+      svg.appendChild(path);
+
+      var size = fontSizeFor(n, item.label);
+      var g = document.createElementNS("http://www.w3.org/2000/svg","g");
+      g.classList.add("seg");
+      g.appendChild(addWedgeLabel(CX, CY, (R_INNER+R_OUTER)/2, mid, item.label, size));
+      svg.appendChild(g);
+
+      var handler = function(){ onWedgeTap(item); };
+      path.addEventListener("click", handler);
+      g.addEventListener("click", handler);
+    });
+
+    renderCrumb();
+  }
+
+  function renderCrumb(){
+    var backBtn = document.getElementById("backLevelBtn");
+    var crumbText = document.getElementById("crumbText");
+    var centerHint = document.getElementById("centerHint");
+    var useWrap = document.getElementById("useLevelWrap");
+    var useBtn = document.getElementById("useLevelBtn");
+
+    backBtn.classList.toggle("show", state.path.length > 0);
+
+    if(state.path.length === 0){
+      crumbText.innerHTML = "Six core feelings";
+      centerHint.textContent = "Tap a slice";
+      useWrap.style.display = "none";
+    } else if(state.path.length === 1){
+      crumbText.innerHTML = "<b>" + state.path[0].label + "</b> \u2014 pick a closer word";
+      centerHint.textContent = state.path[0].label;
+      useWrap.style.display = "block";
+      useBtn.textContent = "Just \u201c" + state.path[0].label + "\u201d is close enough";
+    } else {
+      crumbText.innerHTML = state.path[0].label + " \u2192 <b>" + state.path[1].label + "</b>";
+      centerHint.textContent = state.path[1].label;
+      useWrap.style.display = "block";
+      useBtn.textContent = "Just \u201c" + state.path[1].label + "\u201d is close enough";
+    }
+  }
+
+  function onWedgeTap(item){
+    if(state.path.length < 2){
+      state.path.push({ label:item.label, color:item.color });
+      renderWheel();
+    } else {
+      finalizeFeeling(item.label, item.color);
+    }
+  }
+
+  function finalizeFeeling(label, color){
+    var family = state.path.length ? state.path[0].label : label;
+    state.feeling = { label:label, family:family };
+    var panel = document.getElementById("pickedPanel");
+    panel.innerHTML = '<p class="feeling">' + label + '</p><p class="family">under ' + family + '</p>';
+    document.getElementById("startTimerBtn").disabled = false;
+  }
+
+  document.getElementById("backLevelBtn").addEventListener("click", function(){
+    if(state.path.length === 0) return;
+    state.path.pop();
+    renderWheel();
+  });
+  document.getElementById("wheelCenter").addEventListener("click", function(){
+    if(state.path.length > 0){
+      state.path.pop();
+      renderWheel();
+    }
+  });
+  document.getElementById("useLevelBtn").addEventListener("click", function(){
+    var last = state.path[state.path.length - 1];
+    finalizeFeeling(last.label, last.color);
+  });
+
+  renderWheel();
+
+  // ---------- Timer ----------
+  var RING_R = 90, RING_C = 2 * Math.PI * RING_R;
+  var ringFg = document.getElementById("ringFg");
+  ringFg.setAttribute("stroke-dasharray", RING_C);
+  ringFg.setAttribute("stroke-dashoffset", 0);
+
+  function formatTime(sec){
+    var m = Math.floor(sec / 60);
+    var s = sec % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+  function renderTimer(){
+    document.getElementById("timeDisplay").textContent = formatTime(state.timeLeft);
+    var frac = 1 - (state.timeLeft / TIMER_SECONDS);
+    ringFg.setAttribute("stroke-dashoffset", RING_C * frac);
+  }
+  function tick(){
+    if(state.timeLeft <= 0){ stopTimer(); onTimerComplete(); return; }
+    state.timeLeft -= 1;
+    renderTimer();
+  }
+  function startTimer(){
+    if(state.running) return;
+    state.running = true;
+    document.getElementById("pauseBtn").textContent = "Pause";
+    document.getElementById("timerSub").textContent = "counting down";
+    state.timerId = setInterval(tick, 1000);
+  }
+  function pauseTimer(){
+    state.running = false;
+    document.getElementById("pauseBtn").textContent = "Resume";
+    document.getElementById("timerSub").textContent = "paused";
+    clearInterval(state.timerId);
+  }
+  function stopTimer(){ state.running = false; clearInterval(state.timerId); }
+  function resetTimer(){
+    stopTimer();
+    state.timeLeft = TIMER_SECONDS;
+    renderTimer();
+    document.getElementById("pauseBtn").textContent = "Pause";
+    document.getElementById("timerSub").textContent = "counting down";
+    startTimer();
+  }
+
+  function chime(){
+    try{
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [660, 880, 990].forEach(function(freq, i){
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + i*0.18);
+        gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i*0.18 + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i*0.18 + 0.5);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime + i*0.18);
+        osc.stop(ctx.currentTime + i*0.18 + 0.55);
+      });
+    }catch(e){}
+    if(navigator.vibrate) navigator.vibrate([120,60,120]);
+    if(window.Notification && Notification.permission === "granted"){
+      try{ new Notification("Time's up", { body: "Your ten minutes are up." }); }catch(e){}
+    }
+  }
+  function onTimerComplete(){ chime(); revealActivity("feeling"); }
+
+  // ---------- Reveal ----------
+  var lastActivityIndex = -1;
+  var revealMode = "feeling"; // "feeling" | "quick"
+  function pickActivity(){
+    if(!state.activities.length) return null;
+    if(state.activities.length === 1) return state.activities[0];
+    var idx;
+    do{ idx = Math.floor(Math.random() * state.activities.length); }
+    while(idx === lastActivityIndex);
+    lastActivityIndex = idx;
+    return state.activities[idx];
+  }
+  function revealActivity(mode){
+    if(mode) revealMode = mode;
+    var pick = pickActivity();
+    var eyebrow = document.getElementById("revealEyebrow");
+    if(revealMode === "quick"){
+      eyebrow.style.display = "none";
+    } else {
+      eyebrow.style.display = "";
+      document.getElementById("revealFeeling").textContent = state.feeling ? state.feeling.label.toLowerCase() : "this";
+    }
+    document.getElementById("revealActivity").textContent = pick || "Add some activities first \u2014 tap \u201cEdit my activities.\u201d";
+    showScreen("reveal");
+  }
+
+  // ---------- Activities editor ----------
+  var listEl = document.getElementById("activityList");
+  var emptyNote = document.getElementById("emptyNote");
+  function renderActivities(){
+    listEl.innerHTML = "";
+    emptyNote.style.display = state.activities.length ? "none" : "block";
+    state.activities.forEach(function(act, i){
+      var li = document.createElement("li");
+      var span = document.createElement("span");
+      span.textContent = act;
+      var btn = document.createElement("button");
+      btn.className = "remove-btn";
+      btn.setAttribute("aria-label", "Remove " + act);
+      btn.textContent = "\u2715";
+      btn.addEventListener("click", function(){
+        state.activities.splice(i, 1);
+        saveActivities();
+        renderActivities();
+      });
+      li.appendChild(span);
+      li.appendChild(btn);
+      listEl.appendChild(li);
+    });
+  }
+  function addActivity(){
+    var input = document.getElementById("newActivityInput");
+    var val = input.value.trim();
+    if(!val) return;
+    state.activities.push(val);
+    saveActivities();
+    input.value = "";
+    renderActivities();
+  }
+  document.getElementById("addActivityBtn").addEventListener("click", addActivity);
+  document.getElementById("newActivityInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter") addActivity();
+  });
+
+  // ---------- Navigation wiring ----------
+  document.getElementById("startTimerBtn").addEventListener("click", function(){
+    document.getElementById("timerFeelingLabel").textContent = state.feeling.label;
+    state.timeLeft = TIMER_SECONDS;
+    renderTimer();
+    showScreen("timer");
+    startTimer();
+    if(window.Notification && Notification.permission === "default"){
+      try{ Notification.requestPermission(); }catch(e){}
+    }
+  });
+
+  document.getElementById("pauseBtn").addEventListener("click", function(){
+    if(state.running) pauseTimer(); else startTimer();
+  });
+  document.getElementById("resetBtn").addEventListener("click", resetTimer);
+  document.getElementById("cancelTimerBtn").addEventListener("click", function(){
+    stopTimer();
+    showScreen("wheel");
+  });
+
+  document.getElementById("pickAgainBtn").addEventListener("click", function(){ revealActivity(); });
+  document.getElementById("quickPickFromWheel").addEventListener("click", function(){ revealActivity("quick"); });
+  document.getElementById("quickPickFromActivities").addEventListener("click", function(){ revealActivity("quick"); });
+  document.getElementById("startOverBtn").addEventListener("click", function(){
+    state.path = [];
+    state.feeling = null;
+    document.getElementById("pickedPanel").innerHTML = "";
+    document.getElementById("startTimerBtn").disabled = true;
+    renderWheel();
+    showScreen("wheel");
+  });
+
+  document.getElementById("gotoActivitiesFromWheel").addEventListener("click", function(){
+    fromScreen = "wheel"; renderActivities(); showScreen("activities");
+  });
+  document.getElementById("gotoActivitiesFromReveal").addEventListener("click", function(){
+    fromScreen = "reveal"; renderActivities(); showScreen("activities");
+  });
+  document.getElementById("doneActivitiesBtn").addEventListener("click", function(){
+    showScreen(fromScreen);
+  });
+
+  renderTimer();
+})();
+</script>
+</body>
+</html>
