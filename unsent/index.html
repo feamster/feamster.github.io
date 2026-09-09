@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unsent</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3F5F7A">
+<meta name="apple-mobile-web-app-title" content="Unsent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7EBE9;
+    --bg-2: #DCE2DF;
+    --ink: #1B262F;
+    --ink-soft: #55656D;
+    --paper: #F6F4EF;
+    --line: rgba(27,38,47,0.14);
+    --accent: #3F5F7A;
+    --accent-ink: #F7F9FB;
+    --danger: #A8452E;
+
+    --c-happy: #C7911E;
+    --c-sad: #4E708C;
+    --c-disgusted: #5C8064;
+    --c-angry: #A8452E;
+    --c-fearful: #6C5D8C;
+    --c-surprised: #2E8C83;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 50% -10%, var(--bg-2), var(--bg) 60%);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  button{ font-family:inherit; cursor:pointer; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  #app{
+    width:100%;
+    max-width:480px;
+    height:100vh;
+    height:100dvh;
+    padding: env(safe-area-inset-top,0) 20px 0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .screen{ display:none; flex-direction:column; flex:1; min-height:0; padding-top:22px; animation: rise .35s ease both; }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .kicker{ font-size:13px; color:var(--ink-soft); margin:0 0 6px; min-height:16px; }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:28px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  h1 em{ font-style:italic; font-weight:400; }
+  h2{ font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:22px 0 8px; }
+  p.lead{ font-size:15px; line-height:1.5; color:var(--ink-soft); margin:0 0 18px; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    min-height:36px; margin-bottom:6px; gap:8px;
+  }
+  .counter{
+    font-family:'Fraunces', serif; font-size:20px; font-weight:500; line-height:1.1;
+  }
+  .counter small{ display:block; font-family:'Inter', sans-serif; font-size:12px; color:var(--ink-soft); font-weight:400; margin-top:2px; }
+  .counter.hidden{ visibility:hidden; }
+  .top-actions{ display:flex; gap:6px; }
+  .icon-btn{
+    background:var(--paper); border:1px solid var(--line); border-radius:10px;
+    padding:7px 12px; font-size:14px; font-weight:500; color:var(--ink);
+  }
+  .icon-btn:active{ transform:scale(.97); }
+
+  /* ---------- Thread ---------- */
+  .thread{
+    flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:flex; flex-direction:column; gap:10px; padding:8px 0 14px;
+    overscroll-behavior:contain;
+  }
+  .thread-empty{
+    margin:auto; text-align:center; color:var(--ink-soft); font-size:15px; line-height:1.5; max-width:300px;
+  }
+  .thread-empty b{ font-family:'Fraunces', serif; font-weight:500; font-size:20px; color:var(--ink); display:block; margin-bottom:8px; }
+  .day-label{ align-self:center; font-size:12px; color:var(--ink-soft); margin:8px 0 2px; }
+  .msg{
+    align-self:flex-end; max-width:86%;
+    background:var(--accent); color:var(--accent-ink);
+    border-radius:18px 18px 4px 18px; padding:11px 14px;
+    font-size:15px; line-height:1.45; white-space:pre-wrap; word-wrap:break-word;
+    box-shadow:0 1px 2px rgba(27,38,47,0.12);
+    position:relative;
+  }
+  .msg.new{ animation: pop .3s ease both; }
+  @keyframes pop{ from{opacity:0; transform:translateY(10px) scale(.97);} to{opacity:1; transform:none;} }
+  .msg .meta{
+    display:flex; gap:8px; align-items:center; justify-content:flex-end;
+    font-size:11px; opacity:.75; margin-top:6px;
+  }
+  .msg .dot{ width:8px; height:8px; border-radius:50%; background:#fff; display:inline-block; }
+  .msg.let-go{
+    background:transparent; color:var(--ink-soft); border:1px dashed var(--line);
+    box-shadow:none; font-size:13px; padding:8px 12px;
+  }
+  .msg .del{
+    position:absolute; left:-30px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:var(--ink-soft); font-size:16px; padding:6px; opacity:0;
+    transition:opacity .15s;
+  }
+  .msg:hover .del, .msg:focus-within .del{ opacity:.7; }
+
+  /* ---------- Compose ---------- */
+  .compose{
+    border-top:1px solid var(--line);
+    padding:12px 0 calc(env(safe-area-inset-bottom,0) + 14px);
+    background:transparent;
+  }
+  .feelings{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .chip{
+    border:1px solid var(--line); background:var(--paper); border-radius:999px;
+    padding:5px 11px; font-size:13px; font-weight:500; color:var(--ink);
+    display:flex; align-items:center; gap:6px;
+  }
+  .chip .sw{ width:9px; height:9px; border-radius:50%; background:var(--c); }
+  .chip.on{ background:var(--c); border-color:var(--c); color:#fff; }
+  .chip.on .sw{ background:#fff; }
+  textarea{
+    width:100%; min-height:88px; max-height:220px; resize:none;
+    border:1px solid var(--line); border-radius:14px; background:var(--paper);
+    padding:12px 14px; font:15px/1.45 'Inter', sans-serif; color:var(--ink);
+  }
+  textarea::placeholder{ color:#8A969C; }
+  .send-row{ display:flex; gap:8px; margin-top:10px; }
+  .send-row .cta, .send-row .btn-soft{ flex:1; }
+  .cta, .btn-soft{ width:100%; }
+  .cta{
+    background:var(--accent); color:var(--accent-ink); border:none;
+    border-radius:14px; padding:14px 12px; font-size:15px; font-weight:600;
+    transition: transform .08s ease, opacity .15s;
+  }
+  .cta:active{ transform:scale(.98); }
+  .cta:disabled{ opacity:.45; cursor:default; }
+  .btn-soft{
+    background:var(--paper); color:var(--ink); border:1px solid var(--line);
+    border-radius:14px; padding:14px 12px; font-size:15px; font-weight:600;
+  }
+  .btn-soft:disabled{ opacity:.45; cursor:default; }
+  .btn-soft.danger{ color:var(--danger); }
+  .send-hint{ font-size:12px; color:var(--ink-soft); margin:8px 2px 0; }
+
+  /* ---------- After-send moment ---------- */
+  .moment{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:rgba(231,235,233,0.92); backdrop-filter: blur(6px); z-index:20; padding:24px;
+  }
+  .moment.show{ display:flex; animation: rise .3s ease both; }
+  .moment-card{ text-align:center; max-width:340px; }
+  .moment-card h1{ margin-bottom:10px; }
+  .moment-card p{ color:var(--ink-soft); font-size:15px; line-height:1.5; margin:0 0 22px; }
+  .moment-card .cta{ width:100%; display:block; margin-bottom:10px; text-decoration:none; }
+  .link{ background:none; border:none; color:var(--ink-soft); text-decoration:underline; font-size:14px; padding:8px; }
+
+  /* ---------- Fly-away animation ---------- */
+  .fly{
+    position:fixed; z-index:30; pointer-events:none;
+    background:var(--accent); color:var(--accent-ink); border-radius:18px; padding:11px 14px;
+    font-size:15px; line-height:1.45; white-space:pre-wrap; max-width:80vw;
+    animation: fly .9s cubic-bezier(.3,.7,.3,1) forwards;
+  }
+  @keyframes fly{
+    0%{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    100%{ opacity:0; transform:translateY(-70vh) scale(.6); filter:blur(6px); }
+  }
+
+  /* ---------- Forms / settings ---------- */
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; }
+  .field input[type=text], .field input[type=date], .field input[type=password]{
+    width:100%; border:1px solid var(--line); border-radius:12px; background:var(--paper);
+    padding:12px 14px; font:16px 'Inter', sans-serif; color:var(--ink);
+  }
+  .row{ display:flex; gap:8px; }
+  .toggle{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line); font-size:15px; }
+  .toggle input{ width:20px; height:20px; accent-color:var(--accent); }
+  .settings-list{ margin-top:6px; }
+  .settings-list .toggle:last-child{ border-bottom:none; }
+  .stack{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .note{ font-size:13px; color:var(--ink-soft); line-height:1.5; margin:6px 0 0; }
+  .scroll{ flex:1; min-height:0; overflow-y:auto; padding-bottom:30px; }
+
+  /* ---------- Patterns ---------- */
+  .stat-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .stat{
+    flex:1; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px;
+  }
+  .stat b{ display:block; font-family:'Fraunces', serif; font-weight:500; font-size:24px; line-height:1; }
+  .stat span{ font-size:12px; color:var(--ink-soft); display:block; margin-top:4px; }
+  .bars{ display:flex; align-items:flex-end; gap:3px; height:80px; padding:6px 0 0; }
+  .bar{ flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; opacity:.85; }
+  .bar.zero{ background:var(--line); }
+  .bar.hot{ background:var(--danger); }
+  .axis{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:4px; }
+  .feel-list{ display:flex; flex-direction:column; gap:6px; }
+  .feel-line{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .feel-line .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .feel-line .track{ flex:1; height:8px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .feel-line .fill{ height:100%; background:var(--c); }
+  .feel-line .n{ width:28px; text-align:right; color:var(--ink-soft); font-size:13px; }
+  .insight{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; font-size:14px; line-height:1.5; margin-top:8px; }
+
+  /* ---------- PIN ---------- */
+  .pin-screen{ justify-content:center; align-items:center; text-align:center; }
+  .pin-dots{ display:flex; gap:12px; justify-content:center; margin:18px 0 26px; }
+  .pin-dot{ width:14px; height:14px; border-radius:50%; border:2px solid var(--accent); }
+  .pin-dot.on{ background:var(--accent); }
+  .pin-dots.shake{ animation: shake .35s; }
+  @keyframes shake{ 0%,100%{transform:none} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .keypad{ display:grid; grid-template-columns:repeat(3, 72px); gap:12px; }
+  .key{ height:72px; border-radius:50%; border:1px solid var(--line); background:var(--paper); font-size:24px; font-family:'Fraunces', serif; }
+  .key:active{ background:var(--bg-2); }
+  .key.ghost{ border:none; background:none; font-family:'Inter', sans-serif; font-size:14px; color:var(--ink-soft); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ======== PIN LOCK ======== -->
+  <section class="screen pin-screen" id="screen-pin">
+    <p class="kicker" id="pinKicker">Unsent</p>
+    <h1 id="pinTitle">Enter your <em>PIN</em></h1>
+    <div class="pin-dots" id="pinDots">
+      <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+    </div>
+    <div class="keypad" id="keypad"></div>
+  </section>
+
+  <!-- ======== SETUP ======== -->
+  <section class="screen" id="screen-setup">
+    <p class="kicker">Welcome</p>
+    <h1>A place for the things you <em>won't send</em></h1>
+    <p class="lead">When you want to text them, come here instead. Write it, send it, and it stays here. Nothing ever leaves this phone.</p>
+    <div class="field">
+      <label for="setupName">Who are you not contacting? (optional, just a label)</label>
+      <input type="text" id="setupName" placeholder="Their name or initial" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="setupDate">When did no contact start?</label>
+      <input type="date" id="setupDate">
+    </div>
+    <button class="cta" id="setupDoneBtn">Begin</button>
+    <p class="note">You can change any of this later in settings, and you can turn the day counter off entirely.</p>
+  </section>
+
+  <!-- ======== MAIN ======== -->
+  <section class="screen" id="screen-main">
+    <div class="topbar">
+      <div class="counter" id="counter"><span id="counterDays">Day 1</span><small id="counterSub"></small></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="patternsBtn" title="Patterns">Patterns</button>
+        <button class="icon-btn" id="settingsBtn" title="Settings">&#8943;</button>
+      </div>
+    </div>
+
+    <div class="thread" id="thread"></div>
+
+    <div class="compose">
+      <div class="feelings" id="feelings"></div>
+      <textarea id="draft" placeholder="What do you want to say to them?" rows="3"></textarea>
+      <div class="send-row">
+        <button class="cta" id="sendKeepBtn" disabled>Send &amp; keep</button>
+        <button class="btn-soft" id="sendLetGoBtn" disabled>Send &amp; let go</button>
+      </div>
+      <p class="send-hint">Kept messages stay in this thread. Let-go messages are gone the moment you send them. Either way, it goes nowhere.</p>
+    </div>
+  </section>
+
+  <!-- ======== AFTER-SEND MOMENT ======== -->
+  <div class="moment" id="moment">
+    <div class="moment-card">
+      <p class="kicker">Sent</p>
+      <h1 id="momentTitle">Not to them. <em>That counts.</em></h1>
+      <p id="momentBody">The urge is real and you did something with it. Give it a few minutes and it will get quieter.</p>
+      <a class="cta" href="../feel/" id="momentFeelLink">Pick something to do</a>
+      <button class="link" id="momentDismiss">I'm okay for now</button>
+    </div>
+  </div>
+
+  <!-- ======== PATTERNS ======== -->
+  <section class="screen" id="screen-patterns">
+    <div class="topbar">
+      <button class="icon-btn" id="patternsBackBtn">&lsaquo; Back</button>
+    </div>
+    <div class="scroll">
+      <p class="kicker">Patterns</p>
+      <h1>When the urge <em>shows up</em></h1>
+      <div class="stat-row">
+        <div class="stat"><b id="statTotal">0</b><span>messages unsent</span></div>
+        <div class="stat"><b id="statWeek">0</b><span>this week</span></div>
+        <div class="stat"><b id="statLastWeek">0</b><span>last week</span></div>
+      </div>
+      <div class="insight" id="insight"></div>
+
+      <h2>By time of day</h2>
+      <div class="bars" id="barsHour"></div>
+      <div class="axis"><span>12am</span><span>6am</span><span>noon</span><span>6pm</span><span>11pm</span></div>
+
+      <h2>By day of week</h2>
+      <div class="bars" id="barsDay"></div>
+      <div class="axis"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+
+      <h2>What you were feeling</h2>
+      <div class="feel-list" id="feelList"></div>
+
+      <h2>Attempts</h2>
+      <div id="attemptsList" class="note"></div>
+    </div>
+  </section>
+
+  <!-- ======== SETTINGS ======== -->
+  <section class="screen" id="screen-settings">
+    <div class="topbar">
+      <button class="icon-btn" id="settingsBackBtn">&lsaquo; Back</button>
+    </div>
+    <div class="scroll">
+      <p class="kicker">Settings</p>
+      <h1>Your <em>setup</em></h1>
+
+      <div class="field">
+        <label for="setName">Label for them</label>
+        <input type="text" id="setName" placeholder="Their name or initial" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="setDate">No contact started</label>
+        <input type="date" id="setDate">
+      </div>
+
+      <div class="settings-list">
+        <label class="toggle"><span>Show day counter</span><input type="checkbox" id="setShowCounter"></label>
+        <label class="toggle"><span>Ask what I'm feeling</span><input type="checkbox" id="setShowFeelings"></label>
+        <label class="toggle"><span>Lock with a PIN</span><input type="checkbox" id="setPin"></label>
+      </div>
+
+      <h2>I reached out</h2>
+      <p class="note">If you broke no contact, that's information, not failure. This resets the counter to today and keeps your full history.</p>
+      <div class="stack">
+        <button class="btn-soft danger" id="slipBtn">Reset the counter, keep everything</button>
+      </div>
+
+      <h2>Your data</h2>
+      <p class="note">Everything lives in this browser only. Nothing is uploaded anywhere. If you clear the browser's site data, it's gone, so export first if you want a copy.</p>
+      <div class="stack">
+        <button class="btn-soft" id="exportBtn">Export as text</button>
+        <button class="btn-soft danger" id="wipeBtn">Delete everything</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "unsent.v1";
+  var FEELINGS = [
+    {id:"sad", label:"Sad", c:"var(--c-sad)"},
+    {id:"angry", label:"Angry", c:"var(--c-angry)"},
+    {id:"fearful", label:"Anxious", c:"var(--c-fearful)"},
+    {id:"disgusted", label:"Hurt", c:"var(--c-disgusted)"},
+    {id:"happy", label:"Nostalgic", c:"var(--c-happy)"},
+    {"id":"surprised", label:"Lonely", c:"var(--c-surprised)"}
+  ];
+  var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  var state = load();
+  var $ = function(id){ return document.getElementById(id); };
+  var unlocked = false;
+  var pinBuffer = "";
+  var pinMode = "enter";   // enter | set | confirm
+  var pinFirst = "";
+  var pendingSettingsToggle = null;
+
+  /* ---------- storage ---------- */
+  function defaults(){
+    return {
+      name:"", startDate:"", showCounter:true, showFeelings:true, pin:"",
+      messages:[], attempts:[], setupDone:false
+    };
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(!raw) return defaults();
+      var s = JSON.parse(raw);
+      var d = defaults();
+      for(var k in d){ if(!(k in s)) s[k] = d[k]; }
+      return s;
+    }catch(e){ return defaults(); }
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  /* ---------- helpers ---------- */
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function parseISO(s){
+    var p = s.split("-").map(Number);
+    return new Date(p[0], p[1]-1, p[2]);
+  }
+  function daysBetween(aISO, bISO){
+    var a = parseISO(aISO), b = parseISO(bISO);
+    return Math.round((b - a) / 86400000);
+  }
+  function dayNumber(){
+    if(!state.startDate) return 1;
+    return Math.max(1, daysBetween(state.startDate, todayISO()) + 1);
+  }
+  function fmtTime(t){
+    var d = new Date(t);
+    var h = d.getHours(), m = pad(d.getMinutes());
+    var ap = h >= 12 ? "pm" : "am"; h = h % 12; if(h === 0) h = 12;
+    return h + ":" + m + ap;
+  }
+  function fmtDay(t){
+    var d = new Date(t), now = new Date();
+    var iso = d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+    if(iso === todayISO()) return "Today";
+    var diff = daysBetween(iso, todayISO());
+    if(diff === 1) return "Yesterday";
+    return DAYS[d.getDay()] + ", " + d.toLocaleDateString(undefined, {month:"short", day:"numeric"});
+  }
+  function dayKey(t){ var d = new Date(t); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function feelingById(id){ for(var i=0;i<FEELINGS.length;i++){ if(FEELINGS[i].id===id) return FEELINGS[i]; } return null; }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHTML(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+
+  /* ---------- screens ---------- */
+  function show(id){
+    var screens = document.querySelectorAll(".screen");
+    for(var i=0;i<screens.length;i++) screens[i].classList.remove("active");
+    $(id).classList.add("active");
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- PIN ---------- */
+  function buildKeypad(){
+    var kp = $("keypad"); kp.innerHTML = "";
+    var keys = ["1","2","3","4","5","6","7","8","9","cancel","0","del"];
+    keys.forEach(function(k){
+      var b = document.createElement("button");
+      b.type = "button";
+      if(k === "cancel"){ b.className = "key ghost"; b.textContent = "Cancel"; b.id = "pinCancel"; }
+      else if(k === "del"){ b.className = "key ghost"; b.textContent = "Delete"; }
+      else { b.className = "key"; b.textContent = k; }
+      b.addEventListener("click", function(){ pinPress(k); });
+      kp.appendChild(b);
+    });
+  }
+  function renderPinDots(){
+    var dots = $("pinDots").children;
+    for(var i=0;i<4;i++) dots[i].classList.toggle("on", i < pinBuffer.length);
+  }
+  function startPin(mode){
+    pinMode = mode; pinBuffer = ""; pinFirst = "";
+    $("pinTitle").innerHTML = mode === "enter" ? "Enter your <em>PIN</em>" : "Choose a <em>PIN</em>";
+    $("pinKicker").textContent = mode === "enter" ? "Unsent" : "Lock";
+    $("pinCancel").style.visibility = mode === "enter" ? "hidden" : "visible";
+    renderPinDots();
+    show("screen-pin");
+  }
+  function pinPress(k){
+    if(k === "cancel"){
+      if(pinMode !== "enter"){
+        state.pin = ""; save();
+        show("screen-settings"); renderSettings();
+      }
+      return;
+    }
+    if(k === "del"){ pinBuffer = pinBuffer.slice(0,-1); renderPinDots(); return; }
+    if(pinBuffer.length >= 4) return;
+    pinBuffer += k; renderPinDots();
+    if(pinBuffer.length === 4) setTimeout(pinComplete, 120);
+  }
+  function pinComplete(){
+    if(pinMode === "enter"){
+      if(pinBuffer === state.pin){ unlocked = true; enterMain(); }
+      else { pinFail(); }
+    } else if(pinMode === "set"){
+      pinFirst = pinBuffer; pinBuffer = ""; pinMode = "confirm";
+      $("pinTitle").innerHTML = "Enter it <em>again</em>";
+      renderPinDots();
+    } else if(pinMode === "confirm"){
+      if(pinBuffer === pinFirst){
+        state.pin = pinFirst; save(); unlocked = true;
+        show("screen-settings"); renderSettings();
+      } else {
+        pinFail();
+        pinMode = "set"; pinFirst = "";
+        $("pinTitle").innerHTML = "Didn't match. Choose a <em>PIN</em>";
+      }
+    }
+  }
+  function pinFail(){
+    var d = $("pinDots");
+    d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake");
+    pinBuffer = ""; renderPinDots();
+  }
+
+  /* ---------- setup ---------- */
+  function renderSetup(){
+    $("setupDate").value = state.startDate || todayISO();
+    $("setupDate").max = todayISO();
+    $("setupName").value = state.name || "";
+    show("screen-setup");
+  }
+  $("setupDoneBtn").addEventListener("click", function(){
+    state.name = $("setupName").value.trim();
+    state.startDate = $("setupDate").value || todayISO();
+    state.setupDone = true;
+    save(); enterMain();
+  });
+
+  /* ---------- main ---------- */
+  var selectedFeeling = null;
+
+  function enterMain(){
+    show("screen-main");
+    renderCounter(); renderFeelings(); renderThread(true); updateSendButtons();
+  }
+  function renderCounter(){
+    var el = $("counter");
+    el.classList.toggle("hidden", !state.showCounter);
+    var n = dayNumber();
+    $("counterDays").textContent = "Day " + n;
+    var sub = state.name ? "no contact with " + state.name : "of no contact";
+    if(state.attempts.length){
+      var total = totalDays();
+      sub += " · " + total + " days across " + (state.attempts.length+1) + " attempts";
+    }
+    $("counterSub").textContent = sub;
+  }
+  function totalDays(){
+    var t = dayNumber();
+    state.attempts.forEach(function(a){ t += Math.max(1, daysBetween(a.start, a.end) + 1); });
+    return t;
+  }
+  function renderFeelings(){
+    var wrap = $("feelings"); wrap.innerHTML = "";
+    wrap.style.display = state.showFeelings ? "flex" : "none";
+    FEELINGS.forEach(function(f){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip" + (selectedFeeling === f.id ? " on" : "");
+      b.style.setProperty("--c", f.c);
+      b.innerHTML = '<span class="sw"></span>' + f.label;
+      b.addEventListener("click", function(){
+        selectedFeeling = selectedFeeling === f.id ? null : f.id;
+        renderFeelings();
+        $("draft").focus();
+      });
+      wrap.appendChild(b);
+    });
+  }
+  function renderThread(scrollToEnd){
+    var th = $("thread"); th.innerHTML = "";
+    var kept = state.messages;
+    if(!kept.length){
+      var e = document.createElement("div");
+      e.className = "thread-empty";
+      e.innerHTML = "<b>Nothing here yet.</b>When the urge comes, write it below. It arrives here, and nowhere else.";
+      th.appendChild(e);
+      return;
+    }
+    var lastDay = null;
+    kept.forEach(function(m){
+      var dk = dayKey(m.t);
+      if(dk !== lastDay){
+        var lab = document.createElement("div");
+        lab.className = "day-label"; lab.textContent = fmtDay(m.t);
+        th.appendChild(lab); lastDay = dk;
+      }
+      var d = document.createElement("div");
+      d.className = "msg" + (m.kept ? "" : " let-go");
+      var f = m.feeling ? feelingById(m.feeling) : null;
+      var meta = '<div class="meta">' + (f ? '<span class="dot" style="background:'+f.c+'"></span>' + f.label + ' · ' : '') + fmtTime(m.t) + '</div>';
+      if(m.kept){
+        d.innerHTML = escapeHTML(m.text) + meta +
+          '<button class="del" title="Remove this message" aria-label="Remove">&times;</button>';
+        d.querySelector(".del").addEventListener("click", function(){
+          if(confirm("Remove this message from the thread? The urge stays counted in Patterns.")){
+            m.kept = false; m.text = ""; save(); renderThread(false);
+          }
+        });
+      } else {
+        d.innerHTML = "Let go" + meta;
+      }
+      th.appendChild(d);
+    });
+    if(scrollToEnd) th.scrollTop = th.scrollHeight;
+  }
+
+  var draft = $("draft");
+  function updateSendButtons(){
+    var has = draft.value.trim().length > 0;
+    $("sendKeepBtn").disabled = !has;
+    $("sendLetGoBtn").disabled = !has;
+  }
+  draft.addEventListener("input", function(){
+    updateSendButtons();
+    draft.style.height = "auto";
+    draft.style.height = Math.min(220, draft.scrollHeight) + "px";
+  });
+
+  function send(keep){
+    var text = draft.value.trim();
+    if(!text) return;
+    var m = { id:uid(), t:Date.now(), text: keep ? text : "", feeling:selectedFeeling, kept:keep };
+    state.messages.push(m);
+    save();
+    if(keep){
+      renderThread(false);
+      var th = $("thread");
+      var last = th.lastElementChild; if(last) last.classList.add("new");
+      th.scrollTop = th.scrollHeight;
+    } else {
+      flyAway(text);
+      renderThread(false);
+      $("thread").scrollTop = $("thread").scrollHeight;
+    }
+    draft.value = ""; draft.style.height = "auto";
+    selectedFeeling = null; renderFeelings(); updateSendButtons();
+    draft.blur();
+    setTimeout(function(){ showMoment(keep); }, keep ? 350 : 700);
+  }
+  function flyAway(text){
+    var r = draft.getBoundingClientRect();
+    var el = document.createElement("div");
+    el.className = "fly";
+    el.textContent = text.length > 140 ? text.slice(0,140) + "…" : text;
+    el.style.left = Math.max(12, r.right - Math.min(r.width*0.8, 300)) + "px";
+    el.style.top = r.top + "px";
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 950);
+  }
+  function showMoment(keep){
+    $("momentBody").textContent = keep
+      ? "The urge is real and you did something with it. It's in the thread if you want to reread it later, and it will get quieter in a few minutes."
+      : "It's gone. The urge is real and you did something with it. Give it a few minutes and it will get quieter.";
+    $("moment").classList.add("show");
+  }
+  $("momentDismiss").addEventListener("click", function(){ $("moment").classList.remove("show"); });
+  $("sendKeepBtn").addEventListener("click", function(){ send(true); });
+  $("sendLetGoBtn").addEventListener("click", function(){ send(false); });
+
+  $("patternsBtn").addEventListener("click", function(){ renderPatterns(); show("screen-patterns"); });
+  $("patternsBackBtn").addEventListener("click", enterMain);
+  $("settingsBtn").addEventListener("click", function(){ renderSettings(); show("screen-settings"); });
+  $("settingsBackBtn").addEventListener("click", enterMain);
+
+  /* ---------- patterns ---------- */
+  function renderPatterns(){
+    var ms = state.messages;
+    var now = Date.now(), week = 7*86400000;
+    var thisWeek = 0, lastWeek = 0;
+    var byHour = new Array(24).fill(0), byDay = new Array(7).fill(0), byFeel = {};
+    ms.forEach(function(m){
+      if(now - m.t < week) thisWeek++;
+      else if(now - m.t < 2*week) lastWeek++;
+      var d = new Date(m.t);
+      byHour[d.getHours()]++; byDay[d.getDay()]++;
+      if(m.feeling) byFeel[m.feeling] = (byFeel[m.feeling]||0) + 1;
+    });
+    $("statTotal").textContent = ms.length;
+    $("statWeek").textContent = thisWeek;
+    $("statLastWeek").textContent = lastWeek;
+
+    bars($("barsHour"), byHour);
+    bars($("barsDay"), byDay);
+
+    var fl = $("feelList"); fl.innerHTML = "";
+    var maxF = 0; FEELINGS.forEach(function(f){ maxF = Math.max(maxF, byFeel[f.id]||0); });
+    FEELINGS.forEach(function(f){
+      var n = byFeel[f.id]||0;
+      var row = document.createElement("div");
+      row.className = "feel-line"; row.style.setProperty("--c", f.c);
+      row.innerHTML = '<span class="sw"></span><span style="width:74px">'+f.label+'</span><div class="track"><div class="fill" style="width:'+(maxF? (n/maxF*100):0)+'%"></div></div><span class="n">'+n+'</span>';
+      fl.appendChild(row);
+    });
+
+    // insight sentence
+    var ins = $("insight");
+    if(ms.length < 3){
+      ins.textContent = "Patterns show up after a few entries. For now, just keep bringing it here.";
+    } else {
+      var peakH = byHour.indexOf(Math.max.apply(null, byHour));
+      var peakD = byDay.indexOf(Math.max.apply(null, byDay));
+      var band = peakH < 5 ? "late at night" : peakH < 11 ? "in the morning" : peakH < 17 ? "in the afternoon" : peakH < 21 ? "in the evening" : "late at night";
+      var topFeel = null, topN = 0;
+      for(var k in byFeel){ if(byFeel[k] > topN){ topN = byFeel[k]; topFeel = k; } }
+      var s = "The urge tends to hit " + band + ", most often on " + DAYS[peakD] + "s.";
+      if(topFeel) s += " You're usually feeling " + feelingById(topFeel).label.toLowerCase() + " when it does.";
+      if(lastWeek && thisWeek < lastWeek) s += " This week is quieter than last.";
+      ins.textContent = s;
+    }
+
+    var al = $("attemptsList");
+    if(!state.attempts.length){
+      al.textContent = "One attempt so far, " + dayNumber() + " days and counting.";
+    } else {
+      var lines = state.attempts.map(function(a, i){
+        return "Attempt " + (i+1) + ": " + Math.max(1, daysBetween(a.start, a.end)+1) + " days (" + a.start + " to " + a.end + ")";
+      });
+      lines.push("Attempt " + (state.attempts.length+1) + ": " + dayNumber() + " days and counting");
+      al.innerHTML = lines.join("<br>");
+    }
+  }
+  function bars(el, arr){
+    el.innerHTML = "";
+    var max = Math.max.apply(null, arr);
+    arr.forEach(function(n){
+      var b = document.createElement("div");
+      b.className = "bar" + (n === 0 ? " zero" : (max > 0 && n === max ? " hot" : ""));
+      b.style.height = max ? Math.max(3, n/max*100) + "%" : "3%";
+      b.title = n;
+      el.appendChild(b);
+    });
+  }
+
+  /* ---------- settings ---------- */
+  function renderSettings(){
+    $("setName").value = state.name || "";
+    $("setDate").value = state.startDate || todayISO();
+    $("setDate").max = todayISO();
+    $("setShowCounter").checked = !!state.showCounter;
+    $("setShowFeelings").checked = !!state.showFeelings;
+    $("setPin").checked = !!state.pin;
+  }
+  $("setName").addEventListener("change", function(){ state.name = this.value.trim(); save(); });
+  $("setDate").addEventListener("change", function(){ if(this.value){ state.startDate = this.value; save(); } });
+  $("setShowCounter").addEventListener("change", function(){ state.showCounter = this.checked; save(); });
+  $("setShowFeelings").addEventListener("change", function(){ state.showFeelings = this.checked; save(); });
+  $("setPin").addEventListener("change", function(){
+    if(this.checked){ startPin("set"); }
+    else { state.pin = ""; save(); }
+  });
+  $("slipBtn").addEventListener("click", function(){
+    if(!confirm("Reset the day counter to today? Your messages and history stay.")) return;
+    var today = todayISO();
+    state.attempts.push({ start: state.startDate || today, end: today });
+    state.startDate = today; save();
+    renderSettings();
+    alert("Counter reset. Day 1 again, and all your previous days still count.");
+  });
+  $("exportBtn").addEventListener("click", function(){
+    var lines = ["Unsent — export " + new Date().toLocaleString(), ""];
+    lines.push("No contact since: " + (state.startDate||"?") + (state.name ? " (" + state.name + ")" : ""));
+    if(state.attempts.length){
+      lines.push("Previous attempts:");
+      state.attempts.forEach(function(a,i){ lines.push("  " + (i+1) + ". " + a.start + " to " + a.end); });
+    }
+    lines.push("", "Messages (" + state.messages.length + "):", "");
+    state.messages.forEach(function(m){
+      var f = m.feeling ? feelingById(m.feeling).label : "";
+      lines.push("[" + new Date(m.t).toLocaleString() + "]" + (f ? " (" + f + ")" : "") + (m.kept ? "" : " (let go)"));
+      if(m.kept) lines.push(m.text);
+      lines.push("");
+    });
+    var blob = new Blob([lines.join("\n")], {type:"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "unsent-" + todayISO() + ".txt";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+  $("wipeBtn").addEventListener("click", function(){
+    if(!confirm("Delete everything? Messages, history, counter, PIN. This cannot be undone.")) return;
+    if(!confirm("Really delete it all?")) return;
+    state = defaults(); save();
+    unlocked = false; selectedFeeling = null;
+    renderSetup();
+  });
+
+  /* ---------- boot ---------- */
+  buildKeypad();
+  if(!state.setupDone){ renderSetup(); }
+  else if(state.pin && !unlocked){ startPin("enter"); }
+  else { enterMain(); }
+
+  // Re-lock when the app is backgrounded for a while
+  var hiddenAt = null;
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden){ hiddenAt = Date.now(); }
+    else if(hiddenAt && state.pin && Date.now() - hiddenAt > 60000){
+      unlocked = false; startPin("enter");
+    }
+    if(!document.hidden && unlocked) renderCounter();
+  });
+})();
+</script>
+</body>
+</html>
