@@ -93,6 +93,33 @@
   }
   .icon-btn:active{ transform:scale(.97); }
 
+  /* ---------- Thread tabs ---------- */
+  .tabs{ display:flex; gap:6px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none; flex:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab{
+    flex:none; border:1px solid var(--line); background:var(--paper); border-radius:999px;
+    padding:6px 12px; font-size:13px; font-weight:500; color:var(--ink); white-space:nowrap;
+  }
+  .tab.on{ background:var(--ink); border-color:var(--ink); color:#fff; }
+  .tab.add{ color:var(--ink-soft); }
+  .to-row{ margin-bottom:8px; }
+  .to-row input{
+    width:100%; border:1px solid var(--line); border-radius:12px; background:var(--paper);
+    padding:9px 12px; font:14px 'Inter', sans-serif; color:var(--ink);
+  }
+  .thread-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px;
+  }
+  .thread-card .field{ margin-bottom:10px; }
+  .thread-card .toggle{ padding:8px 0; }
+  .thread-card .row{ margin-top:8px; }
+  .thread-card .row button{ font-size:13px; padding:10px; }
+  .ext-link{
+    display:block; background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; color:var(--ink); text-decoration:none; font-size:15px; font-weight:600;
+  }
+  .ext-link small{ display:block; font-weight:400; color:var(--ink-soft); font-size:13px; margin-top:2px; }
+
   /* ---------- Thread ---------- */
   .thread{
     flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
@@ -102,6 +129,7 @@
   .thread-empty{
     margin:auto; text-align:center; color:var(--ink-soft); font-size:15px; line-height:1.5; max-width:300px;
   }
+  .thread-empty a{ color:var(--ink-soft); }
   .thread-empty b{ font-family:'Fraunces', serif; font-weight:500; font-size:20px; color:var(--ink); display:block; margin-bottom:8px; }
   .day-label{ align-self:center; font-size:12px; color:var(--ink-soft); margin:8px 0 2px; }
   .msg{
@@ -114,6 +142,7 @@
   }
   .msg.new{ animation: pop .3s ease both; }
   @keyframes pop{ from{opacity:0; transform:translateY(10px) scale(.97);} to{opacity:1; transform:none;} }
+  .msg .to{ font-size:12px; opacity:.8; margin-bottom:4px; font-weight:600; }
   .msg .meta{
     display:flex; gap:8px; align-items:center; justify-content:flex-end;
     font-size:11px; opacity:.75; margin-top:6px;
@@ -282,9 +311,12 @@
       </div>
     </div>
 
+    <div class="tabs" id="tabs"></div>
+
     <div class="thread" id="thread"></div>
 
     <div class="compose">
+      <div class="to-row" id="toRow" style="display:none;"><input type="text" id="toInput" placeholder="To (optional)" autocomplete="off" maxlength="40"></div>
       <div class="feelings" id="feelings"></div>
       <textarea id="draft" placeholder="What do you want to say to them?" rows="3"></textarea>
       <div class="send-row">
@@ -314,6 +346,7 @@
     <div class="scroll">
       <p class="kicker">Patterns</p>
       <h1>When the urge <em>shows up</em></h1>
+      <div class="tabs" id="patTabs"></div>
       <div class="stat-row">
         <div class="stat"><b id="statTotal">0</b><span>messages unsent</span></div>
         <div class="stat"><b id="statWeek">0</b><span>this week</span></div>
@@ -346,31 +379,30 @@
       <p class="kicker">Settings</p>
       <h1>Your <em>setup</em></h1>
 
-      <div class="field">
-        <label for="setName">Label for them</label>
-        <input type="text" id="setName" placeholder="Their name or initial" autocomplete="off">
-      </div>
-      <div class="field">
-        <label for="setDate">No contact started</label>
-        <input type="date" id="setDate">
+      <h2 style="margin-top:6px;">Threads</h2>
+      <p class="note">Each thread is a person, or a catch-all. Threads marked no-contact get a day counter.</p>
+      <div id="threadList"></div>
+      <div class="stack" style="margin-top:0;">
+        <button class="btn-soft" id="addThreadBtn">+ Add a thread</button>
       </div>
 
+      <h2>Display</h2>
       <div class="settings-list">
         <label class="toggle"><span>Show day counter</span><input type="checkbox" id="setShowCounter"></label>
         <label class="toggle"><span>Ask what I'm feeling</span><input type="checkbox" id="setShowFeelings"></label>
         <label class="toggle"><span>Lock with a PIN</span><input type="checkbox" id="setPin"></label>
       </div>
 
-      <h2>I reached out</h2>
-      <p class="note">If you broke no contact, that's information, not failure. This resets the counter to today and keeps your full history.</p>
-      <div class="stack">
-        <button class="btn-soft danger" id="slipBtn">Reset the counter, keep everything</button>
-      </div>
+      <h2>Companion</h2>
+      <a class="ext-link" href="../feel/">Feel &amp; Do &rsaquo;<small>Name what you're feeling, sit with it, then do something.</small></a>
 
       <h2>Your data</h2>
-      <p class="note">Everything lives in this browser only. Nothing is uploaded anywhere. If you clear the browser's site data, it's gone, so export first if you want a copy.</p>
+      <p class="note">Everything lives in this browser only. Nothing is uploaded anywhere. If you clear the browser's site data, it's gone, so export first if you want a copy. The text export is readable; the JSON export has every message, feeling, timestamp, thread and attempt, and can be re-imported later.</p>
       <div class="stack">
         <button class="btn-soft" id="exportBtn">Export as text</button>
+        <button class="btn-soft" id="exportJsonBtn">Export everything as JSON</button>
+        <button class="btn-soft" id="importBtn">Import from JSON</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
         <button class="btn-soft danger" id="wipeBtn">Delete everything</button>
       </div>
     </div>
@@ -383,14 +415,17 @@
   "use strict";
   var KEY = "unsent.v1";
   var FEELINGS = [
-    {id:"sad", label:"Sad", c:"var(--c-sad)"},
-    {id:"angry", label:"Angry", c:"var(--c-angry)"},
-    {id:"fearful", label:"Anxious", c:"var(--c-fearful)"},
-    {id:"disgusted", label:"Hurt", c:"var(--c-disgusted)"},
-    {id:"happy", label:"Nostalgic", c:"var(--c-happy)"},
-    {"id":"surprised", label:"Lonely", c:"var(--c-surprised)"}
+    {id:"sad", label:"Sad", c:"#4E708C"},
+    {id:"angry", label:"Angry", c:"#A8452E"},
+    {id:"fearful", label:"Anxious", c:"#6C5D8C"},
+    {id:"disgusted", label:"Hurt", c:"#5C8064"},
+    {id:"surprised", label:"Lonely", c:"#2E8C83"},
+    {id:"happy", label:"Nostalgic", c:"#C7911E"},
+    {id:"excited", label:"Excited", c:"#D9822B"},
+    {id:"insight", label:"Insightful", c:"#8C2E6B"}
   ];
   var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var GENERAL_ID = "general";
 
   var state = load();
   var $ = function(id){ return document.getElementById(id); };
@@ -398,28 +433,51 @@
   var pinBuffer = "";
   var pinMode = "enter";   // enter | set | confirm
   var pinFirst = "";
-  var pendingSettingsToggle = null;
+  var patThread = null;    // thread id shown in patterns, or null for all
 
   /* ---------- storage ---------- */
   function defaults(){
     return {
-      name:"", startDate:"", showCounter:true, showFeelings:true, pin:"",
-      messages:[], attempts:[], setupDone:false
+      v:2, threads:[], current:null,
+      showCounter:true, showFeelings:true, pin:"",
+      messages:[], setupDone:false
     };
   }
+  function migrate(s){
+    if(s.v === 2) return s;
+    // v1: single person on the root object
+    var d = defaults();
+    d.showCounter = s.showCounter !== false;
+    d.showFeelings = s.showFeelings !== false;
+    d.pin = s.pin || "";
+    d.setupDone = !!s.setupDone;
+    var primary = { id:"primary", name:s.name || "", noContact:true, startDate:s.startDate || todayISO(), attempts:s.attempts || [] };
+    d.threads = [primary, generalThread()];
+    d.current = "primary";
+    d.messages = (s.messages || []).map(function(m){ m.thread = "primary"; return m; });
+    return d;
+  }
+  function generalThread(){ return { id:GENERAL_ID, name:"Everyone else", noContact:false, startDate:"", attempts:[] }; }
   function load(){
     try{
       var raw = localStorage.getItem(KEY);
       if(!raw) return defaults();
-      var s = JSON.parse(raw);
+      var parsed = JSON.parse(raw);
+      var s = migrate(parsed);
       var d = defaults();
       for(var k in d){ if(!(k in s)) s[k] = d[k]; }
+      if(!s.threads.length){ s.threads = [generalThread()]; s.current = GENERAL_ID; }
+      if(!threadById(s, s.current)) s.current = s.threads[0].id;
+      if(parsed.v !== 2){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
       return s;
     }catch(e){ return defaults(); }
   }
   function save(){
     try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
   }
+  function threadById(s, id){ for(var i=0;i<s.threads.length;i++){ if(s.threads[i].id===id) return s.threads[i]; } return null; }
+  function currentThread(){ return threadById(state, state.current) || state.threads[0]; }
+  function threadMessages(id){ return state.messages.filter(function(m){ return m.thread === id; }); }
 
   /* ---------- helpers ---------- */
   function todayISO(){
@@ -432,12 +490,16 @@
     return new Date(p[0], p[1]-1, p[2]);
   }
   function daysBetween(aISO, bISO){
-    var a = parseISO(aISO), b = parseISO(bISO);
-    return Math.round((b - a) / 86400000);
+    return Math.round((parseISO(bISO) - parseISO(aISO)) / 86400000);
   }
-  function dayNumber(){
-    if(!state.startDate) return 1;
-    return Math.max(1, daysBetween(state.startDate, todayISO()) + 1);
+  function dayNumber(th){
+    if(!th || !th.startDate) return 1;
+    return Math.max(1, daysBetween(th.startDate, todayISO()) + 1);
+  }
+  function totalDays(th){
+    var t = dayNumber(th);
+    (th.attempts||[]).forEach(function(a){ t += Math.max(1, daysBetween(a.start, a.end) + 1); });
+    return t;
   }
   function fmtTime(t){
     var d = new Date(t);
@@ -445,18 +507,26 @@
     var ap = h >= 12 ? "pm" : "am"; h = h % 12; if(h === 0) h = 12;
     return h + ":" + m + ap;
   }
+  function dayKey(t){ var d = new Date(t); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
   function fmtDay(t){
-    var d = new Date(t), now = new Date();
-    var iso = d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+    var iso = dayKey(t);
     if(iso === todayISO()) return "Today";
     var diff = daysBetween(iso, todayISO());
     if(diff === 1) return "Yesterday";
+    var d = new Date(t);
     return DAYS[d.getDay()] + ", " + d.toLocaleDateString(undefined, {month:"short", day:"numeric"});
   }
-  function dayKey(t){ var d = new Date(t); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
   function feelingById(id){ for(var i=0;i<FEELINGS.length;i++){ if(FEELINGS[i].id===id) return FEELINGS[i]; } return null; }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-  function escapeHTML(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function escapeHTML(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function download(name, text, type){
+    var blob = new Blob([text], {type:type||"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
 
   /* ---------- screens ---------- */
   function show(id){
@@ -469,8 +539,7 @@
   /* ---------- PIN ---------- */
   function buildKeypad(){
     var kp = $("keypad"); kp.innerHTML = "";
-    var keys = ["1","2","3","4","5","6","7","8","9","cancel","0","del"];
-    keys.forEach(function(k){
+    ["1","2","3","4","5","6","7","8","9","cancel","0","del"].forEach(function(k){
       var b = document.createElement("button");
       b.type = "button";
       if(k === "cancel"){ b.className = "key ghost"; b.textContent = "Cancel"; b.id = "pinCancel"; }
@@ -494,10 +563,7 @@
   }
   function pinPress(k){
     if(k === "cancel"){
-      if(pinMode !== "enter"){
-        state.pin = ""; save();
-        show("screen-settings"); renderSettings();
-      }
+      if(pinMode !== "enter"){ state.pin = ""; save(); show("screen-settings"); renderSettings(); }
       return;
     }
     if(k === "del"){ pinBuffer = pinBuffer.slice(0,-1); renderPinDots(); return; }
@@ -507,19 +573,17 @@
   }
   function pinComplete(){
     if(pinMode === "enter"){
-      if(pinBuffer === state.pin){ unlocked = true; enterMain(); }
-      else { pinFail(); }
+      if(pinBuffer === state.pin){ unlocked = true; enterMain(); } else { pinFail(); }
     } else if(pinMode === "set"){
       pinFirst = pinBuffer; pinBuffer = ""; pinMode = "confirm";
       $("pinTitle").innerHTML = "Enter it <em>again</em>";
       renderPinDots();
-    } else if(pinMode === "confirm"){
+    } else {
       if(pinBuffer === pinFirst){
         state.pin = pinFirst; save(); unlocked = true;
         show("screen-settings"); renderSettings();
       } else {
-        pinFail();
-        pinMode = "set"; pinFirst = "";
+        pinFail(); pinMode = "set"; pinFirst = "";
         $("pinTitle").innerHTML = "Didn't match. Choose a <em>PIN</em>";
       }
     }
@@ -532,14 +596,15 @@
 
   /* ---------- setup ---------- */
   function renderSetup(){
-    $("setupDate").value = state.startDate || todayISO();
+    $("setupDate").value = todayISO();
     $("setupDate").max = todayISO();
-    $("setupName").value = state.name || "";
+    $("setupName").value = "";
     show("screen-setup");
   }
   $("setupDoneBtn").addEventListener("click", function(){
-    state.name = $("setupName").value.trim();
-    state.startDate = $("setupDate").value || todayISO();
+    var primary = { id:"primary", name:$("setupName").value.trim(), noContact:true, startDate:$("setupDate").value || todayISO(), attempts:[] };
+    state.threads = [primary, generalThread()];
+    state.current = "primary";
     state.setupDone = true;
     save(); enterMain();
   });
@@ -549,24 +614,46 @@
 
   function enterMain(){
     show("screen-main");
-    renderCounter(); renderFeelings(); renderThread(true); updateSendButtons();
+    renderTabs(); renderCounter(); renderFeelings(); renderThread(true); renderCompose(); updateSendButtons();
+  }
+  function renderTabs(){
+    var el = $("tabs"); el.innerHTML = "";
+    if(state.threads.length <= 1){ el.style.display = "none"; return; }
+    el.style.display = "flex";
+    state.threads.forEach(function(th){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tab" + (th.id === state.current ? " on" : "");
+      b.textContent = th.name || (th.noContact ? "No contact" : "Thread");
+      b.addEventListener("click", function(){
+        state.current = th.id; save();
+        renderTabs(); renderCounter(); renderThread(true); renderCompose();
+      });
+      el.appendChild(b);
+    });
   }
   function renderCounter(){
+    var th = currentThread();
     var el = $("counter");
+    if(!th.noContact){
+      el.classList.remove("hidden");
+      $("counterDays").textContent = th.name || "Everyone else";
+      $("counterSub").textContent = threadMessages(th.id).length + " unsent";
+      return;
+    }
     el.classList.toggle("hidden", !state.showCounter);
-    var n = dayNumber();
-    $("counterDays").textContent = "Day " + n;
-    var sub = state.name ? "no contact with " + state.name : "of no contact";
-    if(state.attempts.length){
-      var total = totalDays();
-      sub += " · " + total + " days across " + (state.attempts.length+1) + " attempts";
+    $("counterDays").textContent = "Day " + dayNumber(th);
+    var sub = th.name ? "no contact with " + th.name : "of no contact";
+    if(th.attempts && th.attempts.length){
+      sub += " · " + totalDays(th) + " days across " + (th.attempts.length+1) + " attempts";
     }
     $("counterSub").textContent = sub;
   }
-  function totalDays(){
-    var t = dayNumber();
-    state.attempts.forEach(function(a){ t += Math.max(1, daysBetween(a.start, a.end) + 1); });
-    return t;
+  function renderCompose(){
+    var th = currentThread();
+    $("toRow").style.display = th.noContact ? "none" : "block";
+    $("draft").placeholder = th.noContact
+      ? "What do you want to say to " + (th.name || "them") + "?"
+      : "What do you want to say?";
   }
   function renderFeelings(){
     var wrap = $("feelings"); wrap.innerHTML = "";
@@ -586,16 +673,20 @@
   }
   function renderThread(scrollToEnd){
     var th = $("thread"); th.innerHTML = "";
-    var kept = state.messages;
-    if(!kept.length){
+    var msgs = threadMessages(state.current);
+    if(!msgs.length){
       var e = document.createElement("div");
       e.className = "thread-empty";
-      e.innerHTML = "<b>Nothing here yet.</b>When the urge comes, write it below. It arrives here, and nowhere else.";
+      var th0 = currentThread();
+      e.innerHTML = "<b>Nothing here yet.</b>" + (th0.noContact
+        ? "When the urge comes, write it below. It arrives here, and nowhere else."
+        : "Things you want to tell people but won't, or can't yet. Add who it's for if you like.")
+        + '<br><br><a href="../feel/">Not sure what you\'re feeling? Feel &amp; Do &rsaquo;</a>';
       th.appendChild(e);
       return;
     }
     var lastDay = null;
-    kept.forEach(function(m){
+    msgs.forEach(function(m){
       var dk = dayKey(m.t);
       if(dk !== lastDay){
         var lab = document.createElement("div");
@@ -606,8 +697,9 @@
       d.className = "msg" + (m.kept ? "" : " let-go");
       var f = m.feeling ? feelingById(m.feeling) : null;
       var meta = '<div class="meta">' + (f ? '<span class="dot" style="background:'+f.c+'"></span>' + f.label + ' · ' : '') + fmtTime(m.t) + '</div>';
+      var to = m.to ? '<div class="to">To ' + escapeHTML(m.to) + '</div>' : '';
       if(m.kept){
-        d.innerHTML = escapeHTML(m.text) + meta +
+        d.innerHTML = to + escapeHTML(m.text) + meta +
           '<button class="del" title="Remove this message" aria-label="Remove">&times;</button>';
         d.querySelector(".del").addEventListener("click", function(){
           if(confirm("Remove this message from the thread? The urge stays counted in Patterns.")){
@@ -615,7 +707,7 @@
           }
         });
       } else {
-        d.innerHTML = "Let go" + meta;
+        d.innerHTML = to + "Let go" + meta;
       }
       th.appendChild(d);
     });
@@ -637,23 +729,20 @@
   function send(keep){
     var text = draft.value.trim();
     if(!text) return;
-    var m = { id:uid(), t:Date.now(), text: keep ? text : "", feeling:selectedFeeling, kept:keep };
+    var th = currentThread();
+    var m = { id:uid(), thread:th.id, t:Date.now(), text: keep ? text : "", feeling:selectedFeeling, kept:keep };
+    if(!th.noContact){ var to = $("toInput").value.trim(); if(to) m.to = to; }
     state.messages.push(m);
     save();
-    if(keep){
-      renderThread(false);
-      var th = $("thread");
-      var last = th.lastElementChild; if(last) last.classList.add("new");
-      th.scrollTop = th.scrollHeight;
-    } else {
-      flyAway(text);
-      renderThread(false);
-      $("thread").scrollTop = $("thread").scrollHeight;
-    }
+    if(!keep) flyAway(text);
+    renderThread(false);
+    var tel = $("thread");
+    if(keep){ var last = tel.lastElementChild; if(last) last.classList.add("new"); }
+    tel.scrollTop = tel.scrollHeight;
     draft.value = ""; draft.style.height = "auto";
-    selectedFeeling = null; renderFeelings(); updateSendButtons();
+    selectedFeeling = null; renderFeelings(); updateSendButtons(); renderCounter();
     draft.blur();
-    setTimeout(function(){ showMoment(keep); }, keep ? 350 : 700);
+    setTimeout(function(){ showMoment(keep, th); }, keep ? 350 : 700);
   }
   function flyAway(text){
     var r = draft.getBoundingClientRect();
@@ -665,24 +754,39 @@
     document.body.appendChild(el);
     setTimeout(function(){ el.remove(); }, 950);
   }
-  function showMoment(keep){
+  function showMoment(keep, th){
+    $("momentTitle").innerHTML = th.noContact ? "Not to them. <em>That counts.</em>" : "Said. <em>Not sent.</em>";
     $("momentBody").textContent = keep
-      ? "The urge is real and you did something with it. It's in the thread if you want to reread it later, and it will get quieter in a few minutes."
-      : "It's gone. The urge is real and you did something with it. Give it a few minutes and it will get quieter.";
+      ? "It's in the thread if you want to reread it later. If it was an urge, it will get quieter in a few minutes."
+      : "It's gone. If it was an urge, it will get quieter in a few minutes.";
     $("moment").classList.add("show");
   }
   $("momentDismiss").addEventListener("click", function(){ $("moment").classList.remove("show"); });
   $("sendKeepBtn").addEventListener("click", function(){ send(true); });
   $("sendLetGoBtn").addEventListener("click", function(){ send(false); });
 
-  $("patternsBtn").addEventListener("click", function(){ renderPatterns(); show("screen-patterns"); });
+  $("patternsBtn").addEventListener("click", function(){ patThread = state.current; renderPatterns(); show("screen-patterns"); });
   $("patternsBackBtn").addEventListener("click", enterMain);
   $("settingsBtn").addEventListener("click", function(){ renderSettings(); show("screen-settings"); });
   $("settingsBackBtn").addEventListener("click", enterMain);
 
   /* ---------- patterns ---------- */
+  function renderPatTabs(){
+    var el = $("patTabs"); el.innerHTML = "";
+    if(state.threads.length <= 1){ el.style.display = "none"; return; }
+    el.style.display = "flex";
+    var opts = [{id:null, name:"All"}].concat(state.threads);
+    opts.forEach(function(th){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tab" + (th.id === patThread ? " on" : "");
+      b.textContent = th.name || (th.noContact ? "No contact" : "Thread");
+      b.addEventListener("click", function(){ patThread = th.id; renderPatterns(); });
+      el.appendChild(b);
+    });
+  }
   function renderPatterns(){
-    var ms = state.messages;
+    renderPatTabs();
+    var ms = patThread ? threadMessages(patThread) : state.messages;
     var now = Date.now(), week = 7*86400000;
     var thisWeek = 0, lastWeek = 0;
     var byHour = new Array(24).fill(0), byDay = new Array(7).fill(0), byFeel = {};
@@ -706,11 +810,10 @@
       var n = byFeel[f.id]||0;
       var row = document.createElement("div");
       row.className = "feel-line"; row.style.setProperty("--c", f.c);
-      row.innerHTML = '<span class="sw"></span><span style="width:74px">'+f.label+'</span><div class="track"><div class="fill" style="width:'+(maxF? (n/maxF*100):0)+'%"></div></div><span class="n">'+n+'</span>';
+      row.innerHTML = '<span class="sw"></span><span style="width:78px">'+f.label+'</span><div class="track"><div class="fill" style="width:'+(maxF? (n/maxF*100):0)+'%"></div></div><span class="n">'+n+'</span>';
       fl.appendChild(row);
     });
 
-    // insight sentence
     var ins = $("insight");
     if(ms.length < 3){
       ins.textContent = "Patterns show up after a few entries. For now, just keep bringing it here.";
@@ -721,19 +824,24 @@
       var topFeel = null, topN = 0;
       for(var k in byFeel){ if(byFeel[k] > topN){ topN = byFeel[k]; topFeel = k; } }
       var s = "The urge tends to hit " + band + ", most often on " + DAYS[peakD] + "s.";
-      if(topFeel) s += " You're usually feeling " + feelingById(topFeel).label.toLowerCase() + " when it does.";
+      if(topFeel && feelingById(topFeel)) s += " You're usually feeling " + feelingById(topFeel).label.toLowerCase() + " when it does.";
       if(lastWeek && thisWeek < lastWeek) s += " This week is quieter than last.";
       ins.textContent = s;
     }
 
     var al = $("attemptsList");
-    if(!state.attempts.length){
-      al.textContent = "One attempt so far, " + dayNumber() + " days and counting.";
+    var ncThreads = state.threads.filter(function(t){ return t.noContact && (!patThread || t.id === patThread); });
+    if(!ncThreads.length){
+      al.textContent = "No no-contact threads selected.";
     } else {
-      var lines = state.attempts.map(function(a, i){
-        return "Attempt " + (i+1) + ": " + Math.max(1, daysBetween(a.start, a.end)+1) + " days (" + a.start + " to " + a.end + ")";
+      var lines = [];
+      ncThreads.forEach(function(th){
+        if(ncThreads.length > 1 || !patThread) lines.push("<b>" + escapeHTML(th.name || "No contact") + "</b>");
+        (th.attempts||[]).forEach(function(a, i){
+          lines.push("Attempt " + (i+1) + ": " + Math.max(1, daysBetween(a.start, a.end)+1) + " days (" + a.start + " to " + a.end + ")");
+        });
+        lines.push("Attempt " + ((th.attempts||[]).length+1) + ": " + dayNumber(th) + " days and counting");
       });
-      lines.push("Attempt " + (state.attempts.length+1) + ": " + dayNumber() + " days and counting");
       al.innerHTML = lines.join("<br>");
     }
   }
@@ -751,52 +859,117 @@
 
   /* ---------- settings ---------- */
   function renderSettings(){
-    $("setName").value = state.name || "";
-    $("setDate").value = state.startDate || todayISO();
-    $("setDate").max = todayISO();
     $("setShowCounter").checked = !!state.showCounter;
     $("setShowFeelings").checked = !!state.showFeelings;
     $("setPin").checked = !!state.pin;
+    renderThreadList();
   }
-  $("setName").addEventListener("change", function(){ state.name = this.value.trim(); save(); });
-  $("setDate").addEventListener("change", function(){ if(this.value){ state.startDate = this.value; save(); } });
+  function renderThreadList(){
+    var el = $("threadList"); el.innerHTML = "";
+    state.threads.forEach(function(th){
+      var card = document.createElement("div");
+      card.className = "thread-card";
+      var n = threadMessages(th.id).length;
+      card.innerHTML =
+        '<div class="field"><label>Name</label><input type="text" class="tName" value="' + escapeHTML(th.name) + '" placeholder="Their name, or a label" autocomplete="off"></div>' +
+        '<label class="toggle"><span>No contact (show a day counter)</span><input type="checkbox" class="tNC"' + (th.noContact ? ' checked' : '') + '></label>' +
+        '<div class="field tDateWrap"' + (th.noContact ? '' : ' style="display:none"') + '><label>No contact started</label><input type="date" class="tDate" value="' + (th.startDate || todayISO()) + '" max="' + todayISO() + '"></div>' +
+        '<p class="note">' + n + ' message' + (n===1?'':'s') + (th.noContact ? ' · Day ' + dayNumber(th) : '') + '</p>' +
+        '<div class="row">' +
+          (th.noContact ? '<button type="button" class="btn-soft danger tSlip">I reached out</button>' : '') +
+          '<button type="button" class="btn-soft danger tDel">Delete thread</button>' +
+        '</div>';
+      card.querySelector(".tName").addEventListener("change", function(){ th.name = this.value.trim(); save(); });
+      card.querySelector(".tNC").addEventListener("change", function(){
+        th.noContact = this.checked;
+        if(th.noContact && !th.startDate) th.startDate = todayISO();
+        save(); renderThreadList();
+      });
+      card.querySelector(".tDate").addEventListener("change", function(){ if(this.value){ th.startDate = this.value; save(); renderThreadList(); } });
+      var slip = card.querySelector(".tSlip");
+      if(slip) slip.addEventListener("click", function(){
+        if(!confirm("Reset the day counter for " + (th.name || "this thread") + " to today? Messages and history stay.")) return;
+        var today = todayISO();
+        th.attempts = th.attempts || [];
+        th.attempts.push({ start: th.startDate || today, end: today });
+        th.startDate = today; save(); renderThreadList();
+        alert("Counter reset. Day 1 again, and all your previous days still count.");
+      });
+      card.querySelector(".tDel").addEventListener("click", function(){
+        if(state.threads.length === 1){ alert("Keep at least one thread."); return; }
+        if(!confirm("Delete " + (th.name || "this thread") + " and its " + n + " message" + (n===1?"":"s") + "? This cannot be undone.")) return;
+        state.threads = state.threads.filter(function(t){ return t.id !== th.id; });
+        state.messages = state.messages.filter(function(m){ return m.thread !== th.id; });
+        if(state.current === th.id) state.current = state.threads[0].id;
+        save(); renderThreadList();
+      });
+      el.appendChild(card);
+    });
+  }
+  $("addThreadBtn").addEventListener("click", function(){
+    var name = prompt("Name for the new thread (a person, or something like \"Work\")");
+    if(name === null) return;
+    name = name.trim(); if(!name) return;
+    var nc = confirm("Is this a no-contact thread with a day counter?\n\nOK = yes, Cancel = just a place to write.");
+    var th = { id:uid(), name:name, noContact:nc, startDate: nc ? todayISO() : "", attempts:[] };
+    state.threads.push(th); state.current = th.id; save();
+    renderThreadList();
+  });
   $("setShowCounter").addEventListener("change", function(){ state.showCounter = this.checked; save(); });
   $("setShowFeelings").addEventListener("change", function(){ state.showFeelings = this.checked; save(); });
   $("setPin").addEventListener("change", function(){
-    if(this.checked){ startPin("set"); }
-    else { state.pin = ""; save(); }
+    if(this.checked){ startPin("set"); } else { state.pin = ""; save(); }
   });
-  $("slipBtn").addEventListener("click", function(){
-    if(!confirm("Reset the day counter to today? Your messages and history stay.")) return;
-    var today = todayISO();
-    state.attempts.push({ start: state.startDate || today, end: today });
-    state.startDate = today; save();
-    renderSettings();
-    alert("Counter reset. Day 1 again, and all your previous days still count.");
-  });
+
   $("exportBtn").addEventListener("click", function(){
     var lines = ["Unsent — export " + new Date().toLocaleString(), ""];
-    lines.push("No contact since: " + (state.startDate||"?") + (state.name ? " (" + state.name + ")" : ""));
-    if(state.attempts.length){
-      lines.push("Previous attempts:");
-      state.attempts.forEach(function(a,i){ lines.push("  " + (i+1) + ". " + a.start + " to " + a.end); });
-    }
-    lines.push("", "Messages (" + state.messages.length + "):", "");
-    state.messages.forEach(function(m){
-      var f = m.feeling ? feelingById(m.feeling).label : "";
-      lines.push("[" + new Date(m.t).toLocaleString() + "]" + (f ? " (" + f + ")" : "") + (m.kept ? "" : " (let go)"));
-      if(m.kept) lines.push(m.text);
+    state.threads.forEach(function(th){
+      lines.push("== " + (th.name || (th.noContact ? "No contact" : "Thread")) + " ==");
+      if(th.noContact){
+        lines.push("No contact since: " + th.startDate + " (day " + dayNumber(th) + ")");
+        (th.attempts||[]).forEach(function(a,i){ lines.push("  previous attempt " + (i+1) + ": " + a.start + " to " + a.end); });
+      }
+      var ms = threadMessages(th.id);
+      lines.push("Messages: " + ms.length, "");
+      ms.forEach(function(m){
+        var f = m.feeling && feelingById(m.feeling) ? feelingById(m.feeling).label : "";
+        lines.push("[" + new Date(m.t).toLocaleString() + "]" + (m.to ? " to " + m.to : "") + (f ? " (" + f + ")" : "") + (m.kept ? "" : " (let go)"));
+        if(m.kept) lines.push(m.text);
+        lines.push("");
+      });
       lines.push("");
     });
-    var blob = new Blob([lines.join("\n")], {type:"text/plain"});
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "unsent-" + todayISO() + ".txt";
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    download("unsent-" + todayISO() + ".txt", lines.join("\n"), "text/plain");
+  });
+  $("exportJsonBtn").addEventListener("click", function(){
+    var out = JSON.parse(JSON.stringify(state)); delete out.pin;
+    out.exportedAt = new Date().toISOString();
+    out.feelings = FEELINGS.map(function(f){ return {id:f.id, label:f.label}; });
+    download("unsent-" + todayISO() + ".json", JSON.stringify(out, null, 2), "application/json");
+  });
+  $("importBtn").addEventListener("click", function(){ $("importFile").click(); });
+  $("importFile").addEventListener("change", function(){
+    var file = this.files && this.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var inc = JSON.parse(reader.result);
+        if(!inc || !Array.isArray(inc.messages)) throw new Error("not an Unsent export");
+        inc = migrate(inc);
+        if(!confirm("Import " + inc.messages.length + " messages and " + inc.threads.length + " threads? Existing data is kept; duplicates are skipped.")) return;
+        var haveMsg = {}; state.messages.forEach(function(m){ haveMsg[m.id] = true; });
+        inc.threads.forEach(function(t){ if(!threadById(state, t.id)) state.threads.push(t); });
+        inc.messages.forEach(function(m){ if(!haveMsg[m.id]){ state.messages.push(m); } });
+        state.messages.sort(function(a,b){ return a.t - b.t; });
+        save(); renderThreadList();
+        alert("Imported.");
+      }catch(e){ alert("Couldn't read that file: " + e.message); }
+    };
+    reader.readAsText(file);
+    this.value = "";
   });
   $("wipeBtn").addEventListener("click", function(){
-    if(!confirm("Delete everything? Messages, history, counter, PIN. This cannot be undone.")) return;
+    if(!confirm("Delete everything? Messages, threads, history, counter, PIN. This cannot be undone.")) return;
     if(!confirm("Really delete it all?")) return;
     state = defaults(); save();
     unlocked = false; selectedFeeling = null;
@@ -809,14 +982,13 @@
   else if(state.pin && !unlocked){ startPin("enter"); }
   else { enterMain(); }
 
-  // Re-lock when the app is backgrounded for a while
   var hiddenAt = null;
   document.addEventListener("visibilitychange", function(){
     if(document.hidden){ hiddenAt = Date.now(); }
     else if(hiddenAt && state.pin && Date.now() - hiddenAt > 60000){
       unlocked = false; startPin("enter");
     }
-    if(!document.hidden && unlocked) renderCounter();
+    if(!document.hidden && unlocked && $("screen-main").classList.contains("active")) renderCounter();
   });
 })();
 </script>

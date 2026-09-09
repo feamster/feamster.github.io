@@ -28,7 +28,8 @@
 
     --c-happy: #C7911E;
     --c-sad: #4E708C;
-    --c-disgusted: #5C8064;
+    --c-bad: #5C8064;
+    --c-disgusted: #6B6F76;
     --c-angry: #A8452E;
     --c-fearful: #6C5D8C;
     --c-surprised: #2E8C83;
@@ -232,6 +233,40 @@
   .top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
   .icon-btn{ background:none; color:var(--ink-soft); font-size:14px; padding:6px 0; }
 
+  /* ---------- Patterns / log ---------- */
+  .scroll{ flex:1; min-height:0; overflow-y:auto; padding-bottom:30px; }
+  h2{ font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:22px 0 8px; }
+  .stat-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .stat{ flex:1; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .stat b{ display:block; font-family:'Fraunces', serif; font-weight:500; font-size:24px; line-height:1; }
+  .stat span{ font-size:12px; color:var(--ink-soft); display:block; margin-top:4px; }
+  .insight{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; font-size:14px; line-height:1.5; margin-top:8px; }
+  .bars{ display:flex; align-items:flex-end; gap:3px; height:80px; padding:6px 0 0; }
+  .bar{ flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; opacity:.85; }
+  .bar.zero{ background:var(--line); }
+  .bar.hot{ background:var(--c-angry); }
+  .axis{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:4px; }
+  .feel-list{ display:flex; flex-direction:column; gap:6px; }
+  .feel-line{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .feel-line .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .feel-line .track{ flex:1; height:8px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .feel-line .fill{ height:100%; background:var(--c); }
+  .feel-line .n{ width:28px; text-align:right; color:var(--ink-soft); font-size:13px; }
+  .words{ display:flex; flex-wrap:wrap; gap:6px; }
+  .word{ border-radius:999px; padding:5px 11px; font-size:13px; color:#fff; background:var(--c); }
+  .word small{ opacity:.8; margin-left:4px; }
+  .log-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .log-list li{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; }
+  .log-list .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; margin-top:5px; }
+  .log-list .body{ flex:1; font-size:14px; line-height:1.4; }
+  .log-list .body b{ font-weight:600; }
+  .log-list .body small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:2px; }
+  .note{ font-size:13px; color:var(--ink-soft); line-height:1.5; margin:6px 0 0; }
+  .stack{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .stack .btn-soft{ flex:none; }
+  .ext-link{ display:block; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; color:var(--ink); text-decoration:none; font-size:15px; font-weight:600; margin-top:14px; }
+  .ext-link small{ display:block; font-weight:400; color:var(--ink-soft); font-size:13px; margin-top:2px; }
+
   @media (prefers-reduced-motion: reduce){
     .screen{animation:none;}
     .ring-fg{transition:none;}
@@ -266,6 +301,56 @@
     <div class="row-links">
       <button class="link" id="quickPickFromWheel">Just pick something for me</button>
       <button class="link" id="gotoActivitiesFromWheel">Edit my activities</button>
+    </div>
+    <div class="row-links">
+      <button class="link" id="logOnlyBtn" style="display:none;">Just log this feeling</button>
+      <button class="link" id="gotoPatternsBtn">My patterns</button>
+      <a class="link" href="../unsent/" style="text-decoration:underline;">Unsent &rsaquo;</a>
+    </div>
+  </section>
+
+  <!-- PATTERNS SCREEN -->
+  <section class="screen" id="screen-patterns">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Patterns</p>
+      <button class="icon-btn" id="donePatternsBtn">Done</button>
+    </div>
+    <div class="scroll">
+      <h1>What you've been <em>feeling</em></h1>
+      <div class="stat-row">
+        <div class="stat"><b id="statTotal">0</b><span>times logged</span></div>
+        <div class="stat"><b id="statWeek">0</b><span>this week</span></div>
+        <div class="stat"><b id="statDone">0</b><span>timers finished</span></div>
+      </div>
+      <div class="insight" id="insight"></div>
+
+      <h2>By family</h2>
+      <div class="feel-list" id="famList"></div>
+
+      <h2>Words you reach for</h2>
+      <div class="words" id="wordList"></div>
+
+      <h2>By time of day</h2>
+      <div class="bars" id="barsHour"></div>
+      <div class="axis"><span>12am</span><span>6am</span><span>noon</span><span>6pm</span><span>11pm</span></div>
+
+      <h2>By day of week</h2>
+      <div class="bars" id="barsDay"></div>
+      <div class="axis"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+
+      <h2>Recent</h2>
+      <ul class="log-list" id="logList"></ul>
+      <p class="note" id="logEmpty" style="display:none;">Nothing logged yet. Every time you start a timer, or tap "Just log this feeling," it lands here.</p>
+
+      <a class="ext-link" href="../unsent/">Unsent &rsaquo;<small>Something you want to say to someone, but won't.</small></a>
+
+      <h2>Your data</h2>
+      <p class="note">This log lives in this browser only. Export a copy if you want to keep it or look at it elsewhere.</p>
+      <div class="stack">
+        <button class="btn-soft" id="exportTextBtn">Export as text</button>
+        <button class="btn-soft" id="exportJsonBtn">Export everything as JSON</button>
+        <button class="btn-soft" id="clearLogBtn" style="color:var(--c-angry);">Clear the log</button>
+      </div>
     </div>
   </section>
 
@@ -312,6 +397,9 @@
       <button class="link" id="gotoActivitiesFromReveal">Edit my activities</button>
       <button class="link" id="startOverBtn">Start over</button>
     </div>
+    <div class="row-links">
+      <button class="link" id="gotoPatternsFromReveal">My patterns</button>
+    </div>
   </section>
 
   <!-- ACTIVITIES SCREEN -->
@@ -342,52 +430,59 @@
   // ---------- Feelings data (3 layers) ----------
   var WHEEL = [
     { label:"Happy", color:"var(--c-happy)", children:[
-      { label:"Playful", children:["Aroused","Cheeky","Silly"] },
-      { label:"Content", children:["Free","Joyful","Satisfied"] },
-      { label:"Interested", children:["Curious","Inquisitive","Engaged"] },
-      { label:"Proud", children:["Successful","Confident","Triumphant"] },
-      { label:"Accepted", children:["Respected","Valued","Included"] },
-      { label:"Powerful", children:["Courageous","Creative","Determined"] }
+      { label:"Playful", children:["Aroused","Cheeky"] },
+      { label:"Content", children:["Free","Joyful"] },
+      { label:"Interested", children:["Curious","Inquisitive"] },
+      { label:"Proud", children:["Successful","Confident"] },
+      { label:"Accepted", children:["Respected","Valued"] },
+      { label:"Powerful", children:["Courageous","Creative"] },
+      { label:"Peaceful", children:["Loving","Thankful"] },
+      { label:"Trusting", children:["Sensitive","Intimate"] },
+      { label:"Optimistic", children:["Hopeful","Inspired"] }
     ]},
     { label:"Surprised", color:"var(--c-surprised)", children:[
-      { label:"Startled", children:["Shocked","Dismayed","Stunned"] },
-      { label:"Confused", children:["Disillusioned","Perplexed","Bewildered"] },
-      { label:"Amazed", children:["Astonished","Awe-struck","Astounded"] },
-      { label:"Excited", children:["Eager","Energetic","Enthusiastic"] },
-      { label:"Overcome", children:["Speechless","Overwhelmed","Dumbfounded"] },
-      { label:"Moved", children:["Touched","Impressed","Inspired"] }
+      { label:"Startled", children:["Shocked","Dismayed"] },
+      { label:"Confused", children:["Disillusioned","Perplexed"] },
+      { label:"Amazed", children:["Astonished","Awe"] },
+      { label:"Excited", children:["Eager","Energetic"] }
+    ]},
+    { label:"Bad", color:"var(--c-bad)", children:[
+      { label:"Tired", children:["Unfocused","Sleepy"] },
+      { label:"Stressed", children:["Out of control","Overwhelmed"] },
+      { label:"Busy", children:["Rushed","Pressured"] },
+      { label:"Bored", children:["Apathetic","Indifferent"] }
     ]},
     { label:"Fearful", color:"var(--c-fearful)", children:[
-      { label:"Scared", children:["Helpless","Frightened","Terrified"] },
-      { label:"Anxious", children:["Worried","Nervous","Uneasy"] },
-      { label:"Insecure", children:["Inadequate","Unworthy","Inferior"] },
-      { label:"Weak", children:["Worthless","Insignificant","Small"] },
-      { label:"Rejected", children:["Excluded","Persecuted","Alienated"] },
-      { label:"Threatened", children:["Defensive","On edge","Panicked"] }
+      { label:"Scared", children:["Helpless","Frightened"] },
+      { label:"Anxious", children:["Overwhelmed","Worried"] },
+      { label:"Insecure", children:["Inadequate","Inferior"] },
+      { label:"Weak", children:["Worthless","Insignificant"] },
+      { label:"Rejected", children:["Excluded","Persecuted"] },
+      { label:"Threatened", children:["Nervous","Exposed"] }
     ]},
     { label:"Angry", color:"var(--c-angry)", children:[
-      { label:"Let down", children:["Betrayed","Resentful","Deceived"] },
-      { label:"Humiliated", children:["Disrespected","Ridiculed","Belittled"] },
-      { label:"Bitter", children:["Indignant","Violated","Cynical"] },
-      { label:"Mad", children:["Furious","Jealous","Enraged"] },
-      { label:"Aggressive", children:["Provoked","Hostile","Vindictive"] },
-      { label:"Frustrated", children:["Infuriated","Annoyed","Agitated"] }
+      { label:"Let down", children:["Betrayed","Resentful"] },
+      { label:"Humiliated", children:["Disrespected","Ridiculed"] },
+      { label:"Bitter", children:["Indignant","Violated"] },
+      { label:"Mad", children:["Furious","Jealous"] },
+      { label:"Aggressive", children:["Provoked","Hostile"] },
+      { label:"Frustrated", children:["Infuriated","Annoyed"] },
+      { label:"Distant", children:["Withdrawn","Numb"] },
+      { label:"Critical", children:["Skeptical","Dismissive"] }
     ]},
     { label:"Disgusted", color:"var(--c-disgusted)", children:[
-      { label:"Disapproving", children:["Loathing","Condemning","Disdainful"] },
-      { label:"Disappointed", children:["Appalled","Revolted","Displeased"] },
-      { label:"Awful", children:["Nauseated","Detestable","Repugnant"] },
-      { label:"Repelled", children:["Horrified","Hesitant","Averse"] },
-      { label:"Suspicious", children:["Skeptical","Withdrawn","Wary"] },
-      { label:"Judgmental", children:["Critical","Contemptuous","Scornful"] }
+      { label:"Disapproving", children:["Judgmental","Embarrassed"] },
+      { label:"Disappointed", children:["Appalled","Revolted"] },
+      { label:"Awful", children:["Nauseated","Detestable"] },
+      { label:"Repelled", children:["Horrified","Hesitant"] }
     ]},
     { label:"Sad", color:"var(--c-sad)", children:[
-      { label:"Lonely", children:["Isolated","Abandoned","Forgotten"] },
-      { label:"Vulnerable", children:["Fragile","Victimized","Exposed"] },
-      { label:"Guilty", children:["Ashamed","Remorseful","Regretful"] },
-      { label:"Despair", children:["Grief","Powerless","Hopeless"] },
-      { label:"Depressed", children:["Empty","Numb","Heavy"] },
-      { label:"Hurt", children:["Wounded","Embarrassed","Aching"] }
+      { label:"Lonely", children:["Isolated","Abandoned"] },
+      { label:"Vulnerable", children:["Victimized","Fragile"] },
+      { label:"Despair", children:["Grief","Powerless"] },
+      { label:"Guilty", children:["Ashamed","Remorseful"] },
+      { label:"Depressed", children:["Empty","Inferior"] },
+      { label:"Hurt", children:["Disappointed","Embarrassed"] }
     ]}
   ];
 
@@ -408,6 +503,8 @@
     path: [],            // array of {label, color} chosen so far, e.g. [{label:"Happy"}, {label:"Proud"}]
     feeling: null,        // {label, family}
     activities: loadActivities(),
+    log: loadLog(),
+    currentEntry: null,   // log entry for the session in progress
     timeLeft: TIMER_SECONDS,
     timerId: null,
     running: false
@@ -423,6 +520,34 @@
     }catch(e){}
     return DEFAULT_ACTIVITIES.slice();
   }
+  function loadLog(){
+    try{
+      var raw = localStorage.getItem("feelAndDo.log");
+      if(raw){ var parsed = JSON.parse(raw); if(Array.isArray(parsed)) return parsed; }
+    }catch(e){}
+    return [];
+  }
+  function saveLog(){
+    try{ localStorage.setItem("feelAndDo.log", JSON.stringify(state.log)); }catch(e){}
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function coreOf(label){
+    for(var i=0;i<WHEEL.length;i++){ if(WHEEL[i].label === label) return WHEEL[i]; }
+    return null;
+  }
+  function logFeeling(mode){
+    if(!state.feeling) return null;
+    var entry = {
+      id: uid(), t: Date.now(),
+      feeling: state.feeling.label, family: state.feeling.family,
+      path: state.path.map(function(p){ return p.label; }),
+      mode: mode,             // "timer" | "log"
+      activity: null, done: false
+    };
+    state.log.push(entry); saveLog();
+    state.currentEntry = entry;
+    return entry;
+  }
   function saveActivities(){
     try{ localStorage.setItem("feelAndDo.activities", JSON.stringify(state.activities)); }catch(e){}
   }
@@ -432,7 +557,8 @@
     wheel: document.getElementById("screen-wheel"),
     timer: document.getElementById("screen-timer"),
     reveal: document.getElementById("screen-reveal"),
-    activities: document.getElementById("screen-activities")
+    activities: document.getElementById("screen-activities"),
+    patterns: document.getElementById("screen-patterns")
   };
   var fromScreen = "wheel";
   function showScreen(name){
@@ -458,9 +584,9 @@
   }
 
   function fontSizeFor(count, label){
-    var base = count <= 3 ? 21 : (count <= 6 ? 16 : 13);
-    if(label.length > 10) base -= 2;
-    if(label.length > 14) base -= 2;
+    var base = count <= 3 ? 21 : (count <= 6 ? 16 : (count <= 7 ? 14 : 12.5));
+    if(label.length > 9) base -= 1.5;
+    if(label.length > 11) base -= 1.5;
     return base;
   }
 
@@ -550,7 +676,7 @@
     backBtn.classList.toggle("show", state.path.length > 0);
 
     if(state.path.length === 0){
-      crumbText.innerHTML = "Six core feelings";
+      crumbText.innerHTML = "Seven core feelings";
       centerHint.textContent = "Tap a slice";
       useWrap.style.display = "none";
     } else if(state.path.length === 1){
@@ -581,6 +707,7 @@
     var panel = document.getElementById("pickedPanel");
     panel.innerHTML = '<p class="feeling">' + label + '</p><p class="family">under ' + family + '</p>';
     document.getElementById("startTimerBtn").disabled = false;
+    document.getElementById("logOnlyBtn").style.display = "";
   }
 
   document.getElementById("backLevelBtn").addEventListener("click", function(){
@@ -666,7 +793,10 @@
       try{ new Notification("Time's up", { body: "Your ten minutes are up." }); }catch(e){}
     }
   }
-  function onTimerComplete(){ chime(); revealActivity("feeling"); }
+  function onTimerComplete(){
+    if(state.currentEntry){ state.currentEntry.done = true; saveLog(); }
+    chime(); revealActivity("feeling");
+  }
 
   // ---------- Reveal ----------
   var lastActivityIndex = -1;
@@ -691,6 +821,7 @@
       document.getElementById("revealFeeling").textContent = state.feeling ? state.feeling.label.toLowerCase() : "this";
     }
     document.getElementById("revealActivity").textContent = pick || "Add some activities first \u2014 tap \u201cEdit my activities.\u201d";
+    if(revealMode === "feeling" && state.currentEntry && pick){ state.currentEntry.activity = pick; saveLog(); }
     showScreen("reveal");
   }
 
@@ -734,6 +865,7 @@
 
   // ---------- Navigation wiring ----------
   document.getElementById("startTimerBtn").addEventListener("click", function(){
+    logFeeling("timer");
     document.getElementById("timerFeelingLabel").textContent = state.feeling.label;
     state.timeLeft = TIMER_SECONDS;
     renderTimer();
@@ -756,12 +888,146 @@
   document.getElementById("pickAgainBtn").addEventListener("click", function(){ revealActivity(); });
   document.getElementById("quickPickFromWheel").addEventListener("click", function(){ revealActivity("quick"); });
   document.getElementById("quickPickFromActivities").addEventListener("click", function(){ revealActivity("quick"); });
-  document.getElementById("startOverBtn").addEventListener("click", function(){
+  function resetWheel(){
     state.path = [];
     state.feeling = null;
+    state.currentEntry = null;
     document.getElementById("pickedPanel").innerHTML = "";
     document.getElementById("startTimerBtn").disabled = true;
+    document.getElementById("logOnlyBtn").style.display = "none";
     renderWheel();
+  }
+  document.getElementById("logOnlyBtn").addEventListener("click", function(){
+    var e = logFeeling("log");
+    if(!e) return;
+    var panel = document.getElementById("pickedPanel");
+    panel.innerHTML = '<p class="feeling">Logged</p><p class="family">' + e.feeling + ', ' + new Date(e.t).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) + '</p>';
+    document.getElementById("logOnlyBtn").style.display = "none";
+    setTimeout(resetWheel, 1400);
+  });
+  document.getElementById("gotoPatternsBtn").addEventListener("click", function(){ fromScreen = "wheel"; renderPatterns(); showScreen("patterns"); });
+  document.getElementById("gotoPatternsFromReveal").addEventListener("click", function(){ fromScreen = "reveal"; renderPatterns(); showScreen("patterns"); });
+  document.getElementById("donePatternsBtn").addEventListener("click", function(){ showScreen(fromScreen); });
+
+  // ---------- Patterns ----------
+  var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  function bars(el, arr){
+    el.innerHTML = "";
+    var max = Math.max.apply(null, arr);
+    arr.forEach(function(n){
+      var b = document.createElement("div");
+      b.className = "bar" + (n === 0 ? " zero" : (max > 0 && n === max ? " hot" : ""));
+      b.style.height = max ? Math.max(3, n/max*100) + "%" : "3%";
+      b.title = n;
+      el.appendChild(b);
+    });
+  }
+  function renderPatterns(){
+    var log = state.log.slice();
+    var now = Date.now(), week = 7*86400000;
+    var thisWeek = 0, done = 0;
+    var byHour = new Array(24).fill(0), byDay = new Array(7).fill(0), byFam = {}, byWord = {};
+    log.forEach(function(e){
+      if(now - e.t < week) thisWeek++;
+      if(e.done) done++;
+      var d = new Date(e.t);
+      byHour[d.getHours()]++; byDay[d.getDay()]++;
+      byFam[e.family] = (byFam[e.family]||0) + 1;
+      byWord[e.feeling] = (byWord[e.feeling]||0) + 1;
+    });
+    document.getElementById("statTotal").textContent = log.length;
+    document.getElementById("statWeek").textContent = thisWeek;
+    document.getElementById("statDone").textContent = done;
+
+    var fl = document.getElementById("famList"); fl.innerHTML = "";
+    var maxF = 0; WHEEL.forEach(function(c){ maxF = Math.max(maxF, byFam[c.label]||0); });
+    WHEEL.forEach(function(c){
+      var n = byFam[c.label]||0;
+      var row = document.createElement("div");
+      row.className = "feel-line"; row.style.setProperty("--c", c.color);
+      row.innerHTML = '<span class="sw"></span><span style="width:78px">'+c.label+'</span><div class="track"><div class="fill" style="width:'+(maxF? (n/maxF*100):0)+'%"></div></div><span class="n">'+n+'</span>';
+      fl.appendChild(row);
+    });
+
+    var wl = document.getElementById("wordList"); wl.innerHTML = "";
+    var words = Object.keys(byWord).sort(function(a,b){ return byWord[b]-byWord[a]; }).slice(0,12);
+    if(!words.length){ wl.innerHTML = '<span class="note">Nothing yet.</span>'; }
+    words.forEach(function(w){
+      var fam = null;
+      for(var i=0;i<log.length;i++){ if(log[i].feeling === w){ fam = log[i].family; break; } }
+      var core = coreOf(fam);
+      var sp = document.createElement("span");
+      sp.className = "word"; sp.style.setProperty("--c", core ? core.color : "var(--accent)");
+      sp.innerHTML = w + "<small>" + byWord[w] + "</small>";
+      wl.appendChild(sp);
+    });
+
+    bars(document.getElementById("barsHour"), byHour);
+    bars(document.getElementById("barsDay"), byDay);
+
+    var ins = document.getElementById("insight");
+    if(log.length < 3){
+      ins.textContent = "Patterns show up after a few entries. Keep naming it.";
+    } else {
+      var peakH = byHour.indexOf(Math.max.apply(null, byHour));
+      var peakD = byDay.indexOf(Math.max.apply(null, byDay));
+      var band = peakH < 5 ? "late at night" : peakH < 11 ? "in the morning" : peakH < 17 ? "in the afternoon" : peakH < 21 ? "in the evening" : "late at night";
+      var topFam = null, topN = 0;
+      for(var k in byFam){ if(byFam[k] > topN){ topN = byFam[k]; topFam = k; } }
+      var txt = "You come here most " + band + ", usually on " + DAYS[peakD] + "s.";
+      if(topFam) txt += " The most common family is " + topFam.toLowerCase() + (words.length ? ", and the word you reach for most is \u201c" + words[0] + ".\u201d" : ".");
+      if(done && log.length) txt += " You finished the timer " + Math.round(done/log.length*100) + "% of the time.";
+      ins.textContent = txt;
+    }
+
+    var ll = document.getElementById("logList"); ll.innerHTML = "";
+    document.getElementById("logEmpty").style.display = log.length ? "none" : "block";
+    log.slice().reverse().slice(0,30).forEach(function(e){
+      var core = coreOf(e.family);
+      var li = document.createElement("li");
+      li.style.setProperty("--c", core ? core.color : "var(--accent)");
+      var when = new Date(e.t).toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+      li.innerHTML = '<span class="sw"></span><div class="body"><b>' + e.feeling + '</b>' +
+        (e.feeling !== e.family ? ' <span style="color:var(--ink-soft)">under ' + e.family + '</span>' : '') +
+        '<small>' + when + (e.activity ? ' \u00b7 then: ' + e.activity : (e.mode === "timer" ? (e.done ? ' \u00b7 timer finished' : ' \u00b7 timer not finished') : ' \u00b7 logged')) + '</small></div>' +
+        '<button class="remove-btn" aria-label="Remove">\u2715</button>';
+      li.querySelector(".remove-btn").addEventListener("click", function(){
+        if(!confirm("Remove this entry?")) return;
+        state.log = state.log.filter(function(x){ return x.id !== e.id; });
+        saveLog(); renderPatterns();
+      });
+      ll.appendChild(li);
+    });
+  }
+  function download(name, text, type){
+    var blob = new Blob([text], {type:type||"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function todayISO(){ var d = new Date(); return d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate(); }
+  document.getElementById("exportTextBtn").addEventListener("click", function(){
+    var lines = ["Feel & Do \u2014 log export " + new Date().toLocaleString(), ""];
+    state.log.forEach(function(e){
+      lines.push("[" + new Date(e.t).toLocaleString() + "] " + e.path.concat(e.path[e.path.length-1] === e.feeling ? [] : [e.feeling]).join(" > ") +
+        (e.mode === "timer" ? (e.done ? " (timer finished)" : " (timer not finished)") : " (logged)") +
+        (e.activity ? " \u2192 " + e.activity : ""));
+    });
+    lines.push("", "Activities:", "");
+    state.activities.forEach(function(a){ lines.push("- " + a); });
+    download("feel-and-do-" + todayISO() + ".txt", lines.join("\n"), "text/plain");
+  });
+  document.getElementById("exportJsonBtn").addEventListener("click", function(){
+    download("feel-and-do-" + todayISO() + ".json", JSON.stringify({ exportedAt: new Date().toISOString(), activities: state.activities, log: state.log }, null, 2), "application/json");
+  });
+  document.getElementById("clearLogBtn").addEventListener("click", function(){
+    if(!confirm("Clear the whole log? Your activities list stays.")) return;
+    state.log = []; saveLog(); renderPatterns();
+  });
+
+  document.getElementById("startOverBtn").addEventListener("click", function(){
+    resetWheel();
     showScreen("wheel");
   });
 
