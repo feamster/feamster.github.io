@@ -402,35 +402,63 @@
   var DEFAULT_ACTIVITIES = {
     family: [
       "Do one thing with the kids this week — pick it now",
-      "Check in with your ex-wife about how co-parenting is going"
+      "Check in with your ex-wife about how co-parenting is going",
+      "Text each kid one specific thing you noticed about them",
+      "Plan the next kid weekend now",
+      "Call a parent or sibling",
+      "Cook one meal with the kids instead of for them"
     ],
     friends: [
       "Reach out to one friend you haven't talked to in a while",
       "Try an activity where you might meet new people",
       "Invite a friend over for dinner",
-      "Plan the community music night — start with a housewarming"
+      "Plan the community music night — start with a housewarming",
+      "Send a song you're working on to one friend",
+      "Book a climbing session with someone instead of going solo",
+      "Text the friend you thought about today, right now",
+      "Say yes to the next invite even if you'd rather not"
     ],
     spirit: [
       "Spend some time outside in nature today",
-      "Meditate for ten minutes"
+      "Meditate for ten minutes",
+      "Walk by the lake with no phone",
+      "Ten minutes of breathing before opening email",
+      "Write three lines of gratitude",
+      "Sit outside with coffee before the day starts"
     ],
     work: [
       "Make a little progress on one of the two book projects",
-      "Put an hour into the side hustle"
+      "Put an hour into the side hustle",
+      "Write 200 words on a book chapter",
+      "Thirty minutes on the side hustle before anything else",
+      "Clear one nagging task you've been avoiding",
+      "Take one meeting as a walk"
     ],
     hobbies: [
       "Go climbing",
       "Work on the album — record or produce one track",
       "Write a new song, or part of one",
-      "Read a chapter of a book"
+      "Read a chapter of a book",
+      "Twenty minutes on the Digitakt",
+      "Learn one new guitar part",
+      "Bounce a rough mix and listen to it on a walk",
+      "Go skating, paddleboarding, cycling, or swimming",
+      "Take the camera out for an hour",
+      "Read for fifteen minutes before bed"
     ],
     selfcare: [
       "Go for a run",
       "Cook yourself a real meal",
       "Stretch for ten minutes",
-      "Get to bed early tonight"
+      "Get to bed early tonight",
+      "A run before work",
+      "Go to bed thirty minutes earlier",
+      "Drink water and eat lunch away from the desk",
+      "Book the appointment you've been putting off",
+      "A proper stretch after climbing"
     ]
   };
+  var DEFAULTS_VERSION = 2;
 
   // First two snapshots come from the paper Life Map.
   var SEED_ENTRIES = [
@@ -445,7 +473,7 @@
   function freshState(){
     var acts = {};
     AXES.forEach(function(a){ acts[a.key] = DEFAULT_ACTIVITIES[a.key].slice(); });
-    return { v:1, seeded:true, entries: SEED_ENTRIES.map(function(e){ return JSON.parse(JSON.stringify(e)); }), activities: acts, done: [] };
+    return { v:1, seeded:true, defaultsVersion:DEFAULTS_VERSION, entries: SEED_ENTRIES.map(function(e){ return JSON.parse(JSON.stringify(e)); }), activities: acts, done: [] };
   }
   function load(){
     try{
@@ -457,6 +485,10 @@
           AXES.forEach(function(a){ if(!Array.isArray(p.activities[a.key])) p.activities[a.key] = DEFAULT_ACTIVITIES[a.key].slice(); });
           if(!Array.isArray(p.entries)) p.entries = [];
           if(!Array.isArray(p.done)) p.done = [];
+          if((p.defaultsVersion||1) < DEFAULTS_VERSION){
+            AXES.forEach(function(a){ DEFAULT_ACTIVITIES[a.key].forEach(function(x){ if(p.activities[a.key].indexOf(x) < 0) p.activities[a.key].push(x); }); });
+            p.defaultsVersion = DEFAULTS_VERSION;
+          }
           return p;
         }
       }
