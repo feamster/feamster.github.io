@@ -399,10 +399,11 @@
   ];
   var AXIS = {}; AXES.forEach(function(a){ AXIS[a.key] = a; });
 
+  // The first items in each list are from the Life Map doc, adapted so each is doable today.
   var DEFAULT_ACTIVITIES = {
     family: [
-      "Do one thing with the kids this week — pick it now",
-      "Check in with your ex-wife about how co-parenting is going",
+      "Be more present with my children: do one thing with them this week",
+      "Check in with my ex-wife about the co-parenting relationship",
       "Text each kid one specific thing you noticed about them",
       "Plan the next kid weekend now",
       "Call a parent or sibling",
@@ -411,36 +412,36 @@
       "Ask your ex-wife what would actually help her this week"
     ],
     friends: [
-      "Reach out to one friend you haven't talked to in a while",
-      "Try an activity where you might meet new people",
-      "Invite a friend over for dinner",
-      "Plan the community music night — start with a housewarming",
+      "Reach out to one friend I haven't talked to in a while",
+      "Make new friends through activities: sign up for one this week",
+      "Invite one friend over for dinner (every week or two once the house is closed)",
+      "Host a community music event: start by planning the housewarming",
       "Send a song you're working on to one friend",
       "Book a climbing session with someone instead of going solo",
       "Text the friend you thought about today, right now",
       "Say yes to the next invite even if you'd rather not"
     ],
     spirit: [
-      "Spend some time outside in nature today",
-      "Meditate for ten minutes",
+      "Be outside in nature today",
+      "Meditate today (daily practice)",
       "Walk by the lake with no phone",
       "Ten minutes of breathing before opening email",
       "Write three lines of gratitude",
       "Sit outside with coffee before the day starts"
     ],
     work: [
-      "Make a little progress on one of the two book projects",
-      "Put an hour into the side hustle",
+      "Make progress on one of the two book projects (finish them: progress each week)",
+      "Devote some time and energy to the side hustle today",
       "Write 200 words on a book chapter",
       "Thirty minutes on the side hustle before anything else",
       "Clear one nagging task you've been avoiding",
       "Take one meeting as a walk"
     ],
     hobbies: [
-      "Go climbing",
-      "Work on the album — record or produce one track",
-      "Write a new song, or part of one",
-      "Read a chapter of a book",
+      "Push a new hobby like climbing: go this week",
+      "Work on the album: one recording or production session (finish it this year)",
+      "Write a new song, or part of one (two a month)",
+      "Read a chapter of a book (one book a month)",
       "Twenty minutes on the Digitakt",
       "Learn one new guitar part",
       "Bounce a rough mix and listen to it on a walk",
@@ -460,7 +461,24 @@
       "A proper stretch after climbing"
     ]
   };
-  var DEFAULTS_VERSION = 3;
+  // Old paraphrases → doc wording, applied once to existing data.
+  var RENAMES = {
+    "Do one thing with the kids this week — pick it now": "Be more present with my children: do one thing with them this week",
+    "Check in with your ex-wife about how co-parenting is going": "Check in with my ex-wife about the co-parenting relationship",
+    "Reach out to one friend you haven't talked to in a while": "Reach out to one friend I haven't talked to in a while",
+    "Try an activity where you might meet new people": "Make new friends through activities: sign up for one this week",
+    "Invite a friend over for dinner": "Invite one friend over for dinner (every week or two once the house is closed)",
+    "Plan the community music night — start with a housewarming": "Host a community music event: start by planning the housewarming",
+    "Spend some time outside in nature today": "Be outside in nature today",
+    "Meditate for ten minutes": "Meditate today (daily practice)",
+    "Make a little progress on one of the two book projects": "Make progress on one of the two book projects (finish them: progress each week)",
+    "Put an hour into the side hustle": "Devote some time and energy to the side hustle today",
+    "Go climbing": "Push a new hobby like climbing: go this week",
+    "Work on the album — record or produce one track": "Work on the album: one recording or production session (finish it this year)",
+    "Write a new song, or part of one": "Write a new song, or part of one (two a month)",
+    "Read a chapter of a book": "Read a chapter of a book (one book a month)"
+  };
+  var DEFAULTS_VERSION = 4;
   var SEED_VERSION = 2;
 
   // First two snapshots come from the paper Life Map.
@@ -489,7 +507,15 @@
           if(!Array.isArray(p.entries)) p.entries = [];
           if(!Array.isArray(p.done)) p.done = [];
           if((p.defaultsVersion||1) < DEFAULTS_VERSION){
-            AXES.forEach(function(a){ DEFAULT_ACTIVITIES[a.key].forEach(function(x){ if(p.activities[a.key].indexOf(x) < 0) p.activities[a.key].push(x); }); });
+            AXES.forEach(function(a){
+              p.activities[a.key] = p.activities[a.key].map(function(x){ return RENAMES[x] || x; });
+              DEFAULT_ACTIVITIES[a.key].forEach(function(x){ if(p.activities[a.key].indexOf(x) < 0) p.activities[a.key].push(x); });
+              // Put the doc's items first, in doc order, keeping everything else after.
+              var lead = DEFAULT_ACTIVITIES[a.key].filter(function(x){ return p.activities[a.key].indexOf(x) >= 0; });
+              var rest = p.activities[a.key].filter(function(x){ return lead.indexOf(x) < 0; });
+              p.activities[a.key] = lead.concat(rest);
+            });
+            p.done.forEach(function(d){ if(RENAMES[d.activity]) d.activity = RENAMES[d.activity]; });
             p.defaultsVersion = DEFAULTS_VERSION;
           }
           if((p.seedVersion||1) < SEED_VERSION){
