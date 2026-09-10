@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Life Map</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F6B52">
+<meta name="apple-mobile-web-app-title" content="Life Map">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7EBE9;
+    --bg-2: #DCE2DF;
+    --ink: #1B262F;
+    --ink-soft: #55656D;
+    --paper: #F6F4EF;
+    --line: rgba(27,38,47,0.14);
+    --accent: #4F6B52;
+    --accent-ink: #F6F9F6;
+    --danger: #A8452E;
+
+    --c-family: #A8452E;
+    --c-friends: #C7911E;
+    --c-spirit: #6C5D8C;
+    --c-work: #4E708C;
+    --c-hobbies: #2E8C83;
+    --c-selfcare: #5C8064;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 50% -10%, var(--bg-2), var(--bg) 60%);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    padding: env(safe-area-inset-top,0) 20px calc(env(safe-area-inset-bottom,0) + 28px);
+    display:flex;
+    flex-direction:column;
+  }
+
+  .screen{ display:none; flex-direction:column; flex:1; padding-top:26px; animation: rise .4s ease both; }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .kicker{ font-size:13px; color:var(--ink-soft); margin:0 0 6px; min-height:16px; }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:28px;
+    line-height:1.15;
+    margin:0 0 18px;
+  }
+  h1 em{ font-style:italic; font-weight:400; }
+  h2{ font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:22px 0 8px; }
+  h2 small{ font-family:'Inter', sans-serif; font-size:13px; color:var(--ink-soft); font-weight:400; margin-left:6px; }
+
+  button, .link{ font-family:'Inter', sans-serif; border:none; cursor:pointer; }
+  .spacer{flex:1;}
+  .top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .icon-btn{ background:none; color:var(--ink-soft); font-size:14px; padding:6px 0; }
+  .scroll{ flex:1; min-height:0; overflow-y:auto; padding-bottom:30px; }
+
+  .cta{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    padding:16px 20px;
+    border-radius:14px;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-size:16px;
+    font-weight:600;
+    margin-top:16px;
+    transition: transform .15s ease, opacity .2s ease;
+  }
+  .cta:disabled{opacity:0.4; pointer-events:none;}
+  .cta:active{transform:scale(0.98);}
+  .link{
+    background:none;
+    color:var(--ink-soft);
+    font-size:14px;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    padding:10px 0;
+  }
+  .row-links{ display:flex; justify-content:center; gap:20px; margin-top:4px; flex-wrap:wrap; }
+  .btn-soft{
+    flex:1; padding:13px; border-radius:12px;
+    background:var(--paper); border:1px solid var(--line);
+    color:var(--ink); font-size:14px; font-weight:500;
+  }
+  .btn-soft:active{transform:scale(0.98);}
+  .stack{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .stack .btn-soft{ flex:none; }
+  .note{ font-size:13px; color:var(--ink-soft); line-height:1.5; margin:6px 0 0; }
+  .ext-link{ display:block; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; color:var(--ink); text-decoration:none; font-size:15px; font-weight:600; margin-top:10px; }
+  .ext-link small{ display:block; font-weight:400; color:var(--ink-soft); font-size:13px; margin-top:2px; }
+
+  /* ---------- Radar ---------- */
+  .radar-wrap{ position:relative; width:100%; max-width:340px; margin:0 auto 6px; aspect-ratio:1/1; }
+  svg#radar{ width:100%; height:100%; display:block; overflow:visible; }
+  .radar-grid{ fill:none; stroke:var(--line); stroke-width:1; }
+  .radar-grid.outer{ stroke:rgba(27,38,47,0.28); }
+  .radar-spoke{ stroke:var(--line); stroke-width:1; }
+  .radar-ghost{ fill:rgba(27,38,47,0.06); stroke:rgba(27,38,47,0.45); stroke-width:1.5; stroke-dasharray:4 4; }
+  .radar-now{ fill:rgba(79,107,82,0.22); stroke:var(--accent); stroke-width:2.5; stroke-linejoin:round; }
+  .radar-dot{ stroke:var(--paper); stroke-width:2; }
+  .radar-label{ font-family:'Inter', sans-serif; font-size:11.5px; font-weight:600; fill:var(--ink-soft); }
+  .radar-legend{ display:flex; justify-content:center; gap:16px; font-size:12px; color:var(--ink-soft); margin:0 0 10px; flex-wrap:wrap; }
+  .radar-legend span::before{ content:""; display:inline-block; width:18px; height:0; border-top:2px solid var(--accent); margin-right:6px; vertical-align:middle; }
+  .radar-legend span.ghost::before{ border-top:2px dashed rgba(27,38,47,0.5); }
+
+  /* ---------- Date + sliders ---------- */
+  .date-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:12px; }
+  .date-row label{ font-size:14px; color:var(--ink-soft); }
+  .date-row input[type=date]{ font-family:'Inter', sans-serif; font-size:15px; font-weight:500; color:var(--ink); background:none; border:none; padding:0; text-align:right; }
+  .date-row input[type=date]:focus{ outline:none; }
+  .date-row .tag{ font-size:11.5px; color:var(--accent); font-weight:600; background:rgba(79,107,82,0.12); border-radius:999px; padding:3px 8px; white-space:nowrap; }
+
+  .sliders{ display:flex; flex-direction:column; gap:8px; }
+  .slider-row{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 14px 8px; }
+  .slider-head{ display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .slider-head .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .slider-head .name{ flex:1; font-size:14.5px; font-weight:500; }
+  .slider-head .val{ font-family:'Fraunces', serif; font-size:22px; line-height:1; min-width:28px; text-align:right; font-variant-numeric:tabular-nums; }
+  .slider-head .delta{ font-size:12px; color:var(--ink-soft); min-width:32px; text-align:right; }
+  .slider-head .delta.up{ color:var(--c-selfcare); }
+  .slider-head .delta.down{ color:var(--danger); }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    width:100%; height:8px; border-radius:4px; margin:6px 0 4px;
+    background: linear-gradient(to right, var(--c) 0%, var(--c) var(--pct), var(--line) var(--pct), var(--line) 100%);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:26px; height:26px; border-radius:50%;
+    background:var(--paper); border:3px solid var(--c);
+    box-shadow:0 2px 6px rgba(27,38,47,0.2); cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px; height:20px; border-radius:50%;
+    background:var(--paper); border:3px solid var(--c);
+    box-shadow:0 2px 6px rgba(27,38,47,0.2); cursor:pointer;
+  }
+  .note-row{ margin-top:10px; }
+  .note-row input{
+    width:100%; padding:12px 14px; border-radius:12px;
+    border:1px solid var(--line); font-size:14px;
+    font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink);
+  }
+  .note-row input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+
+  /* ---------- Do screen ---------- */
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .chip{
+    border-radius:999px; padding:8px 13px; font-size:13.5px; font-weight:500;
+    background:var(--paper); border:1px solid var(--line); color:var(--ink);
+    display:flex; align-items:center; gap:6px;
+  }
+  .chip .sw{ width:9px; height:9px; border-radius:50%; background:var(--c); }
+  .chip.on{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .chip.on .sw{ outline:2px solid var(--paper); outline-offset:-1px; }
+  .reveal-card{
+    background:var(--paper);
+    border-radius:20px;
+    padding:34px 26px;
+    text-align:center;
+    box-shadow: 0 10px 30px rgba(27,38,47,0.12);
+    margin-top:4px;
+    border-top:5px solid var(--c, var(--accent));
+  }
+  .reveal-card .eyebrow{ font-size:13px; color:var(--ink-soft); margin:0 0 10px; }
+  .reveal-card .eyebrow b{ color:var(--ink); font-weight:600; }
+  .reveal-card .activity{ font-family:'Fraunces', serif; font-size:25px; line-height:1.3; margin:0; }
+
+  /* ---------- Activities editor ---------- */
+  .activity-list{ list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .activity-list li{
+    display:flex; align-items:center; gap:10px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:12px; padding:12px 14px;
+  }
+  .activity-list li span{flex:1; font-size:15px;}
+  .remove-btn{ background:none; color:var(--ink-soft); font-size:18px; line-height:1; padding:2px 6px; }
+  .add-row{ display:flex; gap:8px; margin-top:4px; }
+  .add-row input{
+    flex:1; padding:13px 14px; border-radius:12px;
+    border:1px solid var(--line); font-size:15px;
+    font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink);
+  }
+  .add-row input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .add-btn{ width:48px; border-radius:12px; background:var(--accent); color:var(--accent-ink); font-size:22px; }
+  .empty-note{ font-size:14px; color:var(--ink-soft); padding:10px 0; }
+  .axis-head{ display:flex; align-items:center; gap:8px; margin:22px 0 8px; }
+  .axis-head .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); }
+  .axis-head h2{ margin:0; }
+
+  /* ---------- History ---------- */
+  .stat-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .stat{ flex:1; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .stat b{ display:block; font-family:'Fraunces', serif; font-weight:500; font-size:24px; line-height:1; }
+  .stat span{ font-size:12px; color:var(--ink-soft); display:block; margin-top:4px; }
+  .insight{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; font-size:14px; line-height:1.5; margin-top:8px; }
+  .feel-list{ display:flex; flex-direction:column; gap:6px; }
+  .feel-line{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .feel-line .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .feel-line .nm{ width:82px; flex:none; }
+  .feel-line .track{ flex:1; display:block; height:8px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .feel-line .fill{ display:block; height:100%; background:var(--c); }
+  .feel-line .n{ width:22px; text-align:right; font-weight:600; font-size:13px; }
+  .feel-line .d{ width:34px; text-align:right; color:var(--ink-soft); font-size:12px; }
+  .feel-line .d.up{ color:var(--c-selfcare); }
+  .feel-line .d.down{ color:var(--danger); }
+  .spark-wrap{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px 8px; margin-top:8px; }
+  svg#spark{ width:100%; height:120px; display:block; overflow:visible; }
+  .spark-line{ fill:none; stroke:var(--c); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+  .spark-axis{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:4px; }
+  .legend{ display:flex; flex-wrap:wrap; gap:6px 12px; font-size:12px; color:var(--ink-soft); margin-top:8px; }
+  .legend span{ display:flex; align-items:center; gap:5px; }
+  .legend .sw{ width:9px; height:9px; border-radius:50%; background:var(--c); }
+  .log-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .log-list li{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; }
+  .log-list .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; margin-top:5px; }
+  .log-list .body{ flex:1; font-size:14px; line-height:1.4; }
+  .log-list .body b{ font-weight:600; }
+  .log-list .body small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:2px; }
+  .log-list .mini{ display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+  .log-list .mini span{ font-size:11.5px; font-weight:600; color:#fff; background:var(--c); border-radius:6px; padding:2px 6px; min-width:26px; text-align:center; }
+  .log-list .acts{ display:flex; flex-direction:column; gap:4px; }
+  .log-list .acts button{ background:none; color:var(--ink-soft); font-size:12.5px; padding:2px 4px; text-decoration:underline; text-underline-offset:2px; }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom,0) + 24px);
+    transform:translate(-50%, 20px); opacity:0;
+    background:var(--ink); color:var(--paper); font-size:14px;
+    padding:10px 16px; border-radius:999px; pointer-events:none;
+    transition: opacity .25s ease, transform .25s ease; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen{animation:none;}
+    .toast{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- MAP SCREEN -->
+  <section class="screen active" id="screen-map">
+    <p class="kicker">Life map</p>
+    <h1>Where things <em>stand</em></h1>
+
+    <div class="radar-wrap">
+      <svg id="radar" viewBox="0 0 320 320"></svg>
+    </div>
+    <p class="radar-legend"><span>this snapshot</span><span class="ghost" id="ghostLegend">last saved</span></p>
+
+    <div class="date-row">
+      <label for="dateInput">Rating for</label>
+      <span class="tag" id="dateTag" style="display:none;">editing saved</span>
+      <input type="date" id="dateInput">
+    </div>
+
+    <div class="sliders" id="sliders"></div>
+    <div class="note-row"><input type="text" id="noteInput" placeholder="A word or two about this moment (optional)" maxlength="140"></div>
+
+    <button class="cta" id="saveBtn">Save this snapshot</button>
+    <div class="row-links">
+      <button class="link" id="gotoDoFromMap">Do one small thing</button>
+      <button class="link" id="gotoHistoryFromMap">My history</button>
+    </div>
+    <div class="row-links">
+      <a class="link" href="../feel/" style="text-decoration:underline;">Feel &amp; Do &rsaquo;</a>
+      <a class="link" href="../unsent/" style="text-decoration:underline;">Unsent &rsaquo;</a>
+    </div>
+  </section>
+
+  <!-- DO SCREEN -->
+  <section class="screen" id="screen-do">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">One small thing</p>
+      <button class="icon-btn" id="doneDoBtn">Done</button>
+    </div>
+    <h1>Here's something <em>to do</em></h1>
+
+    <div class="chips" id="axisChips"></div>
+
+    <div class="reveal-card" id="revealCard">
+      <p class="eyebrow" id="revealEyebrow">To lift <b>anything</b></p>
+      <p class="activity" id="revealActivity">—</p>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="cta" id="didItBtn">I did this</button>
+    <div class="row-links">
+      <button class="link" id="pickAgainBtn">Pick another</button>
+      <button class="link" id="gotoActivitiesFromDo">Edit my activities</button>
+    </div>
+  </section>
+
+  <!-- ACTIVITIES SCREEN -->
+  <section class="screen" id="screen-activities">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Your list</p>
+      <button class="icon-btn" id="doneActivitiesBtn">Done</button>
+    </div>
+    <div class="scroll">
+      <h1>Small things that <em>raise a score</em></h1>
+      <p class="note" style="margin:-8px 0 4px;">Start as small as you can. The point is one a day, not a big one.</p>
+      <div id="activityEditor"></div>
+    </div>
+  </section>
+
+  <!-- HISTORY SCREEN -->
+  <section class="screen" id="screen-history">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">History</p>
+      <button class="icon-btn" id="doneHistoryBtn">Done</button>
+    </div>
+    <div class="scroll">
+      <h1>How it's <em>moved</em></h1>
+      <div class="stat-row">
+        <div class="stat"><b id="statCount">0</b><span>snapshots</span></div>
+        <div class="stat"><b id="statNow">0</b><span>total now (of 60)</span></div>
+        <div class="stat"><b id="statChange">0</b><span id="statChangeLabel">since first</span></div>
+      </div>
+      <div class="insight" id="insight"></div>
+
+      <h2>Right now <small id="nowDate"></small></h2>
+      <div class="feel-list" id="axisList"></div>
+
+      <h2>Over time</h2>
+      <div class="spark-wrap">
+        <svg id="spark" viewBox="0 0 300 120" preserveAspectRatio="none"></svg>
+        <div class="spark-axis"><span id="sparkFrom"></span><span id="sparkTo"></span></div>
+        <div class="legend" id="sparkLegend"></div>
+      </div>
+
+      <h2>Snapshots</h2>
+      <ul class="log-list" id="snapList"></ul>
+      <p class="note" id="snapEmpty" style="display:none;">No snapshots yet. Set the sliders and save one.</p>
+
+      <h2>Small things done <small id="doneCount"></small></h2>
+      <ul class="log-list" id="doneList"></ul>
+      <p class="note" id="doneEmpty" style="display:none;">When you tap "I did this" on a suggestion, it lands here.</p>
+
+      <h2>Companions</h2>
+      <a class="ext-link" href="../feel/">Feel &amp; Do &rsaquo;<small>Name what you're feeling, sit with it, then do something.</small></a>
+      <a class="ext-link" href="../unsent/">Unsent &rsaquo;<small>Something you want to say to someone, but won't.</small></a>
+
+      <h2>Your data</h2>
+      <p class="note">Everything lives in this browser only. Nothing is uploaded anywhere. Export a copy if you want to keep it; the JSON export can be re-imported later.</p>
+      <div class="stack">
+        <button class="btn-soft" id="exportTextBtn">Export as text</button>
+        <button class="btn-soft" id="exportJsonBtn">Export everything as JSON</button>
+        <button class="btn-soft" id="importBtn">Import from JSON</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
+        <button class="btn-soft" id="clearBtn" style="color:var(--danger);">Clear all snapshots</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Axes ----------
+  var AXES = [
+    { key:"family",   label:"Relationships with family",  short:"Family",    color:"var(--c-family)" },
+    { key:"friends",  label:"Relationships with friends", short:"Friends",   color:"var(--c-friends)" },
+    { key:"spirit",   label:"Religion / spirituality",    short:"Spirit",    color:"var(--c-spirit)" },
+    { key:"work",     label:"Work / occupation",          short:"Work",      color:"var(--c-work)" },
+    { key:"hobbies",  label:"Hobbies / interests",        short:"Hobbies",   color:"var(--c-hobbies)" },
+    { key:"selfcare", label:"Self care",                  short:"Self care", color:"var(--c-selfcare)" }
+  ];
+  var AXIS = {}; AXES.forEach(function(a){ AXIS[a.key] = a; });
+
+  var DEFAULT_ACTIVITIES = {
+    family: [
+      "Do one thing with the kids this week — pick it now",
+      "Check in with your ex-wife about how co-parenting is going"
+    ],
+    friends: [
+      "Reach out to one friend you haven't talked to in a while",
+      "Try an activity where you might meet new people",
+      "Invite a friend over for dinner",
+      "Plan the community music night — start with a housewarming"
+    ],
+    spirit: [
+      "Spend some time outside in nature today",
+      "Meditate for ten minutes"
+    ],
+    work: [
+      "Make a little progress on one of the two book projects",
+      "Put an hour into the side hustle"
+    ],
+    hobbies: [
+      "Go climbing",
+      "Work on the album — record or produce one track",
+      "Write a new song, or part of one",
+      "Read a chapter of a book"
+    ],
+    selfcare: [
+      "Go for a run",
+      "Cook yourself a real meal",
+      "Stretch for ten minutes",
+      "Get to bed early tonight"
+    ]
+  };
+
+  // First two snapshots come from the paper Life Map.
+  var SEED_ENTRIES = [
+    { id:"seed-before", date:"2026-07-15", note:"Before the breakup", t:Date.parse("2026-07-15T12:00:00"),
+      scores:{ family:5, friends:5, spirit:7, work:10, hobbies:7, selfcare:6 } },
+    { id:"seed-now", date:"2026-09-03", note:"A couple of weeks after", t:Date.parse("2026-09-03T12:00:00"),
+      scores:{ family:9, friends:8, spirit:8, work:7, hobbies:9, selfcare:9 } }
+  ];
+
+  var KEY = "lifeMap.v1";
+
+  function freshState(){
+    var acts = {};
+    AXES.forEach(function(a){ acts[a.key] = DEFAULT_ACTIVITIES[a.key].slice(); });
+    return { v:1, seeded:true, entries: SEED_ENTRIES.map(function(e){ return JSON.parse(JSON.stringify(e)); }), activities: acts, done: [] };
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){
+        var p = JSON.parse(raw);
+        if(p && p.v === 1){
+          if(!p.activities) p.activities = {};
+          AXES.forEach(function(a){ if(!Array.isArray(p.activities[a.key])) p.activities[a.key] = DEFAULT_ACTIVITIES[a.key].slice(); });
+          if(!Array.isArray(p.entries)) p.entries = [];
+          if(!Array.isArray(p.done)) p.done = [];
+          return p;
+        }
+      }
+    }catch(e){}
+    return freshState();
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  var state = load();
+  save();
+
+  // ---------- Helpers ----------
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function todayISO(){ var d = new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function parseISO(s){ var p = s.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function fmtDate(iso, withYear){
+    var d = parseISO(iso);
+    var o = { month:"short", day:"numeric" };
+    if(withYear !== false) o.year = "numeric";
+    return d.toLocaleDateString(undefined, o);
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function sortedEntries(){ return state.entries.slice().sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }); }
+  function latestEntry(){ var s = sortedEntries(); return s.length ? s[s.length-1] : null; }
+  function entryFor(date){ for(var i=0;i<state.entries.length;i++){ if(state.entries[i].date === date) return state.entries[i]; } return null; }
+  function prevEntryBefore(date){
+    var s = sortedEntries(), best = null;
+    for(var i=0;i<s.length;i++){ if(s[i].date < date) best = s[i]; }
+    return best;
+  }
+  function total(scores){ var t=0; AXES.forEach(function(a){ t += +scores[a.key]||0; }); return t; }
+  function signed(n){ return (n>0?"+":"") + n; }
+  function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  // ---------- Screens ----------
+  var screens = { map:$("screen-map"), "do":$("screen-do"), activities:$("screen-activities"), history:$("screen-history") };
+  function showScreen(name){
+    Object.keys(screens).forEach(function(k){ screens[k].classList.toggle("active", k === name); });
+    window.scrollTo(0,0);
+  }
+
+  // ---------- Map screen: sliders + radar ----------
+  var current = {};   // scores being edited
+  var ghost = null;   // entry to compare against
+
+  function buildSliders(){
+    var wrap = $("sliders"); wrap.innerHTML = "";
+    AXES.forEach(function(a){
+      var row = document.createElement("div");
+      row.className = "slider-row"; row.style.setProperty("--c", a.color);
+      row.innerHTML =
+        '<div class="slider-head"><span class="sw"></span><span class="name">' + esc(a.label) + '</span>' +
+        '<span class="delta" id="delta-' + a.key + '"></span><span class="val" id="val-' + a.key + '">0</span></div>' +
+        '<input type="range" min="0" max="10" step="1" value="0" id="range-' + a.key + '" aria-label="' + esc(a.label) + '">';
+      wrap.appendChild(row);
+      var r = row.querySelector("input");
+      r.addEventListener("input", function(){ current[a.key] = +r.value; refreshSlider(a.key); drawRadar(); });
+    });
+  }
+  function refreshSlider(key){
+    var v = current[key];
+    var r = $("range-" + key);
+    r.value = v; r.style.setProperty("--pct", (v*10) + "%");
+    $("val-" + key).textContent = v;
+    var d = $("delta-" + key);
+    if(ghost){
+      var diff = v - (+ghost.scores[key]||0);
+      d.textContent = diff === 0 ? "—" : signed(diff);
+      d.className = "delta" + (diff>0 ? " up" : diff<0 ? " down" : "");
+    }else{ d.textContent = ""; d.className = "delta"; }
+  }
+  function setCurrentFrom(scores){
+    AXES.forEach(function(a){ current[a.key] = Math.max(0, Math.min(10, +scores[a.key]||0)); });
+  }
+  function refreshAll(){ AXES.forEach(function(a){ refreshSlider(a.key); }); drawRadar(); }
+
+  function radarPoint(i, v, R){
+    var ang = -Math.PI/2 + i * (2*Math.PI/AXES.length);
+    var r = R * (v/10);
+    return [160 + r*Math.cos(ang), 160 + r*Math.sin(ang)];
+  }
+  function polyPoints(scores, R){
+    return AXES.map(function(a,i){ var p = radarPoint(i, +scores[a.key]||0, R); return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+  }
+  function drawRadar(){
+    var svg = $("radar"), R = 112, html = "";
+    [2,4,6,8,10].forEach(function(lvl){
+      var pts = AXES.map(function(a,i){ var p = radarPoint(i, lvl, R); return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+      html += '<polygon class="radar-grid' + (lvl===10?' outer':'') + '" points="' + pts + '"/>';
+    });
+    AXES.forEach(function(a,i){
+      var p = radarPoint(i, 10, R);
+      html += '<line class="radar-spoke" x1="160" y1="160" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '"/>';
+    });
+    if(ghost) html += '<polygon class="radar-ghost" points="' + polyPoints(ghost.scores, R) + '"/>';
+    html += '<polygon class="radar-now" points="' + polyPoints(current, R) + '"/>';
+    AXES.forEach(function(a,i){
+      var p = radarPoint(i, current[a.key]||0, R);
+      html += '<circle class="radar-dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="5" fill="' + a.color + '"/>';
+      var l = radarPoint(i, 10, R + 22);
+      var anchor = Math.abs(l[0]-160) < 6 ? "middle" : (l[0] > 160 ? "start" : "end");
+      var dy = l[1] < 150 ? -2 : (l[1] > 170 ? 10 : 4);
+      html += '<text class="radar-label" x="' + l[0].toFixed(1) + '" y="' + (l[1]+dy).toFixed(1) + '" text-anchor="' + anchor + '" fill="' + a.color + '">' + esc(a.short) + ' ' + (current[a.key]||0) + '</text>';
+    });
+    svg.innerHTML = html;
+    var lg = $("ghostLegend");
+    if(ghost){ lg.style.display = ""; lg.textContent = "saved " + fmtDate(ghost.date, false); }
+    else lg.style.display = "none";
+  }
+
+  function loadDate(date){
+    var e = entryFor(date);
+    var tag = $("dateTag");
+    if(e){
+      setCurrentFrom(e.scores);
+      $("noteInput").value = e.note || "";
+      tag.style.display = ""; tag.textContent = "editing saved";
+      $("saveBtn").textContent = "Update this snapshot";
+    }else{
+      var base = prevEntryBefore(date) || latestEntry();
+      if(base) setCurrentFrom(base.scores); else AXES.forEach(function(a){ current[a.key] = 5; });
+      $("noteInput").value = "";
+      tag.style.display = "none";
+      $("saveBtn").textContent = "Save this snapshot";
+    }
+    ghost = prevEntryBefore(date);
+    if(!ghost && e){ ghost = null; }
+    refreshAll();
+  }
+
+  function initMap(){
+    var d = $("dateInput");
+    if(!d.value) d.value = todayISO();
+    d.max = todayISO();
+    loadDate(d.value);
+  }
+  $("dateInput").addEventListener("change", function(){ if(this.value) loadDate(this.value); });
+
+  $("saveBtn").addEventListener("click", function(){
+    var date = $("dateInput").value || todayISO();
+    var e = entryFor(date);
+    var scores = {}; AXES.forEach(function(a){ scores[a.key] = current[a.key]; });
+    if(e){ e.scores = scores; e.note = $("noteInput").value.trim(); e.t = Date.now(); }
+    else state.entries.push({ id:uid(), date:date, scores:scores, note:$("noteInput").value.trim(), t:Date.now() });
+    save();
+    toast((e ? "Updated " : "Saved ") + fmtDate(date, false));
+    loadDate(date);
+  });
+
+  // ---------- Do screen ----------
+  var doAxis = "any";   // "any" | "lowest" | axis key
+  var lastPick = null;  // {axis, activity}
+
+  function lowestAxis(){
+    var e = latestEntry(); if(!e) return null;
+    var best = null;
+    AXES.forEach(function(a){ var v = +e.scores[a.key]||0; if(best === null || v < best.v) best = {key:a.key, v:v}; });
+    return best;
+  }
+  function buildChips(){
+    var wrap = $("axisChips"); wrap.innerHTML = "";
+    var low = lowestAxis();
+    var items = [{key:"any", label:"Anything"}];
+    if(low) items.push({key:"lowest", label:"Lowest: " + AXIS[low.key].short, color:AXIS[low.key].color});
+    AXES.forEach(function(a){ items.push({key:a.key, label:a.short, color:a.color}); });
+    items.forEach(function(it){
+      var b = document.createElement("button");
+      b.className = "chip" + (doAxis === it.key ? " on" : "");
+      if(it.color){ b.style.setProperty("--c", it.color); b.innerHTML = '<span class="sw"></span>' + esc(it.label); }
+      else b.textContent = it.label;
+      b.addEventListener("click", function(){ doAxis = it.key; buildChips(); pickActivity(); });
+      wrap.appendChild(b);
+    });
+  }
+  function pickActivity(){
+    var key = doAxis;
+    if(key === "lowest"){ var low = lowestAxis(); key = low ? low.key : "any"; }
+    var pool = [];
+    if(key === "any"){
+      AXES.forEach(function(a){ state.activities[a.key].forEach(function(x){ pool.push({axis:a.key, activity:x}); }); });
+    }else{
+      state.activities[key].forEach(function(x){ pool.push({axis:key, activity:x}); });
+    }
+    if(lastPick && pool.length > 1) pool = pool.filter(function(p){ return p.activity !== lastPick.activity; });
+    var card = $("revealCard"), eyebrow = $("revealEyebrow"), act = $("revealActivity");
+    if(!pool.length){
+      lastPick = null;
+      card.style.setProperty("--c", key === "any" ? "var(--accent)" : AXIS[key].color);
+      eyebrow.innerHTML = key === "any" ? "Nothing on your list yet" : "Nothing listed for <b>" + esc(AXIS[key].short) + "</b> yet";
+      act.textContent = "Add a few small things first — tap “Edit my activities.”";
+      $("didItBtn").disabled = true;
+      return;
+    }
+    lastPick = pickRandom(pool);
+    var a = AXIS[lastPick.axis], e = latestEntry();
+    card.style.setProperty("--c", a.color);
+    var cur = e ? +e.scores[a.key] : null;
+    eyebrow.innerHTML = "To lift <b>" + esc(a.short.toLowerCase()) + "</b>" + (cur !== null ? " (now " + cur + " of 10)" : "");
+    act.textContent = lastPick.activity;
+    $("didItBtn").disabled = false;
+  }
+  $("didItBtn").addEventListener("click", function(){
+    if(!lastPick) return;
+    state.done.unshift({ id:uid(), t:Date.now(), axis:lastPick.axis, activity:lastPick.activity });
+    save();
+    toast("Logged. That's the day's small thing.");
+    pickActivity();
+  });
+  $("pickAgainBtn").addEventListener("click", pickActivity);
+  $("gotoDoFromMap").addEventListener("click", function(){ buildChips(); pickActivity(); showScreen("do"); });
+  $("doneDoBtn").addEventListener("click", function(){ initMap(); showScreen("map"); });
+
+  // ---------- Activities editor ----------
+  var fromScreen = "map";
+  function renderActivities(){
+    var wrap = $("activityEditor"); wrap.innerHTML = "";
+    AXES.forEach(function(a){
+      var sec = document.createElement("div");
+      sec.style.setProperty("--c", a.color);
+      var list = state.activities[a.key];
+      var html = '<div class="axis-head"><span class="sw"></span><h2>' + esc(a.label) + '</h2></div><ul class="activity-list">';
+      list.forEach(function(x, i){
+        html += '<li><span>' + esc(x) + '</span><button class="remove-btn" data-i="' + i + '" aria-label="Remove">×</button></li>';
+      });
+      html += '</ul>';
+      if(!list.length) html += '<p class="empty-note">Nothing here yet. What is the smallest thing that would nudge this up?</p>';
+      html += '<div class="add-row"><input type="text" placeholder="Add a small thing" maxlength="100"><button class="add-btn">+</button></div>';
+      sec.innerHTML = html;
+      sec.querySelectorAll(".remove-btn").forEach(function(b){
+        b.addEventListener("click", function(){ state.activities[a.key].splice(+b.getAttribute("data-i"), 1); save(); renderActivities(); });
+      });
+      var inp = sec.querySelector("input"), add = sec.querySelector(".add-btn");
+      function addOne(){
+        var v = inp.value.trim(); if(!v) return;
+        state.activities[a.key].push(v); save(); renderActivities();
+        var again = $("activityEditor").querySelectorAll(".add-row input")[AXES.indexOf(a)]; if(again) again.focus();
+      }
+      add.addEventListener("click", addOne);
+      inp.addEventListener("keydown", function(ev){ if(ev.key === "Enter") addOne(); });
+      wrap.appendChild(sec);
+    });
+  }
+  $("gotoActivitiesFromDo").addEventListener("click", function(){ fromScreen = "do"; renderActivities(); showScreen("activities"); });
+  $("doneActivitiesBtn").addEventListener("click", function(){
+    if(fromScreen === "do"){ buildChips(); pickActivity(); showScreen("do"); }
+    else { initMap(); showScreen("map"); }
+  });
+
+  // ---------- History ----------
+  function renderHistory(){
+    var s = sortedEntries();
+    var latest = s.length ? s[s.length-1] : null;
+    var first = s.length ? s[0] : null;
+    var prev = s.length > 1 ? s[s.length-2] : null;
+
+    $("statCount").textContent = s.length;
+    $("statNow").textContent = latest ? total(latest.scores) : "—";
+    if(latest && first && latest !== first){
+      $("statChange").textContent = signed(total(latest.scores) - total(first.scores));
+      $("statChangeLabel").textContent = "since " + fmtDate(first.date, false);
+    }else{ $("statChange").textContent = "—"; $("statChangeLabel").textContent = "since first"; }
+
+    // Insight
+    var ins = $("insight");
+    if(!latest){ ins.textContent = "Save a snapshot and this will start to say something."; }
+    else if(!first || latest === first){ ins.textContent = "One snapshot so far. Rerate each week and the changes will show up here."; }
+    else{
+      var ups = [], downs = [];
+      AXES.forEach(function(a){
+        var d = (+latest.scores[a.key]||0) - (+first.scores[a.key]||0);
+        if(d>0) ups.push({a:a, d:d}); if(d<0) downs.push({a:a, d:d});
+      });
+      ups.sort(function(x,y){ return y.d-x.d; }); downs.sort(function(x,y){ return x.d-y.d; });
+      var low = lowestAxis();
+      var parts = [];
+      if(ups.length) parts.push("Since " + fmtDate(first.date, false) + ", the biggest climb is <b>" + esc(ups[0].a.short.toLowerCase()) + "</b> (" + first.scores[ups[0].a.key] + " → " + latest.scores[ups[0].a.key] + ").");
+      if(downs.length) parts.push((downs.length === 1 ? "The one that dropped is " : "Dropped: ") + downs.map(function(x){ return "<b>" + esc(x.a.short.toLowerCase()) + "</b> (" + first.scores[x.a.key] + " → " + latest.scores[x.a.key] + ")"; }).join(", ") + ".");
+      if(!ups.length && !downs.length) parts.push("Nothing has moved since " + fmtDate(first.date, false) + ".");
+      if(low) parts.push("Lowest right now: <b>" + esc(AXIS[low.key].short.toLowerCase()) + "</b> at " + low.v + ". One small thing there goes furthest.");
+      if(prev){
+        var dprev = total(latest.scores) - total(prev.scores);
+        parts.push("Versus the previous snapshot (" + fmtDate(prev.date, false) + "): " + (dprev === 0 ? "no change overall." : signed(dprev) + " overall."));
+      }
+      ins.innerHTML = parts.join(" ");
+    }
+
+    // Axis list
+    $("nowDate").textContent = latest ? fmtDate(latest.date) : "";
+    var al = $("axisList"); al.innerHTML = "";
+    AXES.forEach(function(a){
+      var v = latest ? +latest.scores[a.key]||0 : 0;
+      var d = prev ? v - (+prev.scores[a.key]||0) : null;
+      var div = document.createElement("div");
+      div.className = "feel-line"; div.style.setProperty("--c", a.color);
+      div.innerHTML = '<span class="sw"></span><span class="nm">' + esc(a.short) + '</span><span class="track"><span class="fill" style="width:' + (v*10) + '%"></span></span>' +
+        '<span class="n">' + v + '</span><span class="d' + (d>0?" up":d<0?" down":"") + '">' + (d === null ? "" : (d === 0 ? "—" : signed(d))) + '</span>';
+      al.appendChild(div);
+    });
+
+    // Sparklines
+    var svg = $("spark"), W = 300, H = 120, html = "";
+    [0,5,10].forEach(function(lvl){ var y = H - 6 - (lvl/10)*(H-12); html += '<line x1="0" y1="' + y + '" x2="' + W + '" y2="' + y + '" stroke="rgba(27,38,47,0.12)" stroke-width="1"/>'; });
+    if(s.length){
+      var t0 = parseISO(s[0].date).getTime(), t1 = parseISO(s[s.length-1].date).getTime();
+      var span = Math.max(1, t1 - t0);
+      function X(e){ return s.length === 1 ? W/2 : ((parseISO(e.date).getTime() - t0)/span) * (W-8) + 4; }
+      function Y(v){ return H - 6 - (v/10)*(H-12); }
+      AXES.forEach(function(a){
+        var pts = s.map(function(e){ return X(e).toFixed(1) + "," + Y(+e.scores[a.key]||0).toFixed(1); });
+        if(s.length > 1) html += '<polyline class="spark-line" style="--c:' + a.color + '" points="' + pts.join(" ") + '"/>';
+        s.forEach(function(e){ html += '<circle cx="' + X(e).toFixed(1) + '" cy="' + Y(+e.scores[a.key]||0).toFixed(1) + '" r="3" fill="' + a.color + '"/>'; });
+      });
+      $("sparkFrom").textContent = fmtDate(s[0].date, false);
+      $("sparkTo").textContent = s.length > 1 ? fmtDate(s[s.length-1].date, false) : "";
+    }else{ $("sparkFrom").textContent = ""; $("sparkTo").textContent = ""; }
+    svg.innerHTML = html;
+    var lg = $("sparkLegend"); lg.innerHTML = "";
+    AXES.forEach(function(a){ var sp = document.createElement("span"); sp.style.setProperty("--c", a.color); sp.innerHTML = '<span class="sw"></span>' + esc(a.short); lg.appendChild(sp); });
+
+    // Snapshot list (newest first)
+    var sl = $("snapList"); sl.innerHTML = "";
+    $("snapEmpty").style.display = s.length ? "none" : "";
+    s.slice().reverse().forEach(function(e, idx, arr){
+      var before = prevEntryBefore(e.date);
+      var li = document.createElement("li");
+      li.style.setProperty("--c", "var(--accent)");
+      var mini = AXES.map(function(a){ return '<span style="--c:' + a.color + '" title="' + esc(a.short) + '">' + (+e.scores[a.key]||0) + '</span>'; }).join("");
+      li.innerHTML = '<span class="sw"></span><div class="body"><b>' + esc(fmtDate(e.date)) + '</b> · ' + total(e.scores) + ' of 60' +
+        (before ? ' <span style="color:var(--ink-soft)">(' + signed(total(e.scores) - total(before.scores)) + ')</span>' : '') +
+        (e.note ? '<small>' + esc(e.note) + '</small>' : '') +
+        '<div class="mini">' + mini + '</div></div>' +
+        '<div class="acts"><button data-act="edit">Edit</button><button data-act="del">Delete</button></div>';
+      li.querySelector('[data-act="edit"]').addEventListener("click", function(){
+        $("dateInput").value = e.date; loadDate(e.date); showScreen("map");
+      });
+      li.querySelector('[data-act="del"]').addEventListener("click", function(){
+        if(!confirm("Delete the snapshot from " + fmtDate(e.date) + "?")) return;
+        state.entries = state.entries.filter(function(x){ return x.id !== e.id; });
+        save(); renderHistory();
+      });
+      sl.appendChild(li);
+    });
+
+    // Done list
+    var dl = $("doneList"); dl.innerHTML = "";
+    $("doneEmpty").style.display = state.done.length ? "none" : "";
+    $("doneCount").textContent = state.done.length ? state.done.length + " so far" : "";
+    var weekAgo = Date.now() - 7*86400000, thisWeek = state.done.filter(function(d){ return d.t >= weekAgo; }).length;
+    if(state.done.length) $("doneCount").textContent = state.done.length + " so far, " + thisWeek + " this week";
+    state.done.slice(0, 40).forEach(function(d){
+      var a = AXIS[d.axis] || AXES[0];
+      var li = document.createElement("li");
+      li.style.setProperty("--c", a.color);
+      li.innerHTML = '<span class="sw"></span><div class="body">' + esc(d.activity) + '<small>' + esc(a.short) + ' · ' + new Date(d.t).toLocaleString(undefined, {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) + '</small></div>' +
+        '<div class="acts"><button data-act="del">Remove</button></div>';
+      li.querySelector('[data-act="del"]').addEventListener("click", function(){
+        state.done = state.done.filter(function(x){ return x.id !== d.id; }); save(); renderHistory();
+      });
+      dl.appendChild(li);
+    });
+  }
+  $("gotoHistoryFromMap").addEventListener("click", function(){ renderHistory(); showScreen("history"); });
+  $("doneHistoryBtn").addEventListener("click", function(){ initMap(); showScreen("map"); });
+
+  // ---------- Data ----------
+  function download(name, text, type){
+    var blob = new Blob([text], {type:type||"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  $("exportTextBtn").addEventListener("click", function(){
+    var lines = ["Life Map — export " + new Date().toLocaleString(), ""];
+    lines.push("Snapshots:", "");
+    sortedEntries().forEach(function(e){
+      lines.push(fmtDate(e.date) + (e.note ? " — " + e.note : "") + "  (total " + total(e.scores) + "/60)");
+      AXES.forEach(function(a){ lines.push("  " + a.label + ": " + (+e.scores[a.key]||0)); });
+      lines.push("");
+    });
+    lines.push("Small things done:", "");
+    state.done.forEach(function(d){ lines.push("[" + new Date(d.t).toLocaleString() + "] " + (AXIS[d.axis]||{}).short + " — " + d.activity); });
+    lines.push("", "Activities:", "");
+    AXES.forEach(function(a){ lines.push(a.label + ":"); state.activities[a.key].forEach(function(x){ lines.push("  - " + x); }); lines.push(""); });
+    download("life-map-" + todayISO() + ".txt", lines.join("\n"), "text/plain");
+  });
+  $("exportJsonBtn").addEventListener("click", function(){
+    download("life-map-" + todayISO() + ".json", JSON.stringify({ exportedAt:new Date().toISOString(), v:1, entries:state.entries, activities:state.activities, done:state.done }, null, 2), "application/json");
+  });
+  $("importBtn").addEventListener("click", function(){ $("importFile").click(); });
+  $("importFile").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var p = JSON.parse(reader.result);
+        if(!p || !Array.isArray(p.entries)) throw new Error("bad");
+        var added = 0;
+        p.entries.forEach(function(e){
+          if(!e || !e.date || !e.scores) return;
+          var ex = entryFor(e.date);
+          if(ex){ ex.scores = e.scores; ex.note = e.note || ex.note; }
+          else { state.entries.push({ id:e.id || uid(), date:e.date, scores:e.scores, note:e.note||"", t:e.t||Date.now() }); added++; }
+        });
+        if(p.activities){ AXES.forEach(function(a){ if(Array.isArray(p.activities[a.key])){ p.activities[a.key].forEach(function(x){ if(state.activities[a.key].indexOf(x) < 0) state.activities[a.key].push(x); }); } }); }
+        if(Array.isArray(p.done)){ var ids = {}; state.done.forEach(function(d){ ids[d.id] = 1; }); p.done.forEach(function(d){ if(d && d.id && !ids[d.id]) state.done.push(d); }); state.done.sort(function(a,b){ return b.t - a.t; }); }
+        save(); renderHistory();
+        toast("Imported " + added + " new snapshot" + (added === 1 ? "" : "s"));
+      }catch(e){ alert("That file doesn't look like a Life Map export."); }
+      $("importFile").value = "";
+    };
+    reader.readAsText(f);
+  });
+  $("clearBtn").addEventListener("click", function(){
+    if(!confirm("Clear every snapshot and the done list? Your activities stay.")) return;
+    state.entries = []; state.done = []; save(); renderHistory();
+  });
+
+  // ---------- Start ----------
+  buildSliders();
+  initMap();
+  var h = (location.hash || "").replace("#", "");
+  if(h === "do"){ buildChips(); pickActivity(); showScreen("do"); }
+  else if(h === "history"){ renderHistory(); showScreen("history"); }
+  else if(h === "activities"){ fromScreen = "map"; renderActivities(); showScreen("activities"); }
+  if(h) history.replaceState(null, "", location.pathname);
+})();
+</script>
+</body>
+</html>
