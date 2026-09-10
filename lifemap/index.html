@@ -406,7 +406,9 @@
       "Text each kid one specific thing you noticed about them",
       "Plan the next kid weekend now",
       "Call a parent or sibling",
-      "Cook one meal with the kids instead of for them"
+      "Cook one meal with the kids instead of for them",
+      "Show up to one of the girls' activities this week",
+      "Ask your ex-wife what would actually help her this week"
     ],
     friends: [
       "Reach out to one friend you haven't talked to in a while",
@@ -458,14 +460,15 @@
       "A proper stretch after climbing"
     ]
   };
-  var DEFAULTS_VERSION = 2;
+  var DEFAULTS_VERSION = 3;
+  var SEED_VERSION = 2;
 
   // First two snapshots come from the paper Life Map.
   var SEED_ENTRIES = [
     { id:"seed-before", date:"2026-07-15", note:"Before the breakup", t:Date.parse("2026-07-15T12:00:00"),
       scores:{ family:5, friends:5, spirit:7, work:10, hobbies:7, selfcare:6 } },
     { id:"seed-now", date:"2026-09-03", note:"A couple of weeks after", t:Date.parse("2026-09-03T12:00:00"),
-      scores:{ family:9, friends:8, spirit:8, work:7, hobbies:9, selfcare:9 } }
+      scores:{ family:7, friends:8, spirit:8, work:7, hobbies:9, selfcare:9 } }
   ];
 
   var KEY = "lifeMap.v1";
@@ -473,7 +476,7 @@
   function freshState(){
     var acts = {};
     AXES.forEach(function(a){ acts[a.key] = DEFAULT_ACTIVITIES[a.key].slice(); });
-    return { v:1, seeded:true, defaultsVersion:DEFAULTS_VERSION, entries: SEED_ENTRIES.map(function(e){ return JSON.parse(JSON.stringify(e)); }), activities: acts, done: [] };
+    return { v:1, seeded:true, defaultsVersion:DEFAULTS_VERSION, seedVersion:SEED_VERSION, entries: SEED_ENTRIES.map(function(e){ return JSON.parse(JSON.stringify(e)); }), activities: acts, done: [] };
   }
   function load(){
     try{
@@ -488,6 +491,11 @@
           if((p.defaultsVersion||1) < DEFAULTS_VERSION){
             AXES.forEach(function(a){ DEFAULT_ACTIVITIES[a.key].forEach(function(x){ if(p.activities[a.key].indexOf(x) < 0) p.activities[a.key].push(x); }); });
             p.defaultsVersion = DEFAULTS_VERSION;
+          }
+          if((p.seedVersion||1) < SEED_VERSION){
+            // The Sept 3 family score was re-rated from 9 to 7; apply if the seeded value is still there.
+            p.entries.forEach(function(e){ if(e.id === "seed-now" && +e.scores.family === 9) e.scores.family = 7; });
+            p.seedVersion = SEED_VERSION;
           }
           return p;
         }
