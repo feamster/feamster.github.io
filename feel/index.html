@@ -307,6 +307,7 @@
       <button class="link" id="gotoPatternsBtn">My patterns</button>
       <a class="link" href="../unsent/" style="text-decoration:underline;">Unsent &rsaquo;</a>
       <a class="link" href="../lifemap/" style="text-decoration:underline;">Life Map &rsaquo;</a>
+      <a class="link" href="../untwist/" style="text-decoration:underline;">Untwist &rsaquo;</a>
     </div>
   </section>
 
@@ -345,6 +346,7 @@
 
       <a class="ext-link" href="../unsent/">Unsent &rsaquo;<small>Something you want to say to someone, but won't.</small></a>
       <a class="ext-link" href="../lifemap/">Life Map &rsaquo;<small>Rate six areas of life, watch them move, do one small thing.</small></a>
+      <a class="ext-link" href="../untwist/">Untwist &rsaquo;<small>Catch a thought, name the error, replace it.</small></a>
 
       <h2>Your data</h2>
       <p class="note">This log lives in this browser only. Export a copy if you want to keep it or look at it elsewhere.</p>
@@ -509,6 +511,7 @@
     currentEntry: null,   // log entry for the session in progress
     timeLeft: TIMER_SECONDS,
     timerId: null,
+    endAt: null,
     running: false
   };
 
@@ -746,25 +749,40 @@
     var frac = 1 - (state.timeLeft / TIMER_SECONDS);
     ringFg.setAttribute("stroke-dashoffset", RING_C * frac);
   }
-  function tick(){
-    if(state.timeLeft <= 0){ stopTimer(); onTimerComplete(); return; }
-    state.timeLeft -= 1;
+  // The timer is anchored to a wall-clock end time, so it keeps correct time while the
+  // screen is locked or the tab is in the background (where intervals are throttled or paused).
+  function saveTimer(){
+    try{
+      if(state.endAt && state.running) localStorage.setItem("feelAndDo.timer", JSON.stringify({ endAt: state.endAt, feeling: state.feeling, entryId: state.currentEntry ? state.currentEntry.id : null }));
+      else localStorage.removeItem("feelAndDo.timer");
+    }catch(e){}
+  }
+  function syncTimer(){
+    if(!state.running || !state.endAt) return;
+    state.timeLeft = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
     renderTimer();
+    if(state.timeLeft <= 0){ stopTimer(); onTimerComplete(); }
   }
   function startTimer(){
     if(state.running) return;
     state.running = true;
+    state.endAt = Date.now() + state.timeLeft * 1000;
     document.getElementById("pauseBtn").textContent = "Pause";
     document.getElementById("timerSub").textContent = "counting down";
-    state.timerId = setInterval(tick, 1000);
+    clearInterval(state.timerId);
+    state.timerId = setInterval(syncTimer, 500);
+    saveTimer();
   }
   function pauseTimer(){
-    state.running = false;
+    if(state.running && state.endAt) state.timeLeft = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
+    state.running = false; state.endAt = null;
     document.getElementById("pauseBtn").textContent = "Resume";
     document.getElementById("timerSub").textContent = "paused";
     clearInterval(state.timerId);
+    renderTimer();
+    saveTimer();
   }
-  function stopTimer(){ state.running = false; clearInterval(state.timerId); }
+  function stopTimer(){ state.running = false; state.endAt = null; clearInterval(state.timerId); saveTimer(); }
   function resetTimer(){
     stopTimer();
     state.timeLeft = TIMER_SECONDS;
@@ -772,6 +790,30 @@
     document.getElementById("pauseBtn").textContent = "Pause";
     document.getElementById("timerSub").textContent = "counting down";
     startTimer();
+  }
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) syncTimer(); });
+  window.addEventListener("pageshow", syncTimer);
+  window.addEventListener("focus", syncTimer);
+
+  // If the page was killed while a timer was running (common on a locked phone), pick it back up.
+  function restoreTimer(){
+    var saved = null;
+    try{ saved = JSON.parse(localStorage.getItem("feelAndDo.timer") || "null"); }catch(e){}
+    if(!saved || !saved.endAt) return;
+    if(saved.feeling){ state.feeling = saved.feeling; }
+    if(saved.entryId){ for(var i=0;i<state.log.length;i++){ if(state.log[i].id === saved.entryId){ state.currentEntry = state.log[i]; break; } } }
+    document.getElementById("timerFeelingLabel").textContent = state.feeling ? state.feeling.label : "—";
+    var left = Math.ceil((saved.endAt - Date.now()) / 1000);
+    if(left <= 0){
+      try{ localStorage.removeItem("feelAndDo.timer"); }catch(e){}
+      if(state.currentEntry){ state.currentEntry.done = true; saveLog(); }
+      revealActivity("feeling");
+    }else{
+      state.timeLeft = left;
+      renderTimer();
+      showScreen("timer");
+      startTimer();
+    }
   }
 
   function chime(){
@@ -1044,6 +1086,7 @@
   });
 
   renderTimer();
+  restoreTimer();
 })();
 </script>
 </body>

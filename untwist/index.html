@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Untwist</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#45508C">
+<meta name="apple-mobile-web-app-title" content="Untwist">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7EBE9;
+    --bg-2: #DCE2DF;
+    --ink: #1B262F;
+    --ink-soft: #55656D;
+    --paper: #F6F4EF;
+    --line: rgba(27,38,47,0.14);
+    --accent: #45508C;
+    --accent-ink: #F6F7FB;
+    --danger: #A8452E;
+    --ok: #5C8064;
+
+    --c-absolute: #A8452E;
+    --c-scale: #C7911E;
+    --c-self: #6C5D8C;
+    --c-others: #4E708C;
+    --c-future: #2E8C83;
+    --c-rules: #5C8064;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 50% -10%, var(--bg-2), var(--bg) 60%);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    padding: env(safe-area-inset-top,0) 20px calc(env(safe-area-inset-bottom,0) + 28px);
+    display:flex;
+    flex-direction:column;
+  }
+  .screen{ display:none; flex-direction:column; flex:1; padding-top:26px; animation: rise .4s ease both; }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .kicker{ font-size:13px; color:var(--ink-soft); margin:0 0 6px; min-height:16px; }
+  h1{ font-family:'Fraunces', serif; font-weight:500; font-size:28px; line-height:1.15; margin:0 0 18px; }
+  h1 em{ font-style:italic; font-weight:400; }
+  h2{ font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:22px 0 8px; }
+  h2 small{ font-family:'Inter', sans-serif; font-size:13px; color:var(--ink-soft); font-weight:400; margin-left:6px; }
+
+  button, .link{ font-family:'Inter', sans-serif; border:none; cursor:pointer; }
+  .spacer{flex:1;}
+  .top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .icon-btn{ background:none; color:var(--ink-soft); font-size:14px; padding:6px 0; }
+  .scroll{ flex:1; min-height:0; overflow-y:auto; padding-bottom:30px; }
+  .cta{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    padding:16px 20px; border-radius:14px;
+    background:var(--accent); color:var(--accent-ink);
+    font-size:16px; font-weight:600; margin-top:16px;
+    transition: transform .15s ease, opacity .2s ease;
+  }
+  .cta:disabled{opacity:0.4; pointer-events:none;}
+  .cta:active{transform:scale(0.98);}
+  .link{ background:none; color:var(--ink-soft); font-size:14px; text-decoration:underline; text-underline-offset:3px; padding:10px 0; }
+  .row-links{ display:flex; justify-content:center; gap:20px; margin-top:4px; flex-wrap:wrap; }
+  .btn-soft{ flex:1; padding:13px; border-radius:12px; background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:14px; font-weight:500; }
+  .btn-soft:active{transform:scale(0.98);}
+  .btn-soft.on{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .stack{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .stack .btn-soft{ flex:none; }
+  .note{ font-size:13px; color:var(--ink-soft); line-height:1.5; margin:6px 0 0; }
+  .note a{ color:var(--ink-soft); }
+  .ext-link{ display:block; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; color:var(--ink); text-decoration:none; font-size:15px; font-weight:600; margin-top:10px; }
+  .ext-link small{ display:block; font-weight:400; color:var(--ink-soft); font-size:13px; margin-top:2px; }
+
+  /* ---------- Steps ---------- */
+  .step{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px 14px; margin-bottom:10px; }
+  .step-head{ display:flex; align-items:baseline; gap:8px; margin-bottom:8px; }
+  .step-head .num{ font-family:'Fraunces', serif; font-size:13px; color:var(--accent); font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  .step-head .title{ font-family:'Fraunces', serif; font-size:18px; }
+  .step-head .hint{ margin-left:auto; font-size:12px; color:var(--ink-soft); }
+  textarea{
+    width:100%; min-height:76px; resize:vertical;
+    padding:11px 12px; border-radius:12px; border:1px solid var(--line);
+    font-family:'Inter', sans-serif; font-size:15px; line-height:1.45; background:#fff; color:var(--ink);
+  }
+  textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .belief{ display:flex; align-items:center; gap:10px; margin-top:10px; font-size:13px; color:var(--ink-soft); }
+  .belief b{ font-family:'Fraunces', serif; font-size:20px; color:var(--ink); min-width:26px; text-align:right; font-weight:500; }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; flex:1;
+    height:8px; border-radius:4px; margin:6px 0;
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct), var(--line) var(--pct), var(--line) 100%);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:24px; height:24px; border-radius:50%; background:var(--paper); border:3px solid var(--accent); box-shadow:0 2px 6px rgba(27,38,47,0.2); cursor:pointer; }
+  input[type=range]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--paper); border:3px solid var(--accent); cursor:pointer; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    border-radius:999px; padding:8px 12px; font-size:13.5px; font-weight:500;
+    background:#fff; border:1px solid var(--line); color:var(--ink);
+    display:flex; align-items:center; gap:6px;
+  }
+  .chip .sw{ width:9px; height:9px; border-radius:50%; background:var(--c); flex:none; }
+  .chip.on{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .chip.on .sw{ outline:2px solid var(--paper); outline-offset:-1px; }
+  .chip.small{ padding:5px 10px; font-size:12.5px; }
+  .picked-defs{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+  .def-card{ border-left:3px solid var(--c); padding:6px 10px; font-size:13px; line-height:1.45; background:rgba(27,38,47,0.03); border-radius:0 8px 8px 0; }
+  .def-card b{ font-weight:600; }
+  .def-card .ask{ display:block; color:var(--ink-soft); margin-top:3px; font-style:italic; }
+  .suggest{ font-size:12.5px; color:var(--ink-soft); margin:8px 0 0; line-height:1.45; }
+  .suggest span{ color:var(--ink); font-weight:500; }
+  .choose{ display:flex; gap:8px; margin-top:4px; }
+
+  /* ---------- Guide ---------- */
+  .group-head{ display:flex; align-items:center; gap:8px; margin:22px 0 8px; }
+  .group-head .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); }
+  .group-head h2{ margin:0; }
+  .group-head small{ font-size:12.5px; color:var(--ink-soft); }
+  .guide-card{ background:var(--paper); border:1px solid var(--line); border-radius:14px; margin-bottom:8px; overflow:hidden; }
+  .guide-card summary{ list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; }
+  .guide-card summary::-webkit-details-marker{ display:none; }
+  .guide-card summary .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .guide-card summary .cnt{ margin-left:auto; font-size:12px; color:var(--ink-soft); font-weight:500; }
+  .guide-card summary::after{ content:"›"; color:var(--ink-soft); font-size:18px; transform:rotate(90deg); transition:transform .15s; }
+  .guide-card[open] summary::after{ transform:rotate(-90deg); }
+  .guide-body{ padding:0 14px 14px; font-size:14px; line-height:1.5; }
+  .guide-body p{ margin:0 0 8px; }
+  .guide-body .lbl{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:2px; }
+  .guide-body ul{ margin:0 0 8px; padding-left:18px; }
+  .guide-body li{ margin-bottom:3px; font-style:italic; color:#33414A; }
+  .guide-body .flag-btn{ margin-top:4px; }
+
+  /* ---------- Patterns ---------- */
+  .stat-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .stat{ flex:1; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .stat b{ display:block; font-family:'Fraunces', serif; font-weight:500; font-size:24px; line-height:1; }
+  .stat span{ font-size:12px; color:var(--ink-soft); display:block; margin-top:4px; }
+  .insight{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:12px 14px; font-size:14px; line-height:1.5; margin-top:8px; }
+  .feel-list{ display:flex; flex-direction:column; gap:6px; }
+  .feel-line{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .feel-line .sw{ width:10px; height:10px; border-radius:50%; background:var(--c); flex:none; }
+  .feel-line .nm{ width:150px; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .feel-line .track{ flex:1; display:block; height:8px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .feel-line .fill{ display:block; height:100%; background:var(--c); }
+  .feel-line .n{ width:24px; text-align:right; color:var(--ink-soft); font-size:13px; }
+  .bars{ display:flex; align-items:flex-end; gap:3px; height:80px; padding:6px 0 0; }
+  .bar{ flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; opacity:.85; }
+  .bar.zero{ background:var(--line); }
+  .axis{ display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:4px; }
+  .log-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .log-list li{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; }
+  .log-list .body{ flex:1; font-size:14px; line-height:1.45; min-width:0; }
+  .log-list .thought{ font-style:italic; color:#33414A; }
+  .log-list .arrow{ color:var(--ink-soft); margin:0 4px; }
+  .log-list .repl{ font-weight:500; }
+  .log-list .tags{ display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+  .log-list .tag{ font-size:11.5px; font-weight:600; color:#fff; background:var(--c); border-radius:6px; padding:2px 7px; }
+  .log-list small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:4px; }
+  .log-list .acts button{ background:none; color:var(--ink-soft); font-size:12.5px; padding:2px 4px; text-decoration:underline; text-underline-offset:2px; }
+
+  .toast{ position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom,0) + 24px); transform:translate(-50%, 20px); opacity:0; background:var(--ink); color:var(--paper); font-size:14px; padding:10px 16px; border-radius:999px; pointer-events:none; transition: opacity .25s ease, transform .25s ease; z-index:50; }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce){ .screen{animation:none;} .toast{transition:none;} }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- CATCH SCREEN -->
+  <section class="screen active" id="screen-catch">
+    <p class="kicker">Right now</p>
+    <h1>Catch the <em>thought</em></h1>
+    <div class="scroll">
+      <div class="step">
+        <div class="step-head"><span class="num">1 · Grab it</span><span class="hint">as it is, unedited</span></div>
+        <textarea id="thought" placeholder="Write the thought down exactly as it showed up."></textarea>
+        <div class="belief"><span>How true does it feel?</span><input type="range" min="0" max="10" step="1" value="7" id="beliefBefore"><b id="beliefBeforeVal">7</b></div>
+      </div>
+
+      <div class="step">
+        <div class="step-head"><span class="num">2 · Analyze it</span><span class="hint">tap what fits, more than one is fine</span></div>
+        <div class="chips" id="errorChips"></div>
+        <p class="suggest" id="suggest"></p>
+        <div class="picked-defs" id="pickedDefs"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-head"><span class="num">3 · Replace it</span><span class="hint">more accurate, not just nicer</span></div>
+        <textarea id="replacement" placeholder="What is a fairer, more accurate way to say it?"></textarea>
+      </div>
+
+      <div class="step">
+        <div class="step-head"><span class="num">4 · Choose</span><span class="hint">which one do you keep?</span></div>
+        <div class="choose">
+          <button class="btn-soft" id="chooseNew" data-v="new">The new one</button>
+          <button class="btn-soft" id="chooseMixed" data-v="mixed">Somewhere between</button>
+          <button class="btn-soft" id="chooseOld" data-v="old">Still the old one</button>
+        </div>
+        <div class="belief"><span>How true does the original feel now?</span><input type="range" min="0" max="10" step="1" value="7" id="beliefAfter"><b id="beliefAfterVal">7</b></div>
+      </div>
+    </div>
+
+    <button class="cta" id="logBtn" disabled>Log it</button>
+    <div class="row-links">
+      <button class="link" id="flagOnlyBtn">Just flag it, no rewrite</button>
+      <button class="link" id="gotoGuideFromCatch">Field guide</button>
+      <button class="link" id="gotoPatternsFromCatch">My patterns</button>
+    </div>
+    <div class="row-links">
+      <a class="link" href="../feel/" style="text-decoration:underline;">Feel &amp; Do &rsaquo;</a>
+      <a class="link" href="../unsent/" style="text-decoration:underline;">Unsent &rsaquo;</a>
+      <a class="link" href="../lifemap/" style="text-decoration:underline;">Life Map &rsaquo;</a>
+    </div>
+  </section>
+
+  <!-- GUIDE SCREEN -->
+  <section class="screen" id="screen-guide">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Field guide</p>
+      <button class="icon-btn" id="doneGuideBtn">Done</button>
+    </div>
+    <div class="scroll">
+      <h1>Seventeen ways a thought <em>goes wrong</em></h1>
+      <p class="note" style="margin:-8px 0 10px;">Feelings are facts. Thoughts are not always true. Each card has the definition, what it sounds like, and what to try instead. Tap "Flag this one" to log it straight from here.</p>
+      <div id="guide"></div>
+      <p class="note">Adapted from <a href="https://www.holisticwellnesspractice.com/2021/12/26/17-common-thinking-errors-how-to-identify-and-replace-them" target="_blank" rel="noopener">17 Common Thinking Errors</a> (Holistic Wellness Practice), which draws on the cognitive-distortion lists of Beck and Burns.</p>
+    </div>
+  </section>
+
+  <!-- PATTERNS SCREEN -->
+  <section class="screen" id="screen-patterns">
+    <div class="top-row">
+      <p class="kicker" style="margin:0;">Patterns</p>
+      <button class="icon-btn" id="donePatternsBtn">Done</button>
+    </div>
+    <div class="scroll">
+      <h1>What your mind <em>reaches for</em></h1>
+      <div class="stat-row">
+        <div class="stat"><b id="statTotal">0</b><span>caught</span></div>
+        <div class="stat"><b id="statWeek">0</b><span>this week</span></div>
+        <div class="stat"><b id="statShift">—</b><span>avg. drop in belief</span></div>
+      </div>
+      <div class="insight" id="insight"></div>
+
+      <h2>Your usual suspects</h2>
+      <div class="feel-list" id="errList"></div>
+
+      <h2>By time of day</h2>
+      <div class="bars" id="barsHour"></div>
+      <div class="axis"><span>12am</span><span>6am</span><span>noon</span><span>6pm</span><span>11pm</span></div>
+
+      <h2>By day of week</h2>
+      <div class="bars" id="barsDay"></div>
+      <div class="axis"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+
+      <h2>Recent</h2>
+      <ul class="log-list" id="logList"></ul>
+      <p class="note" id="logEmpty" style="display:none;">Nothing caught yet. The next time a thought lands hard, write it down here.</p>
+
+      <h2>Companions</h2>
+      <a class="ext-link" href="../feel/">Feel &amp; Do &rsaquo;<small>Name what you're feeling, sit with it, then do something.</small></a>
+      <a class="ext-link" href="../unsent/">Unsent &rsaquo;<small>Something you want to say to someone, but won't.</small></a>
+      <a class="ext-link" href="../lifemap/">Life Map &rsaquo;<small>Rate six areas of life, watch them move, do one small thing.</small></a>
+
+      <h2>Your data</h2>
+      <p class="note">Everything lives in this browser only. Nothing is uploaded anywhere. Export a copy if you want to keep it; the JSON export can be re-imported later.</p>
+      <div class="stack">
+        <button class="btn-soft" id="exportTextBtn">Export as text</button>
+        <button class="btn-soft" id="exportJsonBtn">Export everything as JSON</button>
+        <button class="btn-soft" id="importBtn">Import from JSON</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
+        <button class="btn-soft" id="clearBtn" style="color:var(--danger);">Clear the log</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Groups ----------
+  var GROUPS = [
+    { key:"absolute", label:"Absolutes", desc:"Everything is total, permanent, or a verdict.", color:"var(--c-absolute)" },
+    { key:"scale",    label:"Scale",     desc:"The size of things gets distorted.",           color:"var(--c-scale)" },
+    { key:"self",     label:"Self",      desc:"Feelings and blame turned inward.",            color:"var(--c-self)" },
+    { key:"others",   label:"Others",    desc:"Guessing at, or trying, other people.",        color:"var(--c-others)" },
+    { key:"future",   label:"Future",    desc:"Certainty about what hasn't happened.",        color:"var(--c-future)" },
+    { key:"rules",    label:"Rules",     desc:"How things ought to be, and the resentment when they aren't.", color:"var(--c-rules)" }
+  ];
+  var GROUP = {}; GROUPS.forEach(function(g){ GROUP[g.key] = g; });
+
+  // ---------- The 17 thinking errors ----------
+  var ERRORS = [
+    { id:"allornothing", group:"absolute", name:"All-or-nothing", 
+      def:"Seeing things in absolute categories with no middle ground. Anything short of perfect counts as failure.",
+      sounds:["I completely blew that.", "He's disgusting.", "If it isn't perfect it's worthless."],
+      words:["completely","totally","ruined","perfect","never","always"],
+      ask:"Where on the 0-to-10 scale is this really? What would a 6 look like?",
+      instead:"Put it on a spectrum. Most things are partly good and partly not, and that is still a result." },
+    { id:"overgeneral", group:"absolute", name:"Overgeneralizing",
+      def:"Turning one bad moment into a permanent rule. One event becomes 'always' or 'never.'",
+      sounds:["I'll never be able to forgive her.", "He's always doing that."],
+      words:["always","never","every time","nobody","everyone"],
+      ask:"Is there even one exception? What happened the last time it went differently?",
+      instead:"Say what actually happened, once, with a date on it. Look for the exceptions." },
+    { id:"labeling", group:"absolute", name:"Labeling",
+      def:"Sticking a harsh name on yourself or someone else instead of describing what happened.",
+      sounds:["I'm a horrible person.", "I didn't realize you were so stupid."],
+      words:["I'm a","he's a","she's such a","idiot","loser","selfish"],
+      ask:"What did the person do, specifically? Would you say that about a friend who did the same?",
+      instead:"Swap the label for the behaviour: 'I snapped at her' instead of 'I'm a monster.'" },
+    { id:"hopeless", group:"absolute", name:"Hopelessness",
+      def:"Believing things will stay this way and that trying is pointless.",
+      sounds:["No one is ever going to love me.", "What's the use, why bother changing now."],
+      words:["what's the use","never going to","pointless","too late","why bother"],
+      ask:"When have things changed before, even a little? What's the smallest next step?",
+      instead:"Find one time something did shift. Pick a step small enough to do today." },
+
+    { id:"magnify", group:"scale", name:"Magnifying or minimizing",
+      def:"Blowing something up far past its size, or shrinking it down so it doesn't count. Includes catastrophizing.",
+      sounds:["How can I ever trust him again if he lied about that?", "It was only a little lie, it didn't matter."],
+      words:["disaster","worst","ever","just a","only","no big deal"],
+      ask:"On a scale from a paper cut to losing a limb, where is this really? How likely is the worst case?",
+      instead:"Size it honestly. Ask what you'd tell someone else this had happened to." },
+    { id:"discount", group:"scale", name:"Discounting the positive",
+      def:"Explaining away anything good so it doesn't count. Achievements get a 'yes, but.'",
+      sounds:["Who cares that I got it, they'll find out I'm not that smart.", "Yes, but she only did it once."],
+      words:["yes, but","doesn't count","anyone could","just luck","only"],
+      ask:"If a friend did this, would you let them wave it off?",
+      instead:"Let the good thing stand on its own. Say it without a clause after it." },
+    { id:"filter", group:"scale", name:"Negative mental filter",
+      def:"Fixing on the one bad detail until it colours the whole picture, and the good parts disappear.",
+      sounds:["He got a B.", "(with five A's on the same card)", "I have to do everything around here."],
+      words:["all I can think about","the only thing","everything","nothing went right"],
+      ask:"What else is true here that I'm not counting? List three things.",
+      instead:"Write down the whole picture, good and bad, and weigh them at the same size." },
+
+    { id:"emotional", group:"self", name:"Emotional reasoning",
+      def:"Treating a feeling as proof. 'I feel it, so it must be so.'",
+      sounds:["I feel like an idiot, so I must be one.", "It feels like he's doing it on purpose, so I know he is."],
+      words:["I feel like","it feels like","so it must","I just know"],
+      ask:"The feeling is real. What's the evidence for the thought, separate from the feeling?",
+      instead:"Name the feeling, then check the facts as if the feeling weren't there." },
+    { id:"blame", group:"self", name:"Blame or self-blame",
+      def:"Making one person, yourself or someone else, entirely responsible for how things turned out.",
+      sounds:["It's all your fault I got fired.", "How am I supposed to be nice when he keeps doing that?"],
+      words:["all my fault","all your fault","because of you","if you hadn't","made me"],
+      ask:"Draw a pie chart of the causes. How big is any one slice, honestly?",
+      instead:"List every factor that contributed. Take your slice, no more and no less." },
+    { id:"control", group:"self", name:"Control fallacies",
+      def:"Either believing everything depends on you, or that nothing does and you're at the mercy of outside forces.",
+      sounds:["I tutored him and he failed, so it's my fault.", "What's the use, she'll just leave anyway."],
+      words:["it's on me","up to me","nothing I can do","out of my hands","I should have prevented"],
+      ask:"What is actually in my hands here? What is influence rather than control?",
+      instead:"Separate what you're responsible for from what you can only influence, and act on the first." },
+
+    { id:"mindread", group:"others", name:"Mind reading",
+      def:"Deciding you know what someone else is thinking, usually something bad about you, without checking.",
+      sounds:["He thinks I'm blowing this out of proportion and he's going to leave.", "She thinks I'm crazy."],
+      words:["he thinks","she thinks","they must think","obviously","I can tell"],
+      ask:"What did they actually say or do? Could I ask instead of guessing?",
+      instead:"Treat it as a guess, not a reading. Ask, or wait for evidence." },
+    { id:"right", group:"others", name:"Always being right",
+      def:"Turning a disagreement into a trial where being wrong is unbearable, so everyone else has to be.",
+      sounds:["That's not the way I would do it.", "Your version is so wrong, that's not what happened."],
+      words:["that's not what happened","I'm right","wrong","prove","admit"],
+      ask:"What would it cost to let this one go? Could both versions be partly true?",
+      instead:"Allow more than one valid way of seeing it. Being understood beats being right." },
+    { id:"change", group:"others", name:"Fallacy of change",
+      def:"Expecting other people to change to suit you, and hanging your happiness on it.",
+      sounds:["If only he'd be cleaner, I wouldn't get so upset.", "Why should I bother if they won't?"],
+      words:["if only they","when they finally","they need to","why should I if"],
+      ask:"If they never change, what's my move? What is mine to manage here?",
+      instead:"Take them as they are today and decide what you'll do with that." },
+
+    { id:"fortune", group:"future", name:"Fortune telling",
+      def:"Predicting how things will go, usually badly, and treating the prediction as settled.",
+      sounds:["The trip is going to be ruined, I know it'll rain.", "What if they never change?"],
+      words:["it's going to","what if","I know it will","it'll never","bound to"],
+      ask:"How many of my past predictions came true? What's the base rate?",
+      instead:"Turn the certainty into a possibility with a rough probability, then plan for today." },
+    { id:"reward", group:"future", name:"Heaven's reward fallacy",
+      def:"Keeping a ledger of effort and sacrifice and expecting it to pay out, then feeling cheated when it doesn't.",
+      sounds:["I deserved that promotion, not him.", "Why should I when she never notices what I do?"],
+      words:["I deserved","after all I've done","should have been me","never appreciated"],
+      ask:"Would I still do this if no one ever noticed? Then do it for that reason.",
+      instead:"Unhook the effort from the expected reward. Do what's worth doing on its own terms." },
+
+    { id:"should", group:"rules", name:"Should statements",
+      def:"Running yourself or others on 'should,' 'must,' 'ought to,' and 'have to,' then feeling guilt or anger when reality disagrees.",
+      sounds:["You should have told me.", "He knows me, he should have known what to do."],
+      words:["should","shouldn't","must","ought to","have to","supposed to"],
+      ask:"Whose rule is this? What happens if I say 'I'd prefer' instead?",
+      instead:"Replace the rule with a preference: 'I'd have liked to know' instead of 'you should have told me.'" },
+    { id:"fairness", group:"rules", name:"Fallacy of fairness",
+      def:"Measuring everything against how fair it is, and stewing when life doesn't balance the books.",
+      sounds:["It's not fair he earns more when my job is harder.", "After that, I'm justified in acting like this."],
+      words:["not fair","unfair","deserve","justified","why me","they get to"],
+      ask:"Fair by whose scale? What can I actually influence here?",
+      instead:"Drop the scale. Decide what you want and what you can do, whether or not it's fair." }
+  ];
+  var ERR = {}; ERRORS.forEach(function(e){ ERR[e.id] = e; });
+
+  var KEY = "untwist.v1";
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){ var p = JSON.parse(raw); if(p && p.v === 1 && Array.isArray(p.log)) return p; }
+    }catch(e){}
+    return { v:1, log:[] };
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  var state = load();
+
+  // ---------- Helpers ----------
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function todayISO(){ var d = new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function colorOf(e){ return GROUP[e.group].color; }
+  var toastTimer = null;
+  function toast(msg){ var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 1800); }
+
+  var screens = { catch:$("screen-catch"), guide:$("screen-guide"), patterns:$("screen-patterns") };
+  function showScreen(name){ Object.keys(screens).forEach(function(k){ screens[k].classList.toggle("active", k === name); }); window.scrollTo(0,0); }
+
+  // ---------- Catch screen ----------
+  var picked = [];       // error ids
+  var choice = null;     // "new" | "mixed" | "old"
+  var editingId = null;  // log entry being edited
+
+  function setRange(id, v){ var r = $(id); r.value = v; r.style.setProperty("--pct", (v*10)+"%"); $(id+"Val").textContent = v; }
+  ["beliefBefore","beliefAfter"].forEach(function(id){
+    $(id).addEventListener("input", function(){ setRange(id, +this.value); });
+    setRange(id, +$(id).value);
+  });
+
+  function renderChips(){
+    var wrap = $("errorChips"); wrap.innerHTML = "";
+    ERRORS.forEach(function(e){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip small" + (picked.indexOf(e.id) >= 0 ? " on" : "");
+      b.style.setProperty("--c", colorOf(e));
+      b.innerHTML = '<span class="sw"></span>' + esc(e.name);
+      b.addEventListener("click", function(){
+        var i = picked.indexOf(e.id);
+        if(i >= 0) picked.splice(i,1); else picked.push(e.id);
+        renderChips(); renderPickedDefs(); updateCta();
+      });
+      wrap.appendChild(b);
+    });
+  }
+  function renderPickedDefs(){
+    var wrap = $("pickedDefs"); wrap.innerHTML = "";
+    picked.forEach(function(id){
+      var e = ERR[id];
+      var d = document.createElement("div");
+      d.className = "def-card"; d.style.setProperty("--c", colorOf(e));
+      d.innerHTML = '<b>' + esc(e.name) + '.</b> ' + esc(e.def) + '<span class="ask">' + esc(e.ask) + '</span>';
+      wrap.appendChild(d);
+    });
+  }
+  // Suggest errors from tell-tale words in the thought.
+  function suggestFromText(){
+    var t = ($("thought").value || "").toLowerCase();
+    var hits = [];
+    if(t.length > 3){
+      ERRORS.forEach(function(e){
+        var n = 0; e.words.forEach(function(w){ if(t.indexOf(w) >= 0) n++; });
+        if(n) hits.push({e:e, n:n});
+      });
+      hits.sort(function(a,b){ return b.n - a.n; });
+    }
+    var el = $("suggest");
+    if(!hits.length){ el.innerHTML = ""; return; }
+    el.innerHTML = "The wording hints at " + hits.slice(0,3).map(function(h){ return '<span>' + esc(h.e.name.toLowerCase()) + '</span>'; }).join(", ") + ". Only you know if that's what's going on.";
+  }
+  $("thought").addEventListener("input", function(){ suggestFromText(); updateCta(); });
+  $("replacement").addEventListener("input", updateCta);
+
+  function setChoice(v){
+    choice = v;
+    ["chooseNew","chooseMixed","chooseOld"].forEach(function(id){ $(id).classList.toggle("on", $(id).getAttribute("data-v") === v); });
+    updateCta();
+  }
+  ["chooseNew","chooseMixed","chooseOld"].forEach(function(id){ $(id).addEventListener("click", function(){ setChoice(this.getAttribute("data-v")); }); });
+
+  function updateCta(){
+    var ok = $("thought").value.trim().length > 0 && (picked.length > 0 || $("replacement").value.trim().length > 0);
+    $("logBtn").disabled = !ok;
+    $("logBtn").textContent = editingId ? "Save changes" : "Log it";
+  }
+  function resetCatch(){
+    picked = []; choice = null; editingId = null;
+    $("thought").value = ""; $("replacement").value = "";
+    setRange("beliefBefore", 7); setRange("beliefAfter", 7);
+    renderChips(); renderPickedDefs(); suggestFromText(); setChoice(null); updateCta();
+  }
+  function collect(flagOnly){
+    return {
+      id: editingId || uid(),
+      t: editingId ? (state.log.filter(function(x){ return x.id === editingId; })[0] || {t:Date.now()}).t : Date.now(),
+      thought: $("thought").value.trim(),
+      errors: picked.slice(),
+      replacement: flagOnly ? "" : $("replacement").value.trim(),
+      choice: flagOnly ? null : choice,
+      before: +$("beliefBefore").value,
+      after: flagOnly ? null : +$("beliefAfter").value,
+      flagOnly: !!flagOnly
+    };
+  }
+  function commit(entry){
+    if(editingId){ state.log = state.log.map(function(x){ return x.id === entry.id ? entry : x; }); }
+    else state.log.unshift(entry);
+    save();
+  }
+  $("logBtn").addEventListener("click", function(){
+    var e = collect(false);
+    if(!e.thought) return;
+    var was = !!editingId;
+    commit(e);
+    toast(was ? "Saved" : (e.choice === "new" ? "Logged. New thought chosen." : "Logged."));
+    resetCatch();
+  });
+  $("flagOnlyBtn").addEventListener("click", function(){
+    var e = collect(true);
+    if(!e.thought && !e.errors.length){ toast("Write the thought or tap an error first"); return; }
+    if(!e.thought) e.thought = "(unwritten)";
+    commit(e);
+    toast("Flagged");
+    resetCatch();
+  });
+  function loadForEdit(entry){
+    editingId = entry.id;
+    $("thought").value = entry.thought === "(unwritten)" ? "" : entry.thought;
+    $("replacement").value = entry.replacement || "";
+    picked = (entry.errors || []).slice();
+    setRange("beliefBefore", entry.before == null ? 7 : entry.before);
+    setRange("beliefAfter", entry.after == null ? (entry.before == null ? 7 : entry.before) : entry.after);
+    renderChips(); renderPickedDefs(); suggestFromText(); setChoice(entry.choice || null); updateCta();
+    showScreen("catch");
+  }
+
+  // ---------- Guide ----------
+  function renderGuide(){
+    var counts = {}; state.log.forEach(function(x){ (x.errors||[]).forEach(function(id){ counts[id] = (counts[id]||0)+1; }); });
+    var wrap = $("guide"); wrap.innerHTML = "";
+    GROUPS.forEach(function(g){
+      var head = document.createElement("div");
+      head.className = "group-head"; head.style.setProperty("--c", g.color);
+      head.innerHTML = '<span class="sw"></span><h2>' + esc(g.label) + '</h2><small>' + esc(g.desc) + '</small>';
+      wrap.appendChild(head);
+      ERRORS.filter(function(e){ return e.group === g.key; }).forEach(function(e){
+        var d = document.createElement("details");
+        d.className = "guide-card"; d.style.setProperty("--c", g.color);
+        d.innerHTML = '<summary><span class="sw"></span>' + esc(e.name) + (counts[e.id] ? '<span class="cnt">' + counts[e.id] + '×</span>' : '') + '</summary>' +
+          '<div class="guide-body">' +
+          '<p>' + esc(e.def) + '</p>' +
+          '<span class="lbl">Sounds like</span><ul>' + e.sounds.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ul>' +
+          '<span class="lbl">Ask yourself</span><p>' + esc(e.ask) + '</p>' +
+          '<span class="lbl">Instead</span><p>' + esc(e.instead) + '</p>' +
+          '<button class="btn-soft flag-btn" style="width:100%;">Flag this one now</button>' +
+          '</div>';
+        d.querySelector(".flag-btn").addEventListener("click", function(){
+          resetCatch(); picked = [e.id]; renderChips(); renderPickedDefs(); updateCta();
+          showScreen("catch"); $("thought").focus();
+        });
+        wrap.appendChild(d);
+      });
+    });
+  }
+  $("gotoGuideFromCatch").addEventListener("click", function(){ renderGuide(); showScreen("guide"); });
+  $("doneGuideBtn").addEventListener("click", function(){ showScreen("catch"); });
+
+  // ---------- Patterns ----------
+  function renderPatterns(){
+    var log = state.log;
+    var weekAgo = Date.now() - 7*86400000;
+    $("statTotal").textContent = log.length;
+    $("statWeek").textContent = log.filter(function(x){ return x.t >= weekAgo; }).length;
+    var shifts = log.filter(function(x){ return x.before != null && x.after != null; }).map(function(x){ return x.before - x.after; });
+    $("statShift").textContent = shifts.length ? (shifts.reduce(function(a,b){ return a+b; },0)/shifts.length).toFixed(1) : "—";
+
+    var counts = {}; log.forEach(function(x){ (x.errors||[]).forEach(function(id){ counts[id] = (counts[id]||0)+1; }); });
+    var ranked = ERRORS.map(function(e){ return {e:e, n:counts[e.id]||0}; }).sort(function(a,b){ return b.n - a.n; });
+    var max = ranked.length ? ranked[0].n : 0;
+
+    var ins = $("insight");
+    if(!log.length) ins.textContent = "Once you've caught a few, this will tell you which errors you reach for most, and when.";
+    else{
+      var parts = [];
+      var top = ranked.filter(function(r){ return r.n > 0; }).slice(0,2);
+      if(top.length) parts.push("You reach for <b>" + top.map(function(r){ return esc(r.e.name.toLowerCase()); }).join("</b> and <b>") + "</b> most.");
+      var gcount = {}; log.forEach(function(x){ (x.errors||[]).forEach(function(id){ var g = ERR[id] ? ERR[id].group : null; if(g) gcount[g] = (gcount[g]||0)+1; }); });
+      var gtop = Object.keys(gcount).sort(function(a,b){ return gcount[b]-gcount[a]; })[0];
+      if(gtop) parts.push("Most of it is in the <b>" + esc(GROUP[gtop].label.toLowerCase()) + "</b> family: " + esc(GROUP[gtop].desc.toLowerCase()));
+      var chosenNew = log.filter(function(x){ return x.choice === "new"; }).length, withChoice = log.filter(function(x){ return x.choice; }).length;
+      if(withChoice) parts.push("You chose the new thought " + chosenNew + " of " + withChoice + " times.");
+      if(shifts.length) parts.push("On average the original feels " + $("statShift").textContent + " points less true after the rewrite.");
+      var hours = new Array(24).fill(0); log.forEach(function(x){ hours[new Date(x.t).getHours()]++; });
+      var hmax = Math.max.apply(null, hours); var hi = hours.indexOf(hmax);
+      if(log.length >= 5 && hmax >= 2) parts.push("They cluster around " + (hi===0?"midnight":hi<12?hi+"am":hi===12?"noon":(hi-12)+"pm") + ".");
+      ins.innerHTML = parts.join(" ");
+    }
+
+    var el = $("errList"); el.innerHTML = "";
+    ranked.filter(function(r){ return r.n > 0; }).forEach(function(r){
+      var d = document.createElement("div");
+      d.className = "feel-line"; d.style.setProperty("--c", colorOf(r.e));
+      d.innerHTML = '<span class="sw"></span><span class="nm">' + esc(r.e.name) + '</span><span class="track"><span class="fill" style="width:' + (max ? Math.round(r.n/max*100) : 0) + '%"></span></span><span class="n">' + r.n + '</span>';
+      el.appendChild(d);
+    });
+    if(!ranked.some(function(r){ return r.n > 0; })) el.innerHTML = '<p class="note">No errors tagged yet.</p>';
+
+    function bars(id, n, keyFn){
+      var arr = new Array(n).fill(0); log.forEach(function(x){ arr[keyFn(new Date(x.t))]++; });
+      var m = Math.max.apply(null, arr) || 1;
+      var w = $(id); w.innerHTML = "";
+      arr.forEach(function(v){ var b = document.createElement("div"); b.className = "bar" + (v ? "" : " zero"); b.style.height = (v ? Math.max(6, v/m*100) : 2) + "%"; b.title = v; w.appendChild(b); });
+    }
+    bars("barsHour", 24, function(d){ return d.getHours(); });
+    bars("barsDay", 7, function(d){ return d.getDay(); });
+
+    var ll = $("logList"); ll.innerHTML = "";
+    $("logEmpty").style.display = log.length ? "none" : "";
+    log.slice(0, 60).forEach(function(x){
+      var li = document.createElement("li");
+      var tags = (x.errors||[]).map(function(id){ var e = ERR[id]; return e ? '<span class="tag" style="--c:' + colorOf(e) + '">' + esc(e.name) + '</span>' : ""; }).join("");
+      var body = '<span class="thought">' + esc(x.thought) + '</span>';
+      if(x.replacement) body += '<span class="arrow">→</span><span class="repl">' + esc(x.replacement) + '</span>';
+      var meta = new Date(x.t).toLocaleString(undefined, {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+      if(x.flagOnly) meta += " · flagged";
+      else if(x.choice) meta += " · kept " + (x.choice === "new" ? "the new one" : x.choice === "old" ? "the old one" : "something between");
+      if(x.before != null && x.after != null) meta += " · " + x.before + " → " + x.after;
+      li.innerHTML = '<div class="body">' + body + (tags ? '<div class="tags">' + tags + '</div>' : '') + '<small>' + esc(meta) + '</small></div>' +
+        '<div class="acts"><button data-act="edit">Edit</button><button data-act="del">Delete</button></div>';
+      li.querySelector('[data-act="edit"]').addEventListener("click", function(){ loadForEdit(x); });
+      li.querySelector('[data-act="del"]').addEventListener("click", function(){
+        if(!confirm("Delete this entry?")) return;
+        state.log = state.log.filter(function(y){ return y.id !== x.id; }); save(); renderPatterns();
+      });
+      ll.appendChild(li);
+    });
+  }
+  $("gotoPatternsFromCatch").addEventListener("click", function(){ renderPatterns(); showScreen("patterns"); });
+  $("donePatternsBtn").addEventListener("click", function(){ showScreen("catch"); });
+
+  // ---------- Data ----------
+  function download(name, text, type){
+    var blob = new Blob([text], {type:type||"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  $("exportTextBtn").addEventListener("click", function(){
+    var lines = ["Untwist — export " + new Date().toLocaleString(), ""];
+    state.log.slice().reverse().forEach(function(x){
+      lines.push("[" + new Date(x.t).toLocaleString() + "]" + (x.flagOnly ? " (flagged)" : ""));
+      lines.push("  Thought: " + x.thought + (x.before != null ? "  (felt " + x.before + "/10 true)" : ""));
+      if((x.errors||[]).length) lines.push("  Errors: " + x.errors.map(function(id){ return ERR[id] ? ERR[id].name : id; }).join(", "));
+      if(x.replacement) lines.push("  Replacement: " + x.replacement + (x.after != null ? "  (original now " + x.after + "/10)" : ""));
+      if(x.choice) lines.push("  Chose: " + x.choice);
+      lines.push("");
+    });
+    download("untwist-" + todayISO() + ".txt", lines.join("\n"), "text/plain");
+  });
+  $("exportJsonBtn").addEventListener("click", function(){
+    download("untwist-" + todayISO() + ".json", JSON.stringify({ exportedAt:new Date().toISOString(), v:1, log:state.log, errors:ERRORS.map(function(e){ return {id:e.id, name:e.name}; }) }, null, 2), "application/json");
+  });
+  $("importBtn").addEventListener("click", function(){ $("importFile").click(); });
+  $("importFile").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var p = JSON.parse(reader.result);
+        if(!p || !Array.isArray(p.log)) throw new Error("bad");
+        var ids = {}; state.log.forEach(function(x){ ids[x.id] = 1; });
+        var added = 0;
+        p.log.forEach(function(x){ if(x && x.id && !ids[x.id] && x.thought){ state.log.push(x); added++; } });
+        state.log.sort(function(a,b){ return b.t - a.t; });
+        save(); renderPatterns();
+        toast("Imported " + added + " new " + (added === 1 ? "entry" : "entries"));
+      }catch(e){ alert("That file doesn't look like an Untwist export."); }
+      $("importFile").value = "";
+    };
+    reader.readAsText(f);
+  });
+  $("clearBtn").addEventListener("click", function(){
+    if(!confirm("Clear the whole log?")) return;
+    state.log = []; save(); renderPatterns();
+  });
+
+  // ---------- Start ----------
+  resetCatch();
+  var h = (location.hash || "").replace("#", "");
+  if(h === "guide"){ renderGuide(); showScreen("guide"); }
+  else if(h === "patterns"){ renderPatterns(); showScreen("patterns"); }
+  if(h) history.replaceState(null, "", location.pathname);
+})();
+</script>
+</body>
+</html>
